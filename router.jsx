@@ -15,6 +15,7 @@ import HashGeneral from "./src/Pages/Hash/hash";
 import NasaImage from "./src/Pages/Nasa/kosmos";
 import UuidGenerator from "./src/Pages/UUID/uuid";
 import CertificateGenerator from "./src/Pages/Certificate/certificate";
+import Portfolio from "./src/Pages/Portfolio/portfolio";
 
 export const Routers = () => {
   return (
@@ -34,6 +35,7 @@ export const Routers = () => {
         <Route path="/hash-service" element={<HashGeneral />} />
         <Route path="/nasa-gallery" element={<NasaImage />} />
         <Route path="/cybernexus-certificate" element={<CertificateGenerator />} />
+        <Route path="/portfolio" element={<Portfolio/>}/>
       </Route>
       <Route path="*" element={<Error />} />
     </Routes>
