@@ -12,7 +12,6 @@ import { Terminal } from "./src/Pages/Terminale/terminal";
 import QRCodeGenerator from "./src/Pages/Qr/qr";
 import Base64Tool from "./src/Pages/Base64/base64";
 import HashGeneral from "./src/Pages/Hash/hash";
-import NasaImage from "./src/Pages/Nasa/kosmos";
 import UuidGenerator from "./src/Pages/UUID/uuid";
 import CertificateGenerator from "./src/Pages/Certificate/certificate";
 import Portfolio from "./src/Pages/Portfolio/portfolio";
@@ -33,7 +32,6 @@ export const Routers = () => {
         <Route path="/base64-code" element={<Base64Tool />} />
         <Route path="/uuid-generator" element={<UuidGenerator />} />
         <Route path="/hash-service" element={<HashGeneral />} />
-        <Route path="/nasa-gallery" element={<NasaImage />} />
         <Route path="/cybernexus-certificate" element={<CertificateGenerator />} />
         <Route path="/portfolio" element={<Portfolio/>}/>
       </Route>
