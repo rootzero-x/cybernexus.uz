@@ -59,20 +59,6 @@ export const Welcome = () => {
       reverse: true,
     },
     {
-      title: "Go to Cyber Flow",
-      description: "Cyber Flow - Explore cybersecurity workflows",
-      image: "/cyber-flow.jpg",
-      link: "/cyberflow",
-      reverse: false,
-    },
-    {
-      title: "NASA Gallery",
-      description: "Explore stunning images from NASA",
-      image: "/nasa-gallery.jpg",
-      link: "/nasa-gallery",
-      reverse: true,
-    },
-    {
       title: "QR Code Generator",
       description: "Generate QR codes for your links",
       image: "/qr-code-generator.webp",

@@ -93,7 +93,6 @@ export const WelcomeHeader = () => {
             "about",
             "contact",
             "help",
-            "cyberflow",
             "qr-code-generator",
             "base64-code",
             "uuid-generator",

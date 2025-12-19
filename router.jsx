@@ -7,7 +7,6 @@ import { About } from "./src/Pages/About/about";
 import { Contact } from "./src/Pages/Contact/contact";
 import { Help } from "./src/Pages/Help/help";
 import { Error } from "./src/Pages/Error/error";
-import { Cyberflow } from "./src/Pages/Cyberflow/cyberflow";
 import { Terminal } from "./src/Pages/Terminale/terminal";
 import QRCodeGenerator from "./src/Pages/Qr/qr";
 import Base64Tool from "./src/Pages/Base64/base64";
@@ -26,14 +25,16 @@ export const Routers = () => {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/help" element={<Help />} />
-        <Route path="/cyberflow" element={<Cyberflow />} />
         <Route path="/ctf-challenge" element={<Terminal />} />
         <Route path="/qr-code-generator" element={<QRCodeGenerator />} />
         <Route path="/base64-code" element={<Base64Tool />} />
         <Route path="/uuid-generator" element={<UuidGenerator />} />
         <Route path="/hash-service" element={<HashGeneral />} />
-        <Route path="/cybernexus-certificate" element={<CertificateGenerator />} />
-        <Route path="/portfolio" element={<Portfolio/>}/>
+        <Route
+          path="/cybernexus-certificate"
+          element={<CertificateGenerator />}
+        />
+        <Route path="/portfolio" element={<Portfolio />} />
       </Route>
       <Route path="*" element={<Error />} />
     </Routes>
