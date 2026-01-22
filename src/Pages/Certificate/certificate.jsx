@@ -10,9 +10,39 @@ import {
   RefreshCw,
   Eye,
   EyeOff,
+  Download,
 } from "lucide-react";
 
-const CyberNexusCertificateExam = () => {
+// Move sub-components outside to prevent remounting on re-renders
+const Glass = ({ className, children }) => (
+  <div
+    className={[
+      "rounded-xl border-2 bg-black/55 backdrop-blur-xl",
+      "border-neon-green/40 shadow-neon",
+      className || "",
+    ].join(" ")}
+  >
+    {children}
+  </div>
+);
+
+const Chip = ({ active, onClick, icon: Icon, children }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={[
+      "inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-black tracking-wider transition-all",
+      active
+        ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
+        : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green",
+    ].join(" ")}
+  >
+    {Icon ? <Icon className="text-[12px]" /> : null}
+    {children}
+  </button>
+);
+
+const CertificateGenerator = () => {
   const [stage, setStage] = useState("intro"); // intro, exam, results, certificate
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -24,9 +54,16 @@ const CyberNexusCertificateExam = () => {
   const [examQuestions, setExamQuestions] = useState([]);
   const [showAnswer, setShowAnswer] = useState(false);
   const [examStarted, setExamStarted] = useState(false);
+  // certificate meta
+  const [certId, setCertId] = useState("");
+  const [issuedAt, setIssuedAt] = useState(""); // formatted string
   const canvasRef = useRef(null);
-
-  // Comprehensive question bank with difficulty levels
+  // =========================
+  // ✅ QUESTION BANK (EMPTY PLACEHOLDER)
+  // Siz o‘zingiz ko‘chirib qo‘yasiz.
+  // Strukturasi shunday bo‘lsin:
+  // { id: 1, difficulty: "low+"|"medium+"|"hard+", question: "...", options: ["..."], correct: 0 }
+  // =========================
   const questionBank = [
     // LOW+ Questions
     {
@@ -115,7 +152,6 @@ const CyberNexusCertificateExam = () => {
       ],
       correct: 2,
     },
-
     // MEDIUM+ Questions
     {
       id: 9,
@@ -251,7 +287,6 @@ const CyberNexusCertificateExam = () => {
       ],
       correct: 1,
     },
-
     // HARD+ Questions
     {
       id: 21,
@@ -490,8 +525,12 @@ const CyberNexusCertificateExam = () => {
       correct: 1,
     },
   ];
-
-  // Disable copy, screenshot, and right-click
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+  // Disable copy, screenshot, and right-click (as you had)
   useEffect(() => {
     if (stage === "exam") {
       const preventCopy = (e) => e.preventDefault();
@@ -499,9 +538,7 @@ const CyberNexusCertificateExam = () => {
         if (
           e.key === "PrintScreen" ||
           (e.ctrlKey && e.shiftKey && (e.key === "S" || e.key === "s")) ||
-          (e.metaKey &&
-            e.shiftKey &&
-            (e.key === "3" || e.key === "4" || e.key === "5"))
+          (e.metaKey && e.shiftKey && (e.key === "3" || e.key === "4" || e.key === "5"))
         ) {
           e.preventDefault();
           alert("🚫 Screenshots are disabled during the exam!");
@@ -512,13 +549,11 @@ const CyberNexusCertificateExam = () => {
         e.preventDefault();
         alert("🚫 Right-click is disabled during the exam!");
       };
-
       document.addEventListener("copy", preventCopy);
       document.addEventListener("cut", preventCopy);
       document.addEventListener("contextmenu", preventRightClick);
       document.addEventListener("keyup", preventScreenshot);
       document.addEventListener("keydown", preventScreenshot);
-
       return () => {
         document.removeEventListener("copy", preventCopy);
         document.removeEventListener("cut", preventCopy);
@@ -528,7 +563,6 @@ const CyberNexusCertificateExam = () => {
       };
     }
   }, [stage]);
-
   // Timer
   useEffect(() => {
     if (stage === "exam" && examStarted && timeLeft > 0) {
@@ -544,44 +578,46 @@ const CyberNexusCertificateExam = () => {
       return () => clearInterval(timer);
     }
   }, [stage, examStarted, timeLeft]);
-
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs
-      .toString()
-      .padStart(2, "0")}`;
+  // Build cert meta when passed
+  const buildCertMeta = () => {
+    const id = `CNX-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+    const today = new Date();
+    const issued = today.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    setCertId(id);
+    setIssuedAt(issued);
+    return { id, issued };
   };
-
   const selectRandomQuestions = () => {
     const available = questionBank.filter((q) => !usedQuestions.includes(q.id));
-
     if (available.length < 15) {
       setUsedQuestions([]);
       return selectRandomQuestions();
     }
-
     // Mix difficulties: 4 low+, 7 medium+, 4 hard+
     const low = available.filter((q) => q.difficulty === "low+");
     const medium = available.filter((q) => q.difficulty === "medium+");
     const hard = available.filter((q) => q.difficulty === "hard+");
-
     const shuffleArray = (arr) => arr.sort(() => Math.random() - 0.5);
-
     const selected = [
       ...shuffleArray(low).slice(0, 4),
       ...shuffleArray(medium).slice(0, 7),
       ...shuffleArray(hard).slice(0, 4),
     ];
-
     const finalQuestions = shuffleArray(selected);
     setExamQuestions(finalQuestions);
     setUsedQuestions((prev) => [...prev, ...finalQuestions.map((q) => q.id)]);
   };
-
   const startExam = () => {
     if (!firstName.trim() || !lastName.trim()) {
       alert("⚠️ Please enter your full name!");
+      return;
+    }
+    if (!questionBank.length) {
+      alert("⚠️ Savollar (questionBank) hali qo‘shilmagan!");
       return;
     }
     selectRandomQuestions();
@@ -591,349 +627,337 @@ const CyberNexusCertificateExam = () => {
     setAnswers({});
     setTimeLeft(1800);
   };
-
   const handleAnswerSelect = (questionIndex, optionIndex) => {
-    setAnswers((prev) => ({
-      ...prev,
-      [questionIndex]: optionIndex,
-    }));
+    setAnswers((prev) => ({ ...prev, [questionIndex]: optionIndex }));
     setShowAnswer(false);
   };
-
   const handleNext = () => {
     if (currentQuestion < examQuestions.length - 1) {
       setCurrentQuestion((prev) => prev + 1);
       setShowAnswer(false);
     }
   };
-
   const handlePrevious = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion((prev) => prev - 1);
       setShowAnswer(false);
     }
   };
-
   const handleSubmitExam = () => {
     let correctCount = 0;
     examQuestions.forEach((question, index) => {
-      if (answers[index] === question.correct) {
-        correctCount++;
-      }
+      if (answers[index] === question.correct) correctCount++;
     });
     const percentage = (correctCount / examQuestions.length) * 100;
     setScore(percentage);
     setStage("results");
     setExamStarted(false);
+    // if pass, pre-generate meta now
+    if (percentage >= 80) buildCertMeta();
   };
-
-  const generateCertificate = () => {
+  const generateCertificate = (meta) => {
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext("2d");
-
     canvas.width = 1600;
     canvas.height = 1200;
-
     // Background
-    ctx.fillStyle = "#0a0a12";
+    ctx.fillStyle = "#05070b";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Circuit pattern
-    ctx.strokeStyle = "rgba(0, 255, 100, 0.1)";
+    // Soft grid
+    ctx.strokeStyle = "rgba(0, 255, 170, 0.08)";
     ctx.lineWidth = 1;
-    for (let i = 0; i < 200; i++) {
+    for (let x = 0; x <= canvas.width; x += 56) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+    for (let y = 0; y <= canvas.height; y += 56) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+    // Circuit strokes
+    ctx.strokeStyle = "rgba(0, 255, 136, 0.12)";
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 160; i++) {
       ctx.beginPath();
       ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
       ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
       ctx.stroke();
     }
-
-    // Binary rain
-    ctx.fillStyle = "rgba(0, 255, 100, 0.05)";
-    ctx.font = "16px Monospace";
-    for (let i = 0; i < 100; i++) {
-      const x = Math.random() * canvas.width;
-      const y = Math.random() * canvas.height;
-      ctx.fillText(Math.random().toString(2).substring(2, 10), x, y);
-    }
-
-    // Border
+    // Border glow
     ctx.strokeStyle = "#00ff88";
     ctx.shadowColor = "#00ff88";
-    ctx.shadowBlur = 20;
-    ctx.lineWidth = 15;
-    ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
+    ctx.shadowBlur = 18;
+    ctx.lineWidth = 14;
+    ctx.strokeRect(52, 52, canvas.width - 104, canvas.height - 104);
     ctx.shadowBlur = 0;
-
-    // Logo
-    ctx.font = "bold 80px 'Courier New', monospace";
-    ctx.fillStyle = "rgba(0, 255, 150, 0.8)";
+    // Top left mark
+    ctx.font = "bold 86px 'Courier New', monospace";
+    ctx.fillStyle = "rgba(0, 255, 170, 0.85)";
     ctx.textAlign = "left";
-    ctx.fillText(">_", 100, 150);
-
-    // Header with glitch
-    ctx.font = "bold 90px 'Orbitron', sans-serif";
-    ctx.fillStyle = "#00ffaa";
+    ctx.fillText(">_", 98, 150);
+    // Title (glitch-ish)
     ctx.textAlign = "center";
-    ctx.fillText("CYBER NEXUS", canvas.width / 2 + 3, 180);
-    ctx.fillStyle = "#ff00aa";
-    ctx.fillText("CYBER NEXUS", canvas.width / 2 - 3, 180);
+    ctx.font = "bold 92px 'Orbitron', sans-serif";
     ctx.fillStyle = "#00ffaa";
-    ctx.fillText("CYBER NEXUS", canvas.width / 2, 180);
-
-    // Certificate title
-    ctx.font = "italic 40px 'Rajdhani', sans-serif";
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText(
-      "CERTIFICATE OF CYBERSECURITY EXCELLENCE",
-      canvas.width / 2,
-      250
-    );
-
+    ctx.fillText("CYBER NEXUS", canvas.width / 2 + 3, 182);
+    ctx.fillStyle = "#2ad3ff";
+    ctx.fillText("CYBER NEXUS", canvas.width / 2 - 3, 182);
+    ctx.fillStyle = "#00ffaa";
+    ctx.fillText("CYBER NEXUS", canvas.width / 2, 182);
+    // Subtitle
+    ctx.font = "800 36px 'Rajdhani', sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,0.92)";
+    ctx.fillText("CERTIFICATE OF CYBERSECURITY EXCELLENCE", canvas.width / 2, 248);
     // Badge
-    const centerX = canvas.width / 2;
-    const centerY = 400;
-    const gradient = ctx.createRadialGradient(
-      centerX,
-      centerY,
-      0,
-      centerX,
-      centerY,
-      120
-    );
-    gradient.addColorStop(0, "#00ff88");
-    gradient.addColorStop(1, "#005533");
-    ctx.fillStyle = gradient;
+    const cx = canvas.width / 2;
+    const cy = 410;
+    const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 130);
+    rg.addColorStop(0, "#00ff88");
+    rg.addColorStop(1, "#003322");
+    ctx.fillStyle = rg;
     ctx.beginPath();
-    ctx.arc(centerX, centerY, 120, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 130, 0, Math.PI * 2);
     ctx.fill();
-
-    ctx.fillStyle = "#0a0a12";
+    ctx.fillStyle = "#05070b";
     ctx.beginPath();
-    ctx.arc(centerX, centerY, 100, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 106, 0, Math.PI * 2);
     ctx.fill();
-
-    ctx.font = "bold 60px 'Orbitron', sans-serif";
+    ctx.font = "bold 62px 'Orbitron', sans-serif";
     ctx.fillStyle = "#00ff88";
-    ctx.fillText("CNX", centerX, centerY + 20);
-
-    // Recipient
-    ctx.font = "bold 72px 'Rajdhani', sans-serif";
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText("THIS CERTIFIES THAT", centerX, 550);
-
-    // Name with dynamic sizing
+    ctx.fillText("CNX", cx, cy + 22);
+    // Recipient labels
+    ctx.font = "700 34px 'Rajdhani', sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,0.85)";
+    ctx.fillText("THIS CERTIFIES THAT", cx, 552);
+    // Name dynamic
     const fullName = `${firstName.toUpperCase()} ${lastName.toUpperCase()}`;
-    let fontSize = 96;
-    ctx.font = `bold ${fontSize}px 'Orbitron', sans-serif`;
-    let textWidth = ctx.measureText(fullName).width;
-    const maxWidth = canvas.width - 200;
-
-    while (textWidth > maxWidth && fontSize > 40) {
+    let fontSize = 98;
+    ctx.font = `900 ${fontSize}px 'Orbitron', sans-serif`;
+    const maxWidth = canvas.width - 220;
+    while (ctx.measureText(fullName).width > maxWidth && fontSize > 44) {
       fontSize -= 2;
-      ctx.font = `bold ${fontSize}px 'Orbitron', sans-serif`;
-      textWidth = ctx.measureText(fullName).width;
+      ctx.font = `900 ${fontSize}px 'Orbitron', sans-serif`;
     }
-
     ctx.shadowColor = "#00ff88";
-    ctx.shadowBlur = 15;
+    ctx.shadowBlur = 14;
     ctx.fillStyle = "#00ffcc";
-    ctx.fillText(fullName, centerX, 650);
+    ctx.fillText(fullName, cx, 655);
     ctx.shadowBlur = 0;
-
     // Achievement
-    ctx.font = "italic 54px 'Rajdhani', sans-serif";
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText("HAS SUCCESSFULLY COMPLETED THE", centerX, 750);
-
-    ctx.font = "bold 64px 'Orbitron', sans-serif";
+    ctx.font = "700 38px 'Rajdhani', sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,0.85)";
+    ctx.fillText("HAS SUCCESSFULLY COMPLETED THE", cx, 748);
+    ctx.font = "bold 62px 'Orbitron', sans-serif";
     ctx.fillStyle = "#00ff88";
-    ctx.fillText("CYBERSECURITY PROFESSIONAL EXAM", centerX, 830);
-
+    ctx.fillText("CYBERSECURITY PROFESSIONAL EXAM", cx, 828);
     // Score
-    ctx.font = "bold 48px 'Orbitron', sans-serif";
-    ctx.fillStyle = "#00ffcc";
-    ctx.fillText(`SCORE: ${score.toFixed(1)}%`, centerX, 900);
-
-    // Quote
-    ctx.font = "italic 36px 'Rajdhani', sans-serif";
-    ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
-    ctx.fillText("CERTIFIED CYBERSECURITY EXCELLENCE", centerX, 970);
-
-    // Validation
-    ctx.font = "24px 'Courier New', monospace";
-    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 46px 'Orbitron', sans-serif";
+    ctx.fillStyle = "#2ad3ff";
+    ctx.fillText(`SCORE: ${score.toFixed(1)}%`, cx, 905);
+    // Footer motto
+    ctx.font = "italic 34px 'Rajdhani', sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,0.68)";
+    ctx.fillText("SECURE • VERIFY • BUILD", cx, 970);
+    // Meta right
+    const cert = meta?.id || certId || `CNX-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+    const dateStr =
+      meta?.issued ||
+      issuedAt ||
+      new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
     ctx.textAlign = "right";
-    ctx.fillText(
-      "CERT ID: CNX-" +
-        Math.random().toString(36).substring(2, 10).toUpperCase(),
-      canvas.width - 100,
-      1050
-    );
-
-    const today = new Date();
-    ctx.fillText(
-      "DATE: " +
-        today.toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        }),
-      canvas.width - 100,
-      1080
-    );
-
-    // Seal
+    ctx.font = "700 24px 'Courier New', monospace";
+    ctx.fillStyle = "rgba(255,255,255,0.92)";
+    ctx.fillText(`CERT ID: ${cert}`, canvas.width - 100, 1050);
+    ctx.fillText(`DATE: ${dateStr}`, canvas.width - 100, 1082);
+    // Seal (bottom-right)
     ctx.beginPath();
-    ctx.arc(canvas.width - 200, 1150, 60, 0, Math.PI * 2);
-    ctx.strokeStyle = "#00ff88";
+    ctx.arc(canvas.width - 205, 1146, 62, 0, Math.PI * 2);
+    ctx.strokeStyle = "#2ad3ff";
     ctx.lineWidth = 3;
     ctx.stroke();
-
-    ctx.font = "bold 24px 'Courier New', monospace";
-    ctx.fillStyle = "#00ff88";
     ctx.textAlign = "center";
-    ctx.fillText("CYBER", canvas.width - 200, 1140);
-    ctx.fillText("NEXUS", canvas.width - 200, 1165);
+    ctx.font = "bold 22px 'Courier New', monospace";
+    ctx.fillStyle = "#2ad3ff";
+    ctx.fillText("CYBER", canvas.width - 205, 1137);
+    ctx.fillText("NEXUS", canvas.width - 205, 1164);
   };
-
-  const downloadCertificate = () => {
-    generateCertificate();
+  const downloadCertificate = async () => {
+    const meta = { id: certId || buildCertMeta().id, issued: issuedAt || buildCertMeta().issued };
+    // ensure fonts ready (best-effort)
+    try {
+      if (document?.fonts?.ready) await document.fonts.ready;
+    } catch {}
+    generateCertificate(meta);
     const canvas = canvasRef.current;
+    if (!canvas) return;
     const link = document.createElement("a");
     link.download = `CyberNexus_Certificate_${firstName}_${lastName}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
   };
-
   const retryExam = () => {
     setStage("intro");
     setCurrentQuestion(0);
     setAnswers({});
     setScore(0);
     setTimeLeft(1800);
+    setExamQuestions([]);
+    setShowAnswer(false);
+    setExamStarted(false);
+    // keep usedQuestions (as you had) OR reset? keep as is
   };
-
-  // Intro Stage
+  // Auto-render canvas when opening certificate preview
+  useEffect(() => {
+    if (stage !== "certificate") return;
+    const meta = {
+      id: certId || buildCertMeta().id,
+      issued:
+        issuedAt ||
+        new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
+    };
+    let alive = true;
+    (async () => {
+      try {
+        if (document?.fonts?.ready) await document.fonts.ready;
+      } catch {}
+      // next tick for canvas mount
+      requestAnimationFrame(() => {
+        if (!alive) return;
+        generateCertificate(meta);
+      });
+    })();
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage]);
+  // =========================================
+  // INTRO STAGE (unchanged core, small class unification)
+  // =========================================
   if (stage === "intro") {
     return (
-      <div className="min-h-screen bg-black text-[#00ff88] font-mono flex items-center justify-center p-4">
-        <motion.div
-          className="w-full max-w-2xl bg-black bg-opacity-90 border-2 border-[#00ff88] rounded-lg p-8 shadow-[0_0_30px_rgba(0,255,136,0.3)]"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="text-center mb-8">
-            <motion.div
-              className="text-6xl mb-4"
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            >
-              <Shield className="inline-block text-[#00ff88]" size={80} />
-            </motion.div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-[#00ffcc]">
-              CYBER NEXUS
-            </h1>
-            <h2 className="text-2xl md:text-3xl font-semibold text-[#00ff88] mb-2">
-              Cybersecurity Professional Exam
-            </h2>
-            <p className="text-gray-400 text-sm md:text-base">
-              Test Your Knowledge • Earn Your Certificate
-            </p>
-          </div>
-
-          <div className="bg-[#0a0a12] border border-[#00ff88] rounded-lg p-6 mb-6">
-            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <AlertTriangle size={24} />
-              Exam Requirements
-            </h3>
-            <ul className="space-y-2 text-sm md:text-base">
-              <li className="flex items-start gap-2">
-                <CheckCircle size={20} className="mt-1 flex-shrink-0" />
-                <span>
-                  15 questions covering cybersecurity fundamentals to advanced
-                  topics
-                </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle size={20} className="mt-1 flex-shrink-0" />
-                <span>30 minutes time limit</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle size={20} className="mt-1 flex-shrink-0" />
-                <span>80% passing score required for certification</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <Lock size={20} className="mt-1 flex-shrink-0" />
-                <span>Copy/paste and screenshots are disabled</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <RefreshCw size={20} className="mt-1 flex-shrink-0" />
-                <span>New questions on each attempt</span>
-              </li>
-            </ul>
-          </div>
-
-          <div className="space-y-4 mb-6">
-            <div>
-              <label className="block text-[#00ff88] mb-2 font-semibold">
-                First Name
-              </label>
-              <input
-                type="text"
-                placeholder="Enter your first name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                className="w-full p-3 bg-[#0a0a12] text-[#00ff88] rounded-md border border-[#00ff88] focus:outline-none focus:ring-2 focus:ring-[#00ff88] focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-[#00ff88] mb-2 font-semibold">
-                Last Name
-              </label>
-              <input
-                type="text"
-                placeholder="Enter your last name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                className="w-full p-3 bg-[#0a0a12] text-[#00ff88] rounded-md border border-[#00ff88] focus:outline-none focus:ring-2 focus:ring-[#00ff88] focus:border-transparent"
-              />
-            </div>
-          </div>
-
-          <motion.button
-            onClick={startExam}
-            className="w-full py-4 bg-gradient-to-r from-[#00ff88] to-[#00ffcc] text-black rounded-md font-bold text-lg shadow-[0_0_20px_rgba(0,255,136,0.5)] hover:shadow-[0_0_30px_rgba(0,255,136,0.8)] transition-all"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+      <div className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden">
+        {/* soft grid background */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.10]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
+            backgroundSize: "56px 56px",
+          }}
+        />
+        <div className="relative w-full max-w-3xl mx-auto px-4 sm:px-6 py-10">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, ease: "easeOut" }}
           >
-            START EXAM
-          </motion.button>
-
-          <p className="text-center text-gray-500 text-sm mt-4">
-            Make sure you're in a quiet environment and ready to focus
-          </p>
-        </motion.div>
-
+            <Glass className="p-6 sm:p-8">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
+                      <Shield className="text-neon-blue" size={22} />
+                    </div>
+                    <div className="min-w-0">
+                      <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-neon-green truncate">
+                        CyberNexus Exam
+                      </h1>
+                      <p className="mt-1 text-xs sm:text-sm text-neon-blue/90 font-bold tracking-widest truncate">
+                        CERTIFICATE • PRO LEVEL
+                      </p>
+                    </div>
+                  </div>
+                  <p className="mt-4 text-sm sm:text-base text-gray-300/90 leading-relaxed">
+                    Testni yakunlang va sertifikat oling. 15 ta savol, 30 daqiqa, 80% passing.
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Chip active icon={Lock}>
+                      Anti-copy
+                    </Chip>
+                    <Chip active icon={RefreshCw}>
+                      Random set
+                    </Chip>
+                    <Chip active icon={Award}>
+                      Certificate
+                    </Chip>
+                  </div>
+                </div>
+                <div className="hidden sm:block">
+                  <div className="rounded-xl border border-neon-green/25 bg-black/70 backdrop-blur-xl px-4 py-3">
+                    <div className="text-[11px] font-black tracking-widest text-gray-400">PASSING SCORE</div>
+                    <div className="mt-1 text-2xl font-black text-neon-blue">80%</div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-black tracking-widest text-neon-blue mb-2">
+                    FIRST NAME
+                  </label>
+                  <input
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Enter your first name"
+                    className={[
+                      "w-full rounded-xl border-2 bg-black/60 backdrop-blur px-4 py-3 text-sm",
+                      "border-neon-green/35 text-neon-green placeholder:text-gray-500",
+                      "focus:outline-none focus:border-neon-blue focus:shadow-neon-blue",
+                    ].join(" ")}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-black tracking-widest text-neon-blue mb-2">
+                    LAST NAME
+                  </label>
+                  <input
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Enter your last name"
+                    className={[
+                      "w-full rounded-xl border-2 bg-black/60 backdrop-blur px-4 py-3 text-sm",
+                      "border-neon-green/35 text-neon-green placeholder:text-gray-500",
+                      "focus:outline-none focus:border-neon-blue focus:shadow-neon-blue",
+                    ].join(" ")}
+                  />
+                </div>
+              </div>
+              <motion.button
+                onClick={startExam}
+                className={[
+                  "mt-5 w-full rounded-xl border-2 border-neon-green",
+                  "bg-gradient-to-r from-neon-green to-neon-blue",
+                  "px-5 py-4 text-sm sm:text-base font-black tracking-widest text-black shadow-neon",
+                  "hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2",
+                ].join(" ")}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Shield size={18} />
+                START EXAM
+              </motion.button>
+            </Glass>
+          </motion.div>
+        </div>
         <style jsx global>{`
           @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap");
-          body {
-            background: radial-gradient(
-              ellipse at center,
-              #0a0a12 0%,
-              #000000 100%
-            );
-          }
         `}</style>
       </div>
     );
   }
-
-  // Exam Stage
+  // =========================================
+  // EXAM STAGE (your original layout kept)
+  // =========================================
   if (stage === "exam") {
     const currentQ = examQuestions[currentQuestion];
     const progress = ((currentQuestion + 1) / examQuestions.length) * 100;
-
     return (
       <div className="min-h-screen bg-black text-[#00ff88] font-mono p-4 md:p-6">
         <div className="max-w-4xl mx-auto">
@@ -943,9 +967,7 @@ const CyberNexusCertificateExam = () => {
               <div className="flex items-center gap-3">
                 <Shield size={32} className="text-[#00ff88]" />
                 <div>
-                  <h2 className="text-xl md:text-2xl font-bold">
-                    Cybersecurity Exam
-                  </h2>
+                  <h2 className="text-xl md:text-2xl font-bold">Cybersecurity Exam</h2>
                   <p className="text-sm text-gray-400">
                     {firstName} {lastName}
                   </p>
@@ -960,7 +982,6 @@ const CyberNexusCertificateExam = () => {
                 </div>
               </div>
             </div>
-
             {/* Progress Bar */}
             <div className="mt-4">
               <div className="flex justify-between text-xs mb-2">
@@ -979,7 +1000,6 @@ const CyberNexusCertificateExam = () => {
               </div>
             </div>
           </div>
-
           {/* Question Card */}
           <AnimatePresence mode="wait">
             <motion.div
@@ -1004,12 +1024,10 @@ const CyberNexusCertificateExam = () => {
                   {currentQ.difficulty.toUpperCase()}
                 </span>
               </div>
-
               {/* Question */}
               <h3 className="text-xl md:text-2xl font-bold mb-6 text-white leading-relaxed">
                 {currentQ.question}
               </h3>
-
               {/* Options */}
               <div className="space-y-3">
                 {currentQ.options.map((option, index) => (
@@ -1027,21 +1045,16 @@ const CyberNexusCertificateExam = () => {
                     <div className="flex items-center gap-3">
                       <div
                         className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                          answers[currentQuestion] === index
-                            ? "border-[#00ff88] bg-[#00ff88]"
-                            : "border-gray-600"
+                          answers[currentQuestion] === index ? "border-[#00ff88] bg-[#00ff88]" : "border-gray-600"
                         }`}
                       >
-                        {answers[currentQuestion] === index && (
-                          <CheckCircle size={16} className="text-black" />
-                        )}
+                        {answers[currentQuestion] === index && <CheckCircle size={16} className="text-black" />}
                       </div>
                       <span className="text-sm md:text-base">{option}</span>
                     </div>
                   </motion.button>
                 ))}
               </div>
-
               {/* Answer Status */}
               {answers[currentQuestion] !== undefined && (
                 <motion.div
@@ -1057,7 +1070,6 @@ const CyberNexusCertificateExam = () => {
               )}
             </motion.div>
           </AnimatePresence>
-
           {/* Navigation */}
           <div className="flex flex-col md:flex-row gap-3 mb-6">
             <motion.button
@@ -1069,7 +1081,6 @@ const CyberNexusCertificateExam = () => {
             >
               ← Previous
             </motion.button>
-
             {currentQuestion < examQuestions.length - 1 ? (
               <motion.button
                 onClick={handleNext}
@@ -1090,7 +1101,6 @@ const CyberNexusCertificateExam = () => {
               </motion.button>
             )}
           </div>
-
           {/* Question Navigator */}
           <div className="bg-[#0a0a12] border-2 border-[#00ff88] rounded-lg p-4 shadow-[0_0_20px_rgba(0,255,136,0.3)]">
             <h4 className="text-sm font-bold mb-3">Quick Navigation</h4>
@@ -1116,265 +1126,242 @@ const CyberNexusCertificateExam = () => {
             </p>
           </div>
         </div>
-
         <style jsx global>{`
           @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap");
           body {
-            background: radial-gradient(
-              ellipse at center,
-              #0a0a12 0%,
-              #000000 100%
-            );
+            background: radial-gradient(ellipse at center, #0a0a12 0%, #000000 100%);
           }
         `}</style>
       </div>
     );
   }
-
-  // Results Stage
+  // =========================================
+  // RESULTS STAGE (small “View Certificate” -> new premium certificate stage)
+  // =========================================
   if (stage === "results") {
     const passed = score >= 80;
-    const correctAnswers = Math.round((score / 100) * examQuestions.length);
-
+    const correctAnswers = examQuestions.length ? Math.round((score / 100) * examQuestions.length) : 0;
     return (
-      <div className="min-h-screen bg-black text-[#00ff88] font-mono flex items-center justify-center p-4">
-        <motion.div
-          className="w-full max-w-2xl bg-[#0a0a12] border-2 border-[#00ff88] rounded-lg p-8 shadow-[0_0_30px_rgba(0,255,136,0.3)]"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="text-center mb-8">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1, rotate: 360 }}
-              transition={{ duration: 0.8, type: "spring" }}
-              className="inline-block mb-4"
-            >
-              {passed ? (
-                <CheckCircle size={100} className="text-[#00ff88]" />
-              ) : (
-                <XCircle size={100} className="text-red-500" />
-              )}
-            </motion.div>
-
-            <h2
-              className={`text-4xl md:text-5xl font-bold mb-4 ${
-                passed ? "text-[#00ffcc]" : "text-red-400"
-              }`}
-            >
-              {passed ? "CONGRATULATIONS!" : "KEEP LEARNING!"}
-            </h2>
-            <p className="text-xl text-gray-300">
-              {firstName} {lastName}
-            </p>
-          </div>
-
-          {/* Score Display */}
-          <div className="bg-black border-2 border-[#00ff88] rounded-lg p-6 mb-6">
-            <div className="text-center mb-4">
-              <div
-                className={`text-6xl md:text-7xl font-bold mb-2 ${
-                  passed ? "text-[#00ff88]" : "text-red-400"
-                }`}
-              >
-                {score.toFixed(1)}%
-              </div>
-              <p className="text-gray-400">Your Score</p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div>
-                <div className="text-3xl font-bold text-[#00ffcc]">
-                  {correctAnswers}
+      <div className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden">
+        {/* soft grid background */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.10]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
+            backgroundSize: "56px 56px",
+          }}
+        />
+        <div className="relative w-full max-w-3xl mx-auto px-4 sm:px-6 py-10">
+          <motion.div
+            className="w-full"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            <Glass className="p-6 sm:p-8">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={[
+                        "h-12 w-12 rounded-lg border grid place-items-center",
+                        passed
+                          ? "border-neon-green/40 bg-neon-green/10 shadow-neon"
+                          : "border-red-500/40 bg-red-500/10",
+                      ].join(" ")}
+                    >
+                      {passed ? <CheckCircle className="text-neon-green" /> : <XCircle className="text-red-400" />}
+                    </div>
+                    <div className="min-w-0">
+                      <h2
+                        className={[
+                          "text-2xl sm:text-3xl font-black tracking-wider truncate",
+                          passed ? "text-neon-blue" : "text-red-300",
+                        ].join(" ")}
+                      >
+                        {passed ? "CONGRATULATIONS" : "KEEP LEARNING"}
+                      </h2>
+                      <p className="mt-1 text-xs sm:text-sm text-gray-400 font-bold tracking-widest truncate">
+                        {firstName} {lastName}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Chip active={passed} icon={Award}>
+                      {passed ? "CERTIFIED" : "NOT CERTIFIED"}
+                    </Chip>
+                    <Chip active icon={Shield}>
+                      SCORE: {score.toFixed(1)}%
+                    </Chip>
+                    {passed ? (
+                      <Chip active icon={CheckCircle}>
+                        CERT ID READY
+                      </Chip>
+                    ) : (
+                      <Chip active={false} icon={AlertTriangle}>
+                        PASS: 80%
+                      </Chip>
+                    )}
+                  </div>
                 </div>
-                <div className="text-sm text-gray-400">Correct</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-red-400">
-                  {examQuestions.length - correctAnswers}
-                </div>
-                <div className="text-sm text-gray-400">Incorrect</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Result Message */}
-          {passed ? (
-            <div className="bg-green-900 bg-opacity-30 border border-green-700 rounded-lg p-6 mb-6">
-              <div className="flex items-start gap-3">
-                <Award
-                  size={24}
-                  className="text-green-400 flex-shrink-0 mt-1"
-                />
-                <div>
-                  <h3 className="text-xl font-bold text-green-300 mb-2">
-                    You've Passed the Exam!
-                  </h3>
-                  <p className="text-green-200 text-sm mb-3">
-                    Excellent work! You've demonstrated strong cybersecurity
-                    knowledge and earned your certification. Your certificate is
-                    ready to download.
-                  </p>
-                  <ul className="text-xs text-green-300 space-y-1">
-                    <li>✓ Cybersecurity fundamentals mastered</li>
-                    <li>✓ Advanced concepts understood</li>
-                    <li>✓ Ready for real-world challenges</li>
-                  </ul>
+                <div className="hidden sm:block">
+                  <div className="rounded-xl border border-neon-green/25 bg-black/70 backdrop-blur-xl px-4 py-3">
+                    <div className="text-[11px] font-black tracking-widest text-gray-400">RESULT</div>
+                    <div className={["mt-1 text-2xl font-black", passed ? "text-neon-green" : "text-red-300"].join(" ")}>
+                      {passed ? "PASS" : "FAIL"}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="bg-red-900 bg-opacity-30 border border-red-700 rounded-lg p-6 mb-6">
-              <div className="flex items-start gap-3">
-                <AlertTriangle
-                  size={24}
-                  className="text-red-400 flex-shrink-0 mt-1"
-                />
-                <div>
-                  <h3 className="text-xl font-bold text-red-300 mb-2">
-                    Score Below 80%
-                  </h3>
-                  <p className="text-red-200 text-sm mb-3">
-                    You need at least 80% to earn your certificate. Don't worry!
-                    Review the material and try again. Each attempt will have
-                    different questions to help you learn.
-                  </p>
-                  <ul className="text-xs text-red-300 space-y-1">
-                    <li>• Study cybersecurity fundamentals</li>
-                    <li>• Practice with online resources</li>
-                    <li>• Review common attack vectors</li>
-                    <li>• Understand defense mechanisms</li>
-                  </ul>
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                <div className="rounded-xl border border-neon-green/25 bg-black/60 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-gray-400">CORRECT</div>
+                  <div className="mt-1 text-3xl font-black text-neon-blue">{correctAnswers}</div>
+                </div>
+                <div className="rounded-xl border border-neon-green/25 bg-black/60 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-gray-400">INCORRECT</div>
+                  <div className="mt-1 text-3xl font-black text-red-300">
+                    {Math.max(0, examQuestions.length - correctAnswers)}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-
-          {/* Actions */}
-          <div className="space-y-3">
-            {passed ? (
-              <>
-                <motion.button
-                  onClick={downloadCertificate}
-                  className="w-full py-4 bg-gradient-to-r from-[#00ff88] to-[#00ffcc] text-black rounded-lg font-bold text-lg shadow-[0_0_20px_rgba(0,255,136,0.5)] hover:shadow-[0_0_30px_rgba(0,255,136,0.8)] transition-all flex items-center justify-center gap-2"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Award size={24} />
-                  Download Certificate
-                </motion.button>
-                <motion.button
-                  onClick={() => setStage("certificate")}
-                  className="w-full py-3 bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-700 transition-all"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  View Certificate
-                </motion.button>
-              </>
-            ) : (
-              <motion.button
-                onClick={retryExam}
-                className="w-full py-4 bg-gradient-to-r from-[#00ff88] to-[#00ffcc] text-black rounded-lg font-bold text-lg shadow-[0_0_20px_rgba(0,255,136,0.5)] hover:shadow-[0_0_30px_rgba(0,255,136,0.8)] transition-all flex items-center justify-center gap-2"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <RefreshCw size={24} />
-                Try Again
-              </motion.button>
-            )}
-
-            <motion.button
-              onClick={retryExam}
-              className="w-full py-3 bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-700 transition-all"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Back to Home
-            </motion.button>
-          </div>
-        </motion.div>
-
-        <canvas ref={canvasRef} className="hidden" />
-
+              <div className="mt-5 space-y-3">
+                {passed ? (
+                  <>
+                    <motion.button
+                      onClick={downloadCertificate}
+                      className={[
+                        "w-full rounded-xl border-2 border-neon-green",
+                        "bg-gradient-to-r from-neon-green to-neon-blue",
+                        "px-5 py-4 text-sm sm:text-base font-black tracking-widest text-black shadow-neon",
+                        "hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2",
+                      ].join(" ")}
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Award size={18} />
+                      DOWNLOAD CERTIFICATE
+                    </motion.button>
+                    <motion.button
+                      onClick={() => setStage("certificate")}
+                      className="w-full rounded-xl border-2 border-neon-blue bg-neon-blue/10 px-5 py-3 text-xs sm:text-sm font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all inline-flex items-center justify-center gap-2"
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Eye size={16} />
+                      VIEW CERTIFICATE
+                    </motion.button>
+                  </>
+                ) : (
+                  <motion.button
+                    onClick={retryExam}
+                    className={[
+                      "w-full rounded-xl border-2 border-neon-green",
+                      "bg-gradient-to-r from-neon-green to-neon-blue",
+                      "px-5 py-4 text-sm sm:text-base font-black tracking-widest text-black shadow-neon",
+                      "hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2",
+                    ].join(" ")}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <RefreshCw size={18} />
+                    RETAKE EXAM
+                  </motion.button>
+                )}
+              </div>
+            </Glass>
+          </motion.div>
+        </div>
         <style jsx global>{`
           @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap");
-          body {
-            background: radial-gradient(
-              ellipse at center,
-              #0a0a12 0%,
-              #000000 100%
-            );
-          }
         `}</style>
       </div>
     );
   }
-
-  // Certificate Preview Stage
+  // =========================================
+  // CERTIFICATE STAGE (new premium stage)
+  // =========================================
   if (stage === "certificate") {
     return (
-      <div className="min-h-screen bg-black text-[#00ff88] font-mono flex items-center justify-center p-4">
-        <motion.div
-          className="w-full max-w-4xl"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="text-center mb-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#00ffcc] mb-2">
-              Your Certificate
-            </h2>
-            <p className="text-gray-400">
-              Congratulations on your achievement!
-            </p>
-          </div>
-
-          <div className="bg-[#0a0a12] border-2 border-[#00ff88] rounded-lg p-4 mb-6 shadow-[0_0_30px_rgba(0,255,136,0.3)]">
-            <canvas
-              ref={canvasRef}
-              className="w-full h-auto rounded"
-              style={{ display: "block" }}
-            />
-          </div>
-
-          <div className="flex flex-col md:flex-row gap-3">
-            <motion.button
-              onClick={downloadCertificate}
-              className="flex-1 py-3 bg-gradient-to-r from-[#00ff88] to-[#00ffcc] text-black rounded-lg font-bold flex items-center justify-center gap-2"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Award size={20} />
-              Download Certificate
-            </motion.button>
-            <motion.button
-              onClick={retryExam}
-              className="flex-1 py-3 bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-700"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Back to Home
-            </motion.button>
-          </div>
-        </motion.div>
-
+      <div className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden">
+        {/* soft grid background */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.10]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
+            backgroundSize: "56px 56px",
+          }}
+        />
+        <div className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 py-10">
+          <motion.div
+            className="w-full"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            <Glass className="p-6 sm:p-8">
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={[
+                        "h-12 w-12 rounded-lg border grid place-items-center",
+                        "border-neon-green/40 bg-neon-green/10 shadow-neon",
+                      ].join(" ")}
+                    >
+                      <Award className="text-neon-green" />
+                    </div>
+                    <div className="min-w-0">
+                      <h2 className="text-2xl sm:text-3xl font-black tracking-wider truncate text-neon-blue">
+                        YOUR CERTIFICATE
+                      </h2>
+                      <p className="mt-1 text-xs sm:text-sm text-gray-400 font-bold tracking-widest truncate">
+                        {firstName} {lastName}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6 flex flex-col items-center">
+                <canvas ref={canvasRef} className="w-full max-w-3xl border-4 border-neon-green rounded-lg shadow-neon" />
+                <motion.button
+                  onClick={downloadCertificate}
+                  className={[
+                    "mt-6 w-full max-w-xs rounded-xl border-2 border-neon-green",
+                    "bg-gradient-to-r from-neon-green to-neon-blue",
+                    "px-5 py-4 text-sm sm:text-base font-black tracking-widest text-black shadow-neon",
+                    "hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2",
+                  ].join(" ")}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Download size={18} />
+                  DOWNLOAD CERTIFICATE
+                </motion.button>
+                <motion.button
+                  onClick={retryExam}
+                  className="mt-4 w-full max-w-xs rounded-xl border-2 border-neon-blue bg-neon-blue/10 px-5 py-3 text-xs sm:text-sm font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all inline-flex items-center justify-center gap-2"
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <RefreshCw size={16} />
+                  RETAKE EXAM
+                </motion.button>
+              </div>
+            </Glass>
+          </motion.div>
+        </div>
         <style jsx global>{`
           @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap");
-          body {
-            background: radial-gradient(
-              ellipse at center,
-              #0a0a12 0%,
-              #000000 100%
-            );
-          }
         `}</style>
       </div>
     );
   }
-
+  // =========================================
+  // FALLBACK (should not reach here)
+  // =========================================
   return null;
-};
-
-export default CyberNexusCertificateExam;
+}
+export default CertificateGenerator;

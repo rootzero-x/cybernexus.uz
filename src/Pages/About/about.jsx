@@ -1,5 +1,7 @@
+// src/pages/About/About.jsx
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
-import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FaTelegram,
   FaInstagram,
@@ -12,740 +14,1016 @@ import {
   FaCode,
   FaNetworkWired,
   FaRocket,
-  FaFire,
   FaBolt,
   FaGraduationCap,
+  FaLayerGroup,
+  FaStar,
+  FaRegStar,
+  FaTimes,
+  FaExternalLinkAlt,
+  FaBook,
+  FaBug,
+  FaClipboardCheck,
 } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+
+/**
+ * ✅ CyberNexus About — Premium (News page design language)
+ * - Glass hero + sticky tabs (section navigation)
+ * - Featured horizontal carousel
+ * - Responsive premium cards
+ * - Modal details for feature/roadmap cards
+ * - Favorites (localStorage)
+ * - Minimal clean animations (fade/slide only)
+ */
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 18 },
+  show: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.65, ease: "easeOut", delay: i * 0.08 },
+  }),
+};
 
 export const About = () => {
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const [activeCard, setActiveCard] = useState(null);
-  const popoverRef = useRef(null);
-  const joinUsRef = useRef(null);
+  // ====== Favorites (localStorage) ======
+  const [fav, setFav] = useState(() => {
+    try {
+      const raw = localStorage.getItem("cybernexus_about_fav_v1");
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("cybernexus_about_fav_v1", JSON.stringify(fav));
+    } catch {}
+  }, [fav]);
+
+  const toggleFav = (id) => {
+    setFav((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
+  };
+
+  // ====== Modal ======
+  const [active, setActive] = useState(null);
+
+  // ====== Social popover ======
   const [isMobile, setIsMobile] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const popoverRef = useRef(null);
+  const joinBtnRef = useRef(null);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.matchMedia("(max-width: 767px)").matches);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    const check = () => setIsMobile(window.matchMedia("(max-width: 767px)").matches);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
+    const onDocClick = (e) => {
+      if (!isPopoverOpen) return;
+      const t = e.target;
       if (
-        isPopoverOpen &&
         popoverRef.current &&
-        !popoverRef.current.contains(event.target) &&
-        joinUsRef.current &&
-        !joinUsRef.current.contains(event.target)
+        !popoverRef.current.contains(t) &&
+        joinBtnRef.current &&
+        !joinBtnRef.current.contains(t)
       ) {
         setIsPopoverOpen(false);
       }
     };
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
+    document.addEventListener("click", onDocClick);
+    return () => document.removeEventListener("click", onDocClick);
   }, [isPopoverOpen]);
 
-  const handleMouseLeave = (event) => {
-    const relatedTarget = event.relatedTarget;
-    if (
-      popoverRef.current &&
-      !popoverRef.current.contains(relatedTarget) &&
-      joinUsRef.current &&
-      !joinUsRef.current.contains(relatedTarget)
-    ) {
-      setIsPopoverOpen(false);
-    }
-  };
-
-  const headingText = "CYBER NEXUS";
-  const subHeading = "[ KIBERXAVFSIZLIK PLATFORMASI ]";
-
-  const stats = [
-    {
-      icon: FaTrophy,
-      value: "01",
-      label: "TUMAN BOSQICHI",
-      suffix: "",
-      color: "from-yellow-400 to-orange-500",
-      glow: "rgba(251, 191, 36, 0.4)",
-    },
-    {
-      icon: FaUsers,
-      value: "700",
-      label: "FAOL FOYDALANUVCHI",
-      suffix: "+",
-      color: "from-neon-green to-emerald-400",
-      glow: "rgba(0, 255, 170, 0.4)",
-    },
-    {
-      icon: FaCheckCircle,
-      value: "1500",
-      label: "RO'YXATDAN O'TGAN",
-      suffix: "+",
-      color: "from-neon-blue to-cyan-400",
-      glow: "rgba(0, 170, 255, 0.4)",
-    },
-  ];
-
-  const features = [
-    {
-      icon: FaLock,
-      title: "KIBERXAVFSIZLIK BILIMI",
-      description:
-        "Zamonaviy tahdidlardan himoyalanish texnikalari va amaliy bilimlar. Real vaqtda xavfsizlik strategiyalarini o'rganing.",
-      gradient: "from-neon-green to-emerald-500",
-    },
-    {
-      icon: FaCode,
-      title: "CYBER AWARENESS",
-      description:
-        "Raqamli dunyoda xavfsiz qolish uchun muhim ko'nikmalar. Hujumlarni aniqlash va oldini olish usullari.",
-      gradient: "from-neon-blue to-blue-500",
-    },
-    {
-      icon: FaNetworkWired,
-      title: "AMALIY DASTURLAR",
-      description:
-        "Professional kiberxavfsizlik vositalari va dasturlar. Penetration testing va vulnerability assessment.",
-      gradient: "from-purple-500 to-pink-500",
-    },
-    {
-      icon: FaGraduationCap,
-      title: "SAVOL-JAVOB",
-      description:
-        "Mutaxassislardan to'g'ridan-to'g'ri javoblar oling. Real case studylar va amaliy yechimlar.",
-      gradient: "from-orange-500 to-red-500",
-    },
-  ];
-
-  const glitchVariants = {
-    initial: { x: 0 },
-    animate: {
-      x: [0, -2, 2, -2, 2, 0],
-      transition: {
-        duration: 0.5,
-        repeat: Infinity,
-        repeatDelay: 3,
+  // ====== Data ======
+  const stats = useMemo(
+    () => [
+      {
+        id: "stat-award",
+        icon: FaTrophy,
+        value: "01",
+        label: "TUMAN BOSQICHI",
+        accent: "text-yellow-400",
+        border: "border-yellow-400/50",
+        bg: "bg-yellow-400/10",
       },
-    },
+      {
+        id: "stat-active",
+        icon: FaUsers,
+        value: "700+",
+        label: "FAOL FOYDALANUVCHI",
+        accent: "text-neon-green",
+        border: "border-neon-green/40",
+        bg: "bg-neon-green/10",
+      },
+      {
+        id: "stat-registered",
+        icon: FaCheckCircle,
+        value: "1500+",
+        label: "RO'YXATDAN O'TGAN",
+        accent: "text-neon-blue",
+        border: "border-neon-blue/40",
+        bg: "bg-neon-blue/10",
+      },
+    ],
+    []
+  );
+
+  const features = useMemo(
+    () => [
+      {
+        id: "feat-cyber-knowledge",
+        icon: FaLock,
+        title: "KIBERXAVFSIZLIK BILIMI",
+        desc: "Zamonaviy tahdidlardan himoyalanish, xavflarni aniqlash va real amaliyotga yo‘naltirilgan bilimlar.",
+        details:
+          "Threat modeling, incident mindset, va real hayotdagi hujum zanjirlarini tushunish: password hygiene, 2FA, session security, endpoint basics, data protection.",
+        tags: ["Defense", "Privacy", "Basics"],
+        link: "https://cybernexus.uz",
+      },
+      {
+        id: "feat-awareness",
+        icon: FaShieldAlt,
+        title: "CYBER AWARENESS",
+        desc: "Phishing, social engineering, account security va digital hygiene bo‘yicha mustahkam ko‘nikmalar.",
+        details:
+          "AiTM/credential theft, fake domains, email spoofing, malicious attachments: qanday tanish, qanday tekshirish, qanday bloklash — oddiy va amaliy yondashuv.",
+        tags: ["Phishing", "OSINT", "Hygiene"],
+        link: "https://cybernexus.uz",
+      },
+      {
+        id: "feat-tools",
+        icon: FaNetworkWired,
+        title: "AMALIY DASTURLAR",
+        desc: "Tarmoq tahlili, vulnerability assessment va pentesting ekotizimi bo‘yicha foydali tool’lar to‘plami.",
+        details:
+          "Network fundamentals, scanning basics, vuln triage, hardening checklists. Maqsad: xavfsizlikni oshirish — zarar yetkazish emas.",
+        tags: ["Tools", "Network", "Vuln"],
+        link: "https://cybernexus.uz",
+      },
+      {
+        id: "feat-qa",
+        icon: FaGraduationCap,
+        title: "SAVOL–JAVOB",
+        desc: "Mutaxassislar va community yordamida real case’lar bo‘yicha tezkor maslahatlar va yo‘nalish.",
+        details:
+          "Yo‘l xaritasi, resurs tavsiyalari, learning path: boshlovchi → intermediate → portfolio. Savollarni to‘g‘ri berish va debug fikrlash.",
+        tags: ["Community", "Roadmap", "Mentor"],
+        link: "https://t.me/cyber_nexuss",
+      },
+    ],
+    []
+  );
+
+  const roadmap = useMemo(
+    () => [
+      {
+        id: "road-news",
+        icon: FaBook,
+        title: "NEWS FEED (VERIFIED)",
+        desc: "CISA / Microsoft / Reuters kabi manbalardan yangiliklar — qisqa va aniq formatda.",
+        details:
+          "News bo‘limi: kategoriya, qidiruv, favorites, modal details. Maqsad: o‘qib chiqish oson, share qilish qulay.",
+        tags: ["News", "Verified", "Daily"],
+        link: "https://cybernexus.uz",
+      },
+      {
+        id: "road-checklists",
+        icon: FaClipboardCheck,
+        title: "SECURITY CHECKLISTS",
+        desc: "Account security, device hardening va privacy bo‘yicha tayyor checklist’lar.",
+        details:
+          "Har bir checklist: 10–20 band, real-world tavsiyalar, 2FA, password manager, backup, browser safety.",
+        tags: ["Hardening", "Privacy", "Practice"],
+        link: "https://cybernexus.uz",
+      },
+      {
+        id: "road-labs",
+        icon: FaBug,
+        title: "LABS (SAFE PRACTICE)",
+        desc: "Simulyatsiya va xavfsiz mashqlar: log analysis, basic forensics, phishing recognition.",
+        details:
+          "Xavfsiz va qonuniy format: faqat o‘rganish va himoya uchun. Yomon niyatli yo‘riqnomalar yo‘q.",
+        tags: ["Labs", "Learning", "Defensive"],
+        link: "https://cybernexus.uz",
+      },
+    ],
+    []
+  );
+
+  const socials = useMemo(
+    () => [
+      { icon: FaTelegram, label: "TELEGRAM", href: "https://t.me/cyber_nexuss" },
+      { icon: FaInstagram, label: "INSTAGRAM", href: "https://instagram.com/cybernexus.uz" },
+      { icon: FaGithub, label: "GITHUB", href: "https://github.com/rootzero-x" },
+    ],
+    []
+  );
+
+  // ====== Section tabs (sticky) ======
+  const [section, setSection] = useState("Overview");
+
+  const sectionTabs = useMemo(
+    () => [
+      { key: "Overview", label: "Overview", icon: FaLayerGroup },
+      { key: "Mission", label: "Mission", icon: FaShieldAlt },
+      { key: "Stats", label: "Stats", icon: FaUsers },
+      { key: "Features", label: "Features", icon: FaCode },
+      { key: "Roadmap", label: "Roadmap", icon: FaRocket },
+      { key: "Community", label: "Community", icon: FaBolt },
+    ],
+    []
+  );
+
+  const refs = {
+    Overview: useRef(null),
+    Mission: useRef(null),
+    Stats: useRef(null),
+    Features: useRef(null),
+    Roadmap: useRef(null),
+    Community: useRef(null),
   };
+
+  const scrollTo = (key) => {
+    const el = refs[key]?.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - 92;
+    window.scrollTo({ top, behavior: "smooth" });
+  };
+
+  // Active section highlight (IntersectionObserver)
+  useEffect(() => {
+    const keys = Object.keys(refs);
+    const els = keys.map((k) => refs[k].current).filter(Boolean);
+    if (els.length === 0) return;
+
+    const ob = new IntersectionObserver(
+      (entries) => {
+        // pick the most visible
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => (b.intersectionRatio || 0) - (a.intersectionRatio || 0))[0];
+        if (visible?.target?.dataset?.section) {
+          setSection(visible.target.dataset.section);
+        }
+      },
+      { root: null, threshold: [0.12, 0.2, 0.35, 0.5, 0.65] }
+    );
+
+    els.forEach((el) => ob.observe(el));
+    return () => ob.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ====== UI atoms (match News style) ======
+  const Glass = ({ className, children }) => (
+    <div
+      className={classNames(
+        "rounded-xl border-2 bg-black/55 backdrop-blur-xl",
+        "border-neon-green/40 shadow-neon",
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
+
+  const Chip = ({ active, onClick, icon: Icon, children }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      className={classNames(
+        "inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-black tracking-wider transition-all",
+        active
+          ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
+          : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green"
+      )}
+    >
+      {Icon ? <Icon className="text-[12px]" /> : null}
+      {children}
+    </button>
+  );
+
+  const Clamp2 = ({ children, className }) => (
+    <p
+      className={classNames("text-sm text-neon-green/80 leading-relaxed", className)}
+      style={{
+        display: "-webkit-box",
+        WebkitLineClamp: 2,
+        WebkitBoxOrient: "vertical",
+        overflow: "hidden",
+      }}
+    >
+      {children}
+    </p>
+  );
 
   return (
-    <div className="w-full min-h-screen bg-black font-mono text-neon-green relative overflow-hidden">
-      {/* Advanced Grid Background */}
-      <div className="absolute inset-0 opacity-20">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `
-            linear-gradient(rgba(0, 255, 170, 0.1) 2px, transparent 2px),
-            linear-gradient(90deg, rgba(0, 255, 170, 0.1) 2px, transparent 2px),
-            linear-gradient(rgba(0, 255, 170, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 255, 170, 0.05) 1px, transparent 1px)
-          `,
-            backgroundSize: "100px 100px, 100px 100px, 20px 20px, 20px 20px",
-            backgroundPosition: "-2px -2px, -2px -2px, -1px -1px, -1px -1px",
-          }}
-        ></div>
-      </div>
+    <div className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden">
+      {/* soft grid background */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.10]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
+          backgroundSize: "56px 56px",
+        }}
+      />
 
-      {/* Animated Scanlines */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="scanline-fast"></div>
-        <div className="scanline-slow"></div>
-      </div>
-
-      {/* Cyber Particles */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-neon-green rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              opacity: [0, 1, 0],
-              scale: [0, 1.5, 0],
-            }}
-            transition={{
-              duration: 2 + Math.random() * 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Mouse Glow Effect */}
-      {!isMobile && (
-        <motion.div
-          className="absolute w-96 h-96 rounded-full pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(0, 255, 170, 0.15) 0%, transparent 70%)",
-            left: mousePosition.x - 192,
-            top: mousePosition.y - 192,
-          }}
-          animate={{
-            left: mousePosition.x - 192,
-            top: mousePosition.y - 192,
-          }}
-          transition={{ type: "spring", damping: 30, stiffness: 200 }}
-        />
-      )}
-
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
-        {/* Header Section */}
-        <motion.div
-          className="text-center mb-12 sm:mb-16"
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          {/* Main Title with Glitch */}
-          <motion.div
-            className="relative inline-block mb-4"
-            variants={glitchVariants}
-            initial="initial"
-            animate="animate"
-          >
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-wider text-neon-green glitch-text relative z-10">
-              {headingText}
-            </h1>
-          </motion.div>
-
-          {/* Subtitle */}
-          <motion.p
-            className="text-base sm:text-xl text-neon-blue font-semibold tracking-widest mb-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-          >
-            {subHeading}
-          </motion.p>
-
-          {/* Award Badge */}
-          <motion.div
-            className="inline-flex items-center gap-3 px-6 py-3 border-2 border-yellow-400 bg-gradient-to-r from-yellow-400/10 to-orange-500/10 rounded-lg backdrop-blur-sm"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            whileHover={{ scale: 1.05 }}
-          >
-            <FaTrophy className="text-2xl sm:text-3xl text-yellow-400 animate-pulse" />
-            <div className="text-left">
-              <p className="text-xs sm:text-sm text-yellow-400 font-bold">
-                YOSH IXTIROCHI
-              </p>
-              <p className="text-sm sm:text-base text-white font-black">
-                VILOYAT BOSQICHI
-              </p>
-            </div>
-            <FaFire className="text-2xl sm:text-3xl text-orange-500 animate-pulse" />
-          </motion.div>
-        </motion.div>
-
-        {/* Mission Statement */}
-        <motion.div
-          className="max-w-4xl mx-auto mb-12 sm:mb-16 p-6 sm:p-8 border-2 border-neon-green bg-black/60 backdrop-blur-md rounded-lg cyber-border"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.8 }}
-        >
-          <div className="flex items-start gap-4 mb-4">
-            <FaShieldAlt className="text-3xl sm:text-4xl text-neon-green flex-shrink-0 mt-1" />
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-neon-green mb-3 tracking-wide">
-                &gt;_ MISSIYAMIZ
-              </h2>
-              <p className="text-sm sm:text-base leading-relaxed text-gray-300">
-                Cyber Nexus — 2025-yilda ishga tushirilgan innovatsion
-                kiberxavfsizlik platformasi. Biz tez o'zgarayotgan raqamli
-                dunyoda foydalanuvchilarning xavfsizligini ta'minlash uchun
-                professional bilimlar, yangiliklar va amaliy vositalarni taqdim
-                etamiz. Kiberxavfsizlik — bu tizimlar va ma'lumotlarni
-                hujumlardan himoya qilish, xavflarni aniqlash va tahdidlarni
-                bartaraf etish ko'nikmalaridir. Bizning mutaxassis jamoamiz siz
-                bilan eng so'nggi bilimlarni baham ko'rishga va global raqamli
-                xavfsizlikni mustahkamlashga tayyor.
-              </p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Stats Grid */}
-        <motion.div
-          className="mb-12 sm:mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9, duration: 0.8 }}
-        >
-          <div className="text-center mb-8">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-neon-blue tracking-wider mb-2">
-              &gt; REAL NATIJALAR_
-            </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-transparent via-neon-blue to-transparent mx-auto"></div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                className="group relative p-6 sm:p-8 border-2 border-neon-green bg-black/80 backdrop-blur-sm rounded-lg overflow-hidden cursor-pointer cyber-card"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.1 + index * 0.15, duration: 0.6 }}
-                whileHover={{ scale: 1.05, y: -5 }}
-                onHoverStart={() => setActiveCard(index)}
-                onHoverEnd={() => setActiveCard(null)}
-                style={{
-                  boxShadow:
-                    activeCard === index
-                      ? `0 0 30px ${stat.glow}, 0 0 60px ${stat.glow}`
-                      : "none",
-                }}
-              >
-                {/* Animated Background */}
-                <div
-                  className="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 transition-opacity duration-300"
-                  style={{
-                    background: `linear-gradient(135deg, ${stat.glow}, transparent)`,
-                  }}
-                ></div>
-
-                {/* Corner Decorations */}
-                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-neon-green"></div>
-                <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-neon-green"></div>
-                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-neon-green"></div>
-                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-neon-green"></div>
-
-                <div className="relative z-10">
-                  <stat.icon
-                    className={`text-4xl sm:text-5xl mx-auto mb-4 bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}
-                  />
-                  <div className="text-center">
-                    <div className="flex items-center justify-center mb-2">
-                      <span
-                        className={`text-5xl sm:text-6xl md:text-7xl font-black bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}
-                      >
-                        {stat.value}
-                      </span>
-                      <span className="text-3xl sm:text-4xl md:text-5xl font-black text-neon-blue ml-1">
-                        {stat.suffix}
-                      </span>
+      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-12">
+        {/* HERO (Glass) */}
+        <motion.div initial="hidden" animate="show" variants={fadeUp} custom={0}>
+          <Glass className="p-5 sm:p-7" ref={refs.Overview}>
+            <div data-section="Overview" className="scroll-mt-[92px]">
+              <div className="flex flex-col lg:flex-row lg:items-center gap-5">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3">
+                    <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
+                      <FaShieldAlt className="text-neon-blue" />
                     </div>
-                    <div className="text-xs sm:text-sm font-bold text-gray-400 tracking-wider">
-                      {stat.label}
+                    <div className="min-w-0">
+                      <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-neon-green truncate">
+                        Cyber Nexus
+                      </h1>
+                      <p className="mt-1 text-xs sm:text-sm text-neon-blue/90 font-bold tracking-widest truncate">
+                        ABOUT • ROADMAP • COMMUNITY
+                      </p>
                     </div>
                   </div>
-                </div>
 
-                {/* Scan Line Effect */}
-                <motion.div
-                  className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-neon-green to-transparent"
-                  animate={{
-                    top: ["-10%", "110%"],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                />
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Features Grid */}
-        <motion.div
-          className="mb-12 sm:mb-16"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 0.8 }}
-        >
-          <div className="text-center mb-8">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-neon-green tracking-wider mb-2">
-              &gt; PLATFORMANING IMKONIYATLARI_
-            </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-transparent via-neon-green to-transparent mx-auto"></div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                className="group relative p-6 border-2 border-neon-blue bg-black/70 backdrop-blur-sm rounded-lg overflow-hidden cursor-pointer hover-glow"
-                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.7 + index * 0.1, duration: 0.6 }}
-                whileHover={{ scale: 1.03 }}
-              >
-                {/* Animated Gradient Background */}
-                <motion.div
-                  className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`}
-                />
-
-                <div className="relative z-10">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div
-                      className={`p-3 rounded-lg bg-gradient-to-br ${feature.gradient} bg-opacity-20 border border-neon-blue`}
-                    >
-                      <feature.icon className="text-2xl sm:text-3xl text-white" />
-                    </div>
-                    <h3 className="text-base sm:text-lg font-black text-white tracking-wide">
-                      {feature.title}
-                    </h3>
-                  </div>
-                  <p className="text-xs sm:text-sm text-gray-400 leading-relaxed pl-16">
-                    {feature.description}
+                  <p className="mt-4 text-sm sm:text-base text-gray-300/90 leading-relaxed">
+                    Cyber Nexus — kiberxavfsizlik bo‘yicha amaliy bilimlar, verified yangiliklar
+                    va community’ni birlashtiradigan platforma. Maqsad: raqamli dunyoda xavfsiz
+                    qolish uchun aniq yo‘l-yo‘riq, resurslar va real practice.
                   </p>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Chip
+                      active={fav.length > 0}
+                      onClick={() => {
+                        if (!fav.length) return;
+                        const el = document.getElementById("fav-anchor");
+                        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }}
+                      icon={fav.length ? FaStar : FaRegStar}
+                    >
+                      Favorites ({fav.length})
+                    </Chip>
+                    <Chip active={section === "Features"} onClick={() => scrollTo("Features")} icon={FaCode}>
+                      Platform
+                    </Chip>
+                    <Chip active={section === "Roadmap"} onClick={() => scrollTo("Roadmap")} icon={FaRocket}>
+                      Roadmap
+                    </Chip>
+                  </div>
                 </div>
 
-                {/* Hover Border Animation */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-neon-blue to-transparent animate-border-flow"></div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+                {/* Right side badge */}
+                <div className="w-full lg:w-[440px]">
+                  <div className="rounded-xl border-2 border-yellow-400/60 bg-yellow-400/10 p-4 shadow-[0_0_24px_rgba(250,204,21,0.18)]">
+                    <div className="flex items-center gap-3">
+                      <div className="h-12 w-12 rounded-lg border border-yellow-400/60 bg-yellow-400/10 grid place-items-center">
+                        <FaTrophy className="text-yellow-400 text-xl" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-[11px] font-black tracking-widest text-yellow-300">
+                          YOSH IXTIROCHI
+                        </div>
+                        <div className="text-sm sm:text-base font-black text-white tracking-wider truncate">
+                          VILOYAT BOSQICHI
+                        </div>
+                        <div className="mt-1 text-[11px] font-bold tracking-widest text-gray-300 truncate">
+                          PROGRESS • REAL RESULTS • COMMUNITY
+                        </div>
+                      </div>
+                    </div>
 
-        {/* Target Audience */}
-        <motion.div
-          className="max-w-4xl mx-auto mb-12 sm:mb-16 p-6 sm:p-8 border-2 border-neon-blue bg-black/60 backdrop-blur-md rounded-lg cyber-border"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2, duration: 0.8 }}
-        >
-          <div className="flex items-start gap-4">
-            <FaRocket className="text-3xl sm:text-4xl text-neon-blue flex-shrink-0 mt-1 animate-pulse" />
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-neon-blue mb-4 tracking-wide">
-                &gt;_ KIMLAR UCHUN?
-              </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {[
-                  "O'QUVCHILAR",
-                  "TALABALAR",
-                  "IT ENTHUSIASTS",
-                  "BO'LAJAK HACKERLAR",
-                ].map((audience, i) => (
-                  <motion.div
-                    key={i}
-                    className="p-3 border border-neon-blue bg-neon-blue/5 rounded text-center"
-                    whileHover={{
-                      scale: 1.05,
-                      backgroundColor: "rgba(0, 170, 255, 0.1)",
-                    }}
-                  >
-                    <FaBolt className="text-xl text-neon-blue mx-auto mb-2" />
-                    <p className="text-xs font-bold text-gray-300">
-                      {audience}
-                    </p>
-                  </motion.div>
-                ))}
+                    <div className="mt-3 grid grid-cols-3 gap-2">
+                      {stats.map((s) => (
+                        <div
+                          key={s.id}
+                          className={classNames(
+                            "rounded-lg border bg-black/60 px-3 py-3 text-center",
+                            s.border
+                          )}
+                        >
+                          <div className="text-[10px] font-black tracking-widest text-gray-400">
+                            {s.label}
+                          </div>
+                          <div className={classNames("mt-1 text-lg font-black", s.accent)}>
+                            {s.value}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-3 text-xs text-gray-400 flex items-center justify-between">
+                    <span className="text-neon-green/80 font-bold tracking-widest">
+                      CLICK CARDS → DETAILS
+                    </span>
+                    <span className="text-neon-blue/80 font-bold tracking-widest">
+                      PREMIUM UI
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </Glass>
         </motion.div>
 
-        {/* Social Connect */}
-        <motion.div
-          className="text-center mb-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2.3, duration: 0.8 }}
+        {/* STICKY SECTION TABS */}
+        <div className="sticky top-0 z-30 pt-4">
+          <div className="rounded-xl border border-neon-green/25 bg-black/70 backdrop-blur-xl px-3 py-3">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
+                {sectionTabs.map((t) => (
+                  <Chip
+                    key={t.key}
+                    active={section === t.key}
+                    onClick={() => scrollTo(t.key)}
+                    icon={t.icon}
+                  >
+                    {t.label}
+                  </Chip>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="hidden sm:inline-flex rounded-lg border border-neon-blue/30 bg-neon-blue/10 px-3 py-2 text-xs font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+              >
+                TOP
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* MISSION */}
+        <section
+          ref={refs.Mission}
+          data-section="Mission"
+          className="mt-6 scroll-mt-[92px]"
         >
-          <div className="relative inline-block">
-            <AnimatePresence>
-              {isPopoverOpen && (
+          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={1}>
+            <Glass className="p-5 sm:p-7">
+              <div className="flex items-start gap-4">
+                <div className="shrink-0 h-12 w-12 rounded-lg border border-neon-green/40 bg-neon-green/10 grid place-items-center shadow-neon">
+                  <FaShieldAlt className="text-neon-green" />
+                </div>
+                <div className="min-w-0">
+                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-neon-green">
+                    &gt;_ MISSIYAMIZ
+                  </h2>
+                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-gray-300/90">
+                    Cyber Nexus — kiberxavfsizlikni o‘rganish va amaliyotga tatbiq qilish uchun
+                    premium platforma. Biz “verified sources + real practice + community” konseptini
+                    birlashtiramiz: yangiliklar, roadmap, checklist va o‘quv yo‘nalishlar.
+                  </p>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Chip active={false} onClick={() => scrollTo("Roadmap")} icon={FaRocket}>
+                      Roadmap-based growth
+                    </Chip>
+                    <Chip active={false} onClick={() => scrollTo("Features")} icon={FaLock}>
+                      Privacy-first mindset
+                    </Chip>
+                    <Chip active={false} onClick={() => scrollTo("Community")} icon={FaUsers}>
+                      Community support
+                    </Chip>
+                  </div>
+                </div>
+              </div>
+            </Glass>
+          </motion.div>
+        </section>
+
+        {/* STATS GRID */}
+        <section
+          ref={refs.Stats}
+          data-section="Stats"
+          className="mt-6 scroll-mt-[92px]"
+        >
+          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={2}>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+                REAL NATIJALAR
+              </h2>
+              <span className="text-[11px] text-gray-500">trusted growth →</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              {stats.map((s, i) => (
                 <motion.div
-                  ref={popoverRef}
+                  key={s.id}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, delay: 0.04 + i * 0.06, ease: "easeOut" }}
                   className={classNames(
-                    "absolute z-50 p-6 border-2 border-neon-blue bg-black/95 backdrop-blur-lg rounded-lg",
-                    {
-                      "left-1/2 -translate-x-1/2 -top-40 w-80": !isMobile,
-                      "fixed bottom-0 left-0 right-0 w-full rounded-b-none":
-                        isMobile,
-                    }
+                    "rounded-xl border-2 bg-black/70 backdrop-blur p-5 text-center",
+                    "shadow-neon transition-all hover:border-neon-blue hover:shadow-neon-blue",
+                    s.border
                   )}
-                  initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, y: 20 }}
-                  transition={{ duration: 0.3 }}
-                  onMouseEnter={() => setIsPopoverOpen(true)}
-                  style={{
-                    boxShadow:
-                      "0 0 40px rgba(0, 170, 255, 0.4), 0 0 80px rgba(0, 170, 255, 0.2)",
-                  }}
                 >
-                  <h3 className="text-xl font-black text-neon-green mb-6 text-center tracking-wider">
-                    &gt; CONNECT WITH US_
-                  </h3>
-                  <div className="flex justify-around items-center">
-                    {[
-                      {
-                        icon: FaTelegram,
-                        href: "https://t.me/cyber_nexuss",
-                        label: "TELEGRAM",
-                        delay: 0.1,
-                      },
-                      {
-                        icon: FaInstagram,
-                        href: "https://instagram.com/cybernexus.uz",
-                        label: "INSTAGRAM",
-                        delay: 0.2,
-                      },
-                      {
-                        icon: FaGithub,
-                        href: "https://github.com/rootzero-x",
-                        label: "GITHUB",
-                        delay: 0.3,
-                      },
-                    ].map((social, i) => (
-                      <motion.a
-                        key={i}
-                        href={social.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex flex-col items-center gap-2 group"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: social.delay }}
-                        whileHover={{ scale: 1.15, y: -5 }}
-                      >
-                        <div className="p-3 border-2 border-neon-blue rounded-lg bg-neon-blue/10 group-hover:bg-neon-blue/20 transition-all duration-300">
-                          <social.icon className="w-8 h-8 text-neon-blue group-hover:text-neon-green transition-colors duration-300" />
-                        </div>
-                        <span className="text-xs font-bold text-gray-400 group-hover:text-neon-green transition-colors duration-300">
-                          {social.label}
-                        </span>
-                      </motion.a>
-                    ))}
+                  <div
+                    className={classNames(
+                      "mx-auto mb-4 grid h-12 w-12 place-items-center rounded-lg border",
+                      s.border,
+                      s.bg
+                    )}
+                  >
+                    <s.icon className={classNames("text-2xl", s.accent)} />
+                  </div>
+
+                  <div className={classNames("text-4xl sm:text-5xl font-black", s.accent)}>
+                    {s.value}
+                  </div>
+                  <div className="mt-2 text-xs font-black tracking-widest text-gray-400">
+                    {s.label}
                   </div>
                 </motion.div>
-              )}
-            </AnimatePresence>
+              ))}
+            </div>
+          </motion.div>
+        </section>
 
-            <motion.button
-              ref={joinUsRef}
-              className="px-8 py-4 text-xl sm:text-2xl font-black bg-gradient-to-r from-neon-green to-neon-blue text-black rounded-lg border-2 border-neon-green tracking-wider hover-pulse"
-              onClick={() => setIsPopoverOpen(!isPopoverOpen)}
-              onMouseEnter={() => setIsPopoverOpen(true)}
-              onMouseLeave={handleMouseLeave}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              &gt; BIZGA QO'SHILING! 🚀
-            </motion.button>
-          </div>
-        </motion.div>
+        {/* FEATURES (cards + modal) */}
+        <section
+          ref={refs.Features}
+          data-section="Features"
+          className="mt-8 scroll-mt-[92px]"
+        >
+          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={3}>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-green">
+                PLATFORM IMKONIYATLARI
+              </h2>
+              <span className="text-[11px] text-gray-500">click → details</span>
+            </div>
 
-        {/* Footer */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {features.map((f, idx) => {
+                const isFav = fav.includes(f.id);
+                return (
+                  <motion.button
+                    key={f.id}
+                    type="button"
+                    onClick={() => setActive({ ...f, kind: "Feature" })}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.45, delay: 0.05 + idx * 0.05, ease: "easeOut" }}
+                    whileHover={{ y: -3 }}
+                    className={classNames(
+                      "rounded-xl border-2 bg-black/70 backdrop-blur p-5 text-left",
+                      "border-neon-green/45 shadow-neon",
+                      "hover:border-neon-blue hover:shadow-neon-blue transition-all"
+                    )}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue shrink-0">
+                          <f.icon className="text-neon-blue" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-sm sm:text-base font-black tracking-wider text-white truncate">
+                            {f.title}
+                          </div>
+                          <div className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
+                            FEATURE • DEFENSIVE • PRACTICAL
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFav(f.id);
+                        }}
+                        className={classNames(
+                          "shrink-0 rounded-lg border px-2 py-2 transition-all",
+                          isFav
+                            ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
+                            : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green"
+                        )}
+                        title="Favorite"
+                        aria-label="favorite"
+                      >
+                        {isFav ? <FaStar /> : <FaRegStar />}
+                      </button>
+                    </div>
+
+                    <div className="mt-3">
+                      <Clamp2 className="text-gray-300/90">{f.desc}</Clamp2>
+                    </div>
+
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {(f.tags || []).slice(0, 3).map((t) => (
+                        <span
+                          key={t}
+                          className="text-[10px] font-black tracking-widest rounded-full border border-neon-green/25 bg-black/60 px-2 py-1 text-neon-green/80"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-[11px] font-bold tracking-widest text-gray-400">
+                        DETAILS
+                      </span>
+                      <span className="text-xs font-black tracking-widest text-neon-blue">
+                        OPEN →
+                      </span>
+                    </div>
+                  </motion.button>
+                );
+              })}
+            </div>
+          </motion.div>
+        </section>
+
+        {/* FEATURED ROADMAP CAROUSEL */}
+        <section
+          ref={refs.Roadmap}
+          data-section="Roadmap"
+          className="mt-10 scroll-mt-[92px]"
+        >
+          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+                ROADMAP (HIGHLIGHTS)
+              </h2>
+              <span className="text-[11px] text-gray-500">swipe →</span>
+            </div>
+
+            <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+              {roadmap.map((r) => {
+                const isFav = fav.includes(r.id);
+                return (
+                  <button
+                    key={r.id}
+                    type="button"
+                    onClick={() => setActive({ ...r, kind: "Roadmap" })}
+                    className={classNames(
+                      "min-w-[300px] sm:min-w-[360px] lg:min-w-[420px]",
+                      "rounded-xl border-2 bg-black/70 backdrop-blur p-4 text-left",
+                      "border-neon-green/45 shadow-neon",
+                      "hover:border-neon-blue hover:shadow-neon-blue transition-all"
+                    )}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue shrink-0">
+                          <r.icon className="text-neon-blue" />
+                        </div>
+
+                        <div className="min-w-0">
+                          <div className="text-base font-black tracking-wider text-neon-green truncate">
+                            {r.title}
+                          </div>
+                          <div className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
+                            ROADMAP • PREMIUM UX
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFav(r.id);
+                        }}
+                        className={classNames(
+                          "shrink-0 rounded-lg border px-2 py-2 transition-all",
+                          isFav
+                            ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
+                            : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green"
+                        )}
+                        title="Favorite"
+                        aria-label="favorite"
+                      >
+                        {isFav ? <FaStar /> : <FaRegStar />}
+                      </button>
+                    </div>
+
+                    <div className="mt-3">
+                      <Clamp2 className="mt-2 text-gray-300/90">{r.desc}</Clamp2>
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-[11px] font-bold tracking-widest text-gray-400">
+                        QUICK VIEW
+                      </span>
+                      <span className="text-xs font-black tracking-widest text-neon-blue">
+                        OPEN →
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Favorites anchor */}
+            <div id="fav-anchor" className="mt-8" />
+
+            {/* Favorites summary (if any) */}
+            {fav.length > 0 && (
+              <Glass className="mt-5 p-5 sm:p-6 border-neon-blue/40 shadow-neon-blue">
+                <div className="flex items-start gap-3">
+                  <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
+                    <FaStar className="text-neon-blue" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+                      FAVORITES
+                    </div>
+                    <p className="mt-2 text-sm text-gray-300/90 leading-relaxed">
+                      Siz saqlagan kartalar:{" "}
+                      <span className="text-neon-green font-black">{fav.length}</span> ta.
+                      (Keyinroq tez qaytib ko‘rish uchun.)
+                    </p>
+
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {fav.slice(0, 10).map((id) => (
+                        <span
+                          key={id}
+                          className="text-[10px] font-black tracking-widest rounded-full border border-neon-green/25 bg-black/60 px-2 py-1 text-neon-green/80"
+                        >
+                          {id}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </Glass>
+            )}
+          </motion.div>
+        </section>
+
+        {/* COMMUNITY (audience + join) */}
+        <section
+          ref={refs.Community}
+          data-section="Community"
+          className="mt-10 scroll-mt-[92px]"
+        >
+          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}>
+            <Glass className="p-5 sm:p-7 border-neon-blue/40 shadow-neon-blue">
+              <div className="flex items-start gap-4">
+                <div className="shrink-0 h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
+                  <FaRocket className="text-neon-blue" />
+                </div>
+                <div className="min-w-0 w-full">
+                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-neon-blue">
+                    &gt;_ KIMLAR UCHUN?
+                  </h2>
+
+                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-gray-300/90">
+                    Cyber Nexus — boshlovchilar, talabalar va IT enthusiastlar uchun. Maqsad: tez,
+                    xavfsiz va to‘g‘ri yo‘nalishda o‘sish. “Learning → Practice → Portfolio”.
+                  </p>
+
+                  <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {["O'QUVCHILAR", "TALABALAR", "IT ENTHUSIASTS", "BO'LAJAK MUTAXASSISLAR"].map(
+                      (t, i) => (
+                        <div
+                          key={i}
+                          className="rounded-lg border border-neon-blue/35 bg-neon-blue/5 px-3 py-3 text-center"
+                        >
+                          <FaBolt className="mx-auto text-neon-blue mb-2" />
+                          <div className="text-[11px] sm:text-xs font-black tracking-widest text-gray-300">
+                            {t}
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+
+                  {/* Social connect popover */}
+                  <div className="mt-6 flex justify-center">
+                    <div className="relative">
+                      <AnimatePresence>
+                        {isPopoverOpen && (
+                          <motion.div
+                            ref={popoverRef}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10, transition: { duration: 0.18 } }}
+                            className={classNames(
+                              "z-50 border-2 border-neon-blue bg-black/95 backdrop-blur rounded-xl p-5",
+                              "shadow-neon-blue",
+                              {
+                                "absolute left-1/2 -translate-x-1/2 -top-[150px] w-[320px]":
+                                  !isMobile,
+                                "fixed bottom-0 left-0 right-0 w-full rounded-b-none":
+                                  isMobile,
+                              }
+                            )}
+                          >
+                            <div className="text-center text-sm font-black tracking-widest text-neon-green">
+                              &gt; CONNECT WITH US_
+                            </div>
+
+                            <div className="mt-5 flex items-center justify-around">
+                              {socials.map((s, i) => (
+                                <a
+                                  key={i}
+                                  href={s.href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="group flex flex-col items-center gap-2"
+                                >
+                                  <div className="rounded-lg border-2 border-neon-blue bg-neon-blue/10 p-3 transition-all duration-300 group-hover:border-neon-green group-hover:bg-neon-green/10">
+                                    <s.icon className="h-7 w-7 text-neon-blue transition-colors duration-300 group-hover:text-neon-green" />
+                                  </div>
+                                  <span className="text-[11px] font-black tracking-widest text-gray-400 group-hover:text-neon-green">
+                                    {s.label}
+                                  </span>
+                                </a>
+                              ))}
+                            </div>
+
+                            {isMobile && (
+                              <button
+                                onClick={() => setIsPopoverOpen(false)}
+                                className="mt-5 w-full rounded-lg border border-neon-blue/40 bg-neon-blue/10 py-2 text-xs font-black tracking-widest text-neon-blue"
+                              >
+                                YOPISH
+                              </button>
+                            )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      <motion.button
+                        ref={joinBtnRef}
+                        onClick={() => setIsPopoverOpen((v) => !v)}
+                        whileTap={{ scale: 0.98 }}
+                        className={classNames(
+                          "px-7 py-3 sm:px-8 sm:py-4 rounded-xl border-2",
+                          "border-neon-green bg-gradient-to-r from-neon-green to-neon-blue",
+                          "text-black font-black tracking-wider",
+                          "shadow-neon hover:shadow-neon-blue transition-all duration-300"
+                        )}
+                      >
+                        &gt; BIZGA QO'SHILING! 🚀
+                      </motion.button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Glass>
+          </motion.div>
+        </section>
+
+        {/* FOOTER */}
         <motion.footer
-          className="text-center pt-8 border-t-2 border-neon-green/30"
+          className="mt-12 pt-8 border-t-2 border-neon-green/30 text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 2.5, duration: 1 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
         >
-          <p className="text-sm text-gray-500 mb-2 font-mono">
-            © 2025 CYBER NEXUS — ALL RIGHTS RESERVED
+          <p className="text-xs sm:text-sm text-gray-500 mb-2 font-mono">
+            © 2025–2026 CYBER NEXUS — ALL RIGHTS RESERVED
           </p>
           <a
             href="https://cybernexus.uz"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-neon-blue hover:text-neon-green transition-colors duration-300 font-bold text-base tracking-wider"
+            className="text-neon-blue hover:text-neon-green transition-colors duration-300 font-black text-sm sm:text-base tracking-wider"
           >
             &gt; cybernexus.uz_
           </a>
         </motion.footer>
       </div>
 
-      <style jsx>{`
-        .glitch-text {
-          position: relative;
-          text-shadow: 0 0 10px rgba(0, 255, 170, 0.8),
-            0 0 20px rgba(0, 255, 170, 0.6), 0 0 30px rgba(0, 255, 170, 0.4);
-        }
+      {/* MODAL (details) */}
+      <AnimatePresence>
+        {active && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActive(null)}
+            />
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 18 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              onClick={() => setActive(null)}
+            >
+              <div
+                className="w-full max-w-2xl rounded-xl border-2 border-neon-blue bg-black/90 backdrop-blur p-5 shadow-neon-blue"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="h-14 w-14 rounded-lg border border-neon-green/35 bg-neon-green/10 grid place-items-center overflow-hidden shrink-0">
+                      {active.icon ? (
+                        <active.icon className="text-neon-green text-2xl" />
+                      ) : (
+                        <FaShieldAlt className="text-neon-green text-2xl" />
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-lg sm:text-xl font-black tracking-wider text-neon-green line-clamp-2">
+                        {active.title}
+                      </div>
+                      <div className="mt-2 text-xs font-bold tracking-widest text-neon-blue/90 truncate">
+                        {active.kind || "DETAILS"} • CYBER NEXUS
+                      </div>
+                    </div>
+                  </div>
 
-        .glitch-layer-1 {
-          animation: glitch-1 2s infinite;
-        }
+                  <button
+                    type="button"
+                    onClick={() => setActive(null)}
+                    className="rounded-lg border border-neon-blue/40 bg-neon-blue/10 p-2 text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                    aria-label="close"
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
 
-        .glitch-layer-2 {
-          animation: glitch-2 3s infinite;
-        }
+                <div className="mt-4 rounded-xl border border-neon-green/25 bg-black/60 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-gray-400">
+                    SUMMARY
+                  </div>
+                  <p className="mt-2 text-sm leading-relaxed text-neon-green/85">
+                    {active.desc}
+                  </p>
+                </div>
 
-        @keyframes glitch-1 {
-          0%,
-          100% {
-            transform: translate(0);
-          }
-          33% {
-            transform: translate(-2px, 2px);
-          }
-          66% {
-            transform: translate(2px, -2px);
-          }
-        }
+                <div className="mt-3 rounded-xl border border-neon-green/20 bg-black/50 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-gray-400">
+                    DETAILS
+                  </div>
+                  <p className="mt-2 text-sm leading-relaxed text-neon-green/80">
+                    {active.details}
+                  </p>
 
-        @keyframes glitch-2 {
-          0%,
-          100% {
-            transform: translate(0);
-          }
-          33% {
-            transform: translate(2px, -2px);
-          }
-          66% {
-            transform: translate(-2px, 2px);
-          }
-        }
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {(active.tags || []).map((t) => (
+                      <span
+                        key={t}
+                        className="text-[10px] font-black tracking-widest rounded-full border border-neon-blue/25 bg-neon-blue/10 px-2 py-1 text-neon-blue/90"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
 
-        .scanline-fast {
-          position: absolute;
-          width: 100%;
-          height: 2px;
-          background: linear-gradient(
-            to right,
-            transparent,
-            rgba(0, 255, 170, 0.8),
-            transparent
-          );
-          animation: scan-fast 4s linear infinite;
-        }
+                <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                  <button
+                    type="button"
+                    onClick={() => toggleFav(active.id)}
+                    className={classNames(
+                      "flex-1 rounded-xl border-2 px-4 py-3 text-sm font-black tracking-wider transition-all",
+                      fav.includes(active.id)
+                        ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
+                        : "border-neon-green bg-black/60 text-neon-green shadow-neon hover:border-neon-blue hover:text-neon-blue"
+                    )}
+                  >
+                    {fav.includes(active.id) ? "★ Favorited" : "☆ Add to favorites"}
+                  </button>
 
-        .scanline-slow {
-          position: absolute;
-          width: 100%;
-          height: 100px;
-          background: linear-gradient(
-            to bottom,
-            transparent,
-            rgba(0, 170, 255, 0.1),
-            transparent
-          );
-          animation: scan-slow 8s linear infinite;
-        }
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (active.link) window.open(active.link, "_blank", "noopener,noreferrer");
+                    }}
+                    className="flex-1 rounded-xl border-2 border-neon-green bg-gradient-to-r from-neon-green to-neon-blue px-4 py-3 text-sm font-black tracking-wider text-black shadow-neon hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2"
+                  >
+                    Open <FaExternalLinkAlt className="text-[14px]" />
+                  </button>
+                </div>
 
-        @keyframes scan-fast {
-          0% {
-            transform: translateY(-100%);
-          }
-          100% {
-            transform: translateY(100vh);
-          }
-        }
+                <div className="mt-3 text-center text-[11px] text-gray-500">
+                  External link opens in a new tab.
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
-        @keyframes scan-slow {
-          0% {
-            transform: translateY(-100%);
-          }
-          100% {
-            transform: translateY(100vh);
-          }
-        }
-
-        .cyber-border::before {
-          content: "";
-          position: absolute;
-          top: -2px;
-          left: -2px;
-          right: -2px;
-          bottom: -2px;
-          background: linear-gradient(
-            45deg,
-            transparent,
-            rgba(0, 255, 170, 0.3),
-            transparent
-          );
-          border-radius: inherit;
-          opacity: 0;
-          transition: opacity 0.3s;
-        }
-
-        .cyber-border:hover::before {
-          opacity: 1;
-          animation: border-rotate 4s linear infinite;
-        }
-
-        .cyber-card {
-          position: relative;
-          transition: all 0.3s ease;
-        }
-
-        .cyber-card::before {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(0, 255, 170, 0.2),
-            transparent
-          );
-          transition: left 0.5s;
-        }
-
-        .cyber-card:hover::before {
-          left: 100%;
-        }
-
-        .hover-glow:hover {
-          box-shadow: 0 0 20px rgba(0, 170, 255, 0.4),
-            0 0 40px rgba(0, 170, 255, 0.2),
-            inset 0 0 20px rgba(0, 170, 255, 0.1);
-        }
-
-        .hover-pulse {
-          animation: pulse-glow 2s ease-in-out infinite;
-        }
-        @keyframes pulse-glow {
-          0%,
-          100% {
-            box-shadow: 0 0 10px rgba(0, 255, 170, 0.6),
-              0 0 20px rgba(0, 255, 170, 0.4);
-          }
-          50% {
-            box-shadow: 0 0 20px rgba(0, 255, 170, 0.8),
-              0 0 40px rgba(0, 255, 170, 0.6);
-          }
-        }
-        .animate-border-flow {
-          animation: border-flow 2s linear infinite;
-        }
-        @keyframes border-flow {
-          0% {
-            background-position: 0% 50%;
-          }
-          100% {
-            background-position: 100% 50%;
-          }
-        }
+      {/* small utilities */}
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
     </div>
   );
 };
+
+export default About;

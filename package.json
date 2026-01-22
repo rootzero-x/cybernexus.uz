@@ -15,7 +15,7 @@
     "crypto-js": "^4.2.0",
     "express": "^5.1.0",
     "firebase": "^11.6.0",
-    "framer-motion": "^12.11.0",
+    "framer-motion": "^12.28.1",
     "heroicons": "^2.2.0",
     "lucide-react": "^0.562.0",
     "puppeteer": "^24.8.2",

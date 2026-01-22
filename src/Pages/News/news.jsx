@@ -1,305 +1,1014 @@
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
-import { useContext } from "react";
 import { GlobalContext } from "../../GlobalState/globalstate";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FaSearch,
+  FaStar,
+  FaRegStar,
+  FaExternalLinkAlt,
+  FaTimes,
+  FaLayerGroup,
+  FaShieldAlt,
+  FaBug,
+  FaGavel,
+  FaSkullCrossbones,
+  FaCloud,
+} from "react-icons/fa";
+
+/**
+ * Premium News — App.jsx style
+ * Features:
+ *  - Glass hero + Sticky tabs
+ *  - Featured horizontal carousel
+ *  - Responsive grid (3 screens: mobile/tablet/desktop)
+ *  - Modal details + external link
+ *  - Favorites (localStorage)
+ *  - Search + Category filters
+ */
 
 export const News = () => {
   const { mode } = useContext(GlobalContext);
 
-  const newsItems = [
-    {
-      title: "Verizon and Accenture Enhance Cybersecurity Readiness",
-      description:
-        "Verizon Business and Accenture are advancing enterprise security with AI-driven services, reported May 2025.",
-      details:
-        "The partnership leverages AI to improve threat detection, with 89% of organizations using AI for threat understanding, per Cisco’s 2025 Readiness Index.",
-      source: "Cisco News",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL2nsi11kavWBzGzQLvaeNqstcjTXoiyPWaQ&s",
-      link: "https://www.cisco.com/c/en/us/solutions/security/2025-cybersecurity-readiness-index.html",
-    },
-    {
-      title: "CISO Global Partners with Cyber Assurance Group",
-      description:
-        "CISO Global announced a strategic partnership with Cyber Assurance Group in April 2025, enhancing cybersecurity offerings.",
-      details:
-        "The CyberSimple initiative aims to provide cyber resilience, expecting $5M in software bookings and 75% margins in 2025.",
-      source: "Yahoo Finance",
-      image:
-        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80",
-      link: "https://finance.yahoo.com/news/ciso-global-inc-nasdaq-ciso-150800840.html",
-    },
-    {
-      title: "US-Russia Cyber Tensions Rise with New Malware",
-      description:
-        "Google identified 'LOSTKEYS' malware linked to Russia’s Cold River group, targeting Western officials in May 2025.",
-      details:
-        "Attacks hit advisers and NGOs, raising concerns amid ongoing US-Russia cyber tensions, despite no recent pause confirmation.",
-      source: "Reuters",
-      image:
-        "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80",
-      link: "https://www.reuters.com/technology/cybersecurity/google-identifies-new-malware-linked-russia-based-hacking-group-2025-05-07/",
-    },
-    {
-      title: "China-Linked SAP NetWeaver Exploit Expands",
-      description:
-        "A second wave of China-linked attacks targets SAP NetWeaver, reported May 2025.",
-      details:
-        "Hundreds of compromises across critical infrastructure exploit CVE-2025-31324, per Onapsis and CISA alerts.",
-      source: "Cybersecurity Dive",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVIWbKm_OGwUIvet1EuKkOpV74wlQn__Vu2w&s",
-      link: "https://www.cybersecuritydive.com/news/sap-netweaver-exploitation-second-wave/723123/",
-    },
-    {
-      title: "Healthcare Cybersecurity Rules Tighten in 2025",
-      description:
-        "New 2025 rules mandate encryption and MFA for healthcare providers, effective June.",
-      details:
-        "Non-compliance risks $1M fines, addressing rising ransomware claims, down 7% in 2024 per Coalition.",
-      source: "HIPAA Journal",
-      image:
-        "https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80",
-      link: "https://www.hipaajournal.com/cyber-insurance-provider-reports-fall-in-claims-frequency-in-2024/",
-    },
-    {
-      title: "Lockbit Ransomware Group Hacked",
-      description:
-        "Analysts confirm a breach of the Lockbit ransomware group in May 2025.",
-      details:
-        "A rogue post and data leak suggest internal compromise, impacting their extortion operations.",
-      source: "Reuters",
-      image:
-        "https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80",
-      link: "https://www.reuters.com/technology/cybersecurity/ransomware-group-lockbit-appears-have-been-hacked-analysts-say-2025-05-09/",
-    },
-    {
-      title: "Southern Water Recovers from 2024 Attack",
-      description:
-        "Southern Water’s £4.5M recovery from a February 2024 ransomware attack updated in May 2025.",
-      details:
-        "Disrupted billing systems required extensive restoration efforts, highlighting resilience needs.",
-      source: "BleepingComputer",
-      image:
-        "https://www.shutterstock.com/image-illustration/cyber-attack-breaking-news-daily-600nw-1699077571.jpg",
-      link: "https://www.bleepingcomputer.com/news/security/southern-water-cyberattack-costs-5-7m/",
-    },
-    {
-      title: "Belgium Probes Ongoing Chinese Espionage",
-      description:
-        "Belgium investigates a persistent Chinese hack on its State Security Service, May 2025.",
-      details:
-        "The breach targets intelligence data, raising European espionage concerns.",
-      source: "BleepingComputer",
-      image:
-        "https://media.licdn.com/dms/image/v2/D4D12AQF9r6jn6KcTdQ/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1681124508062?e=2147483647&v=beta&t=N-SQoi5S7Q3XA_Kl5JiDi9DGS3ABkyWTvyU1zkdIboQ",
-      link: "https://www.bleepingcomputer.com/news/security/belgium-chinese-hack-state-security/",
-    },
-    {
-      title: "Qilin Ransomware Targets Expand",
-      description:
-        "Qilin ransomware hit Lee Enterprises in 2025, with new targets emerging in May.",
-      details:
-        "Data leaks continue to disrupt operations, posted on dark web forums.",
-      source: "BleepingComputer",
-      image:
-        "https://media.licdn.com/dms/image/v2/D4E12AQGOT9LcuWVGsA/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1684486842001?e=2147483647&v=beta&t=lH6wkvU7f2zNih6ICXrVFujBaFWSvRyRZBTJPIYpeJs",
-      link: "https://www.bleepingcomputer.com/news/security/qilin-ransomware-lee-enterprises/",
-    },
-    {
-      title: "Microsoft Warns of AI Deepfake Threats",
-      description:
-        "Microsoft identifies a gang bypassing AI guardrails for deepfakes, May 2025.",
-      details:
-        "Tools for illicit content threaten digital trust, prompting new defenses.",
-      source: "BleepingComputer",
-      image:
-        "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80",
-      link: "https://www.bleepingcomputer.com/news/security/microsoft-ai-deepfake-gang/",
-    },
-    {
-      title: "CISA Strengthens US Defenses",
-      description:
-        "CISA reaffirms focus on US infrastructure protection against cyber threats, May 2025.",
-      details:
-        "Efforts counter rising attacks, including Russia-linked malware, despite Pentagon shifts.",
-      source: "Infosecurity Magazine",
-      image:
-        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80",
-      link: "https://www.infosecurity-magazine.com/news/cisa-denies-shift-russian-threats/",
-    },
-    {
-      title: "Turkey Probes Twitch Breach Fallout",
-      description:
-        "Turkey investigates ongoing issues from a 2025 Twitch data breach, May update.",
-      details: "Exposed user data prompts continued regulatory scrutiny.",
-      source: "Reuters",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQF1NBqUbAzW0aeYFt0E6HE6uYe_WdKRSmkQA&s",
-      link: "https://www.reuters.com/technology/cybersecurity/turkey-fines-twitch-2m-lira-data-breach/",
-    },
-    {
-      title: "T-Mobile Confirms Chinese Telecom Hack",
-      description:
-        "T-Mobile verifies a Chinese-led breach affecting call records, May 2025.",
-      details:
-        "Linked to broader telecom attacks, raising industry-wide concerns.",
-      source: "Reuters",
-      image:
-        "https://www.redseal.net/wp-content/uploads/2024/04/Cyber-news-roundup.png",
-      link: "https://www.reuters.com/technology/cybersecurity/t-mobile-hacked-chinese-breach/",
-    },
-    {
-      title: "Hungary Probes State-Sponsored Hack",
-      description:
-        "Hungary investigates a suspected state-sponsored defense agency breach, May 2025.",
-      details: "Exposed military contracts suggest espionage motives.",
-      source: "Reuters",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgJO-p8gmdIH6JKxtfC0GE9JtXV715Jlv_ZQ&s",
-      link: "https://www.reuters.com/technology/cybersecurity/hungary-defense-agency-hacked/",
-    },
-    {
-      title: "Thales Expands Cyber Profit Forecast",
-      description:
-        "Thales raises profit outlook after cyber asset acquisitions, May 2025.",
-      details:
-        "New deals enhance cybersecurity capabilities, boosting revenue.",
-      source: "Reuters",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbC28FgAnR0NBzECc4xFf1ilQSFQj-OT3F2g&s",
-      link: "https://www.reuters.com/business/defence-firm-thales-eyes-profit-growth-cyber-expansion/",
-    },
-    {
-      title: "Cisco Leads with AI Security Gear",
-      description:
-        "Cisco exceeds earnings with AI-driven networking solutions, May 2025.",
-      details:
-        "Strong demand reflects growing cybersecurity needs, per 2025 Readiness Index.",
-      source: "Reuters",
-      image:
-        "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80",
-      link: "https://www.reuters.com/technology/cisco-beats-earnings-ai-networking-gear/",
-    },
-    {
-      title: "Italy Fines Intesa for Data Breach",
-      description:
-        "Italy imposes a €500K fine on Intesa for a 2025 data breach, May update.",
-      details: "Exposed banking data triggers regulatory action.",
-      source: "Reuters",
-      image:
-        "https://www.shutterstock.com/image-illustration/cyber-attack-security-breach-breaking-600nw-2230182511.jpg",
-      link: "https://www.reuters.com/technology/cybersecurity/italy-fines-intesa-data-breach/",
-    },
-    {
-      title: "South Korea Links Russia to Cyberattacks",
-      description:
-        "South Korea attributes recent cyberattacks to pro-Russia groups, May 2025.",
-      details: "Targets include government systems amid geopolitical tensions.",
-      source: "Reuters",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSU1A5Qmc5yMF9ckMJU4HCcEEMrE18Pap9nQ&s",
-      link: "https://www.reuters.com/world/south-korea-pro-russia-cyberattacks/",
-    },
-    {
-      title: "Cyber A.I. Group Showcases AI at SXSW",
-      description:
-        "Cyber A.I. Group highlights AI cybersecurity at SXSW 2025, May update.",
-      details: "CEO Walter Hughes presents innovative protection strategies.",
-      source: "Yahoo Finance",
-      image:
-        "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80",
-      link: "https://finance.yahoo.com/news/latest-news-ai-chips-cybersecurity/",
-    },
-    {
-      title: "Quantum Computing Threatens Encryption",
-      description:
-        "Quantum advances by Google and Microsoft raise cybersecurity concerns, May 2025.",
-      details: "Milestones challenge current encryption, urging new standards.",
-      source: "Dark Reading",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYtsEzc22YgWJ0e7ZukVA5NIAJyNrZwCCQKw&s",
-      link: "https://www.darkreading.com/cybersecurity-operations/quantum-computing-advances-2025/",
-    },
-    {
-      title: "Thailand Nabs DESORDEN Cybercriminal",
-      description:
-        "Thailand arrests a DESORDEN member for extorting 90+ organizations, May 2025.",
-      details: "Seized data leaks highlight international cybercrime efforts.",
-      source: "BleepingComputer",
-      image:
-        "https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80",
-      link: "https://www.bleepingcomputer.com/news/security/thailand-arrests-desorden-cybercriminal/",
-    },
-  ];
+  // ====== DATA (Updated, credible sources, Jan 2026 focus) ======
+const newsItems = [
+  // ========= THREAT INTEL (Microsoft / Reuters / CISA) =========
+  {
+    id: "reuters-mustang-panda-2026-01-15",
+    title: "China-linked group ‘Mustang Panda’ targets U.S. entities with themed malware",
+    description:
+      "Cyber-espionage campaign used phishing with Venezuela-themed lures to deliver malware and maintain access.",
+    details:
+      "Researchers linked tooling/infrastructure to Mustang Panda; illustrates rapid weaponization of real-world events in phishing.",
+    source: "Reuters",
+    date: "2026-01-15",
+    category: "Threat Intel",
+    tags: ["APT", "Phishing", "Malware"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Flag_of_China.png/640px-Flag_of_China.png",
+    link: "https://www.reuters.com/business/media-telecom/chinese-linked-hackers-target-us-entities-with-venezuelan-themed-malware-2026-01-15/",
+  },
+  {
+    id: "msft-aitm-bec-2026-01-21",
+    title: "Resurgence of multi-stage AiTM phishing + BEC campaign abusing SharePoint",
+    description:
+      "Microsoft reports a multi-stage adversary-in-the-middle (AiTM) phishing and business email compromise (BEC) campaign.",
+    details:
+      "Campaign abused SharePoint file-sharing to deliver payloads and used inbox rules for persistence/stealth.",
+    source: "Microsoft Security Blog",
+    date: "2026-01-21",
+    category: "Threat Intel",
+    tags: ["Phishing", "BEC", "AiTM", "SharePoint"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Microsoft_Office_SharePoint_%282019%E2%80%93present%29.svg/512px-Microsoft_Office_SharePoint_%282019%E2%80%93present%29.svg.png",
+    link: "https://www.microsoft.com/en-us/security/blog/2026/01/21/multistage-aitm-phishing-bec-campaign-abusing-sharepoint/",
+  },
+  {
+    id: "msft-domain-spoof-2026-01-06",
+    title: "Phishing actors exploit complex routing & misconfigurations to spoof domains",
+    description:
+      "Microsoft explains how attackers abuse routing complexity and misconfigurations to spoof domains.",
+    details:
+      "Harden email/domain routing, monitor anomalies, enforce authentication and anti-spoofing controls.",
+    source: "Microsoft Security Blog",
+    date: "2026-01-06",
+    category: "Threat Intel",
+    tags: ["Spoofing", "Email Security", "Phishing"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Antispam_icon.svg/512px-Antispam_icon.svg.png",
+    link: "https://www.microsoft.com/en-us/security/blog/2026/01/06/phishing-actors-exploit-complex-routing-and-misconfigurations-to-spoof-domains/",
+  },
+  {
+    id: "cisa-brickstorm-alert-2025-12-04",
+    title: "PRC state-sponsored actors use BRICKSTORM malware across public sector and IT",
+    description:
+      "CISA warns PRC state-sponsored actors are using BRICKSTORM for persistent access across sectors.",
+    details:
+      "Guidance includes detection, mitigation, and threat-hunting recommendations for defenders.",
+    source: "CISA",
+    date: "2025-12-04",
+    category: "Threat Intel",
+    tags: ["BRICKSTORM", "PRC", "Persistence", "Hunting"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Seal_of_the_United_States_Department_of_Homeland_Security.svg/640px-Seal_of_the_United_States_Department_of_Homeland_Security.svg.png",
+    link: "https://www.cisa.gov/news-events/alerts/2025/12/04/prc-state-sponsored-actors-use-brickstorm-malware-across-public-sector-and-information-technology",
+  },
+
+  // ========= VULNERABILITIES / KEV / PATCH =========
+  {
+    id: "cisa-kev-2026-01-21",
+    title: "CISA adds one known exploited vulnerability to KEV Catalog",
+    description:
+      "CISA confirmed evidence of active exploitation and added a vulnerability to the KEV catalog.",
+    details:
+      "If it’s on KEV, it’s exploited in real attacks — treat patching/mitigation as urgent.",
+    source: "CISA",
+    date: "2026-01-21",
+    category: "Vulnerabilities",
+    tags: ["KEV", "Patch", "Exploitation"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Seal_of_the_United_States_Department_of_Homeland_Security.svg/640px-Seal_of_the_United_States_Department_of_Homeland_Security.svg.png",
+    link: "https://www.cisa.gov/news-events/alerts/2026/01/21/cisa-adds-one-known-exploited-vulnerability-catalog",
+  },
+  {
+    id: "cisa-kev-2026-01-07",
+    title: "CISA adds two known exploited vulnerabilities to KEV Catalog",
+    description:
+      "CISA added two vulnerabilities to KEV based on evidence of active exploitation.",
+    details:
+      "Use KEV as patch-priority input; add compensating controls if immediate patching isn’t possible.",
+    source: "CISA",
+    date: "2026-01-07",
+    category: "Vulnerabilities",
+    tags: ["KEV", "Exploitation", "Remediation"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Flag_of_the_United_States.svg/640px-Flag_of_the_United_States.svg.png",
+    link: "https://www.cisa.gov/news-events/alerts/2026/01/07/cisa-adds-two-known-exploited-vulnerabilities-catalog",
+  },
+  {
+    id: "cisa-kev-live-catalog",
+    title: "Known Exploited Vulnerabilities Catalog (LIVE)",
+    description:
+      "CISA maintains the authoritative list of vulnerabilities exploited in the wild.",
+    details:
+      "Weekly workflow: map KEV → asset inventory → patch/mitigate → monitor exposed services.",
+    source: "CISA",
+    date: "LIVE",
+    category: "Vulnerabilities",
+    tags: ["KEV", "CVE", "Best Practice"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Computer_icon.svg/512px-Computer_icon.svg.png",
+    link: "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+  },
+  {
+    id: "cisa-vuln-bulletin-sb26-020",
+    title: "CISA Vulnerability Bulletin (Week of Jan 12, 2026)",
+    description:
+      "Weekly summary of newly recorded vulnerabilities (useful for triage and tracking).",
+    details:
+      "Good for awareness + prioritization; combine with KEV to drive patch decisions.",
+    source: "CISA Bulletin",
+    date: "2026-01-12",
+    category: "Vulnerabilities",
+    tags: ["Bulletin", "CVE", "Triage"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Checklist_icon.svg/512px-Checklist_icon.svg.png",
+    link: "https://www.cisa.gov/news-events/bulletins/sb26-020",
+  },
+
+  // ========= ICS / OT SECURITY (CISA ICS Advisories) =========
+  {
+    id: "cisa-icsa-26-015-03-siemens",
+    title: "ICS Advisory: Siemens TeleControl Server Basic",
+    description:
+      "CISA ICS advisory for Siemens TeleControl Server Basic (OT/ICS vulnerability guidance).",
+    details:
+      "Review affected versions and mitigations; prioritize if exposed or reachable from untrusted networks.",
+    source: "CISA ICS Advisory",
+    date: "2026-01-14",
+    category: "Vulnerabilities",
+    tags: ["ICS", "OT", "Siemens"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Industrial_icon.svg/512px-Industrial_icon.svg.png",
+    link: "https://www.cisa.gov/news-events/ics-advisories/icsa-26-015-03",
+  },
+  {
+    id: "cisa-icsa-26-020-01-schneider",
+    title: "ICS Advisory: Schneider Electric EcoStruxure Foxboro DCS",
+    description:
+      "CISA ICS advisory for Schneider Electric EcoStruxure Foxboro DCS vulnerabilities.",
+    details:
+      "OT environments: segment networks, reduce exposure, and follow vendor/CISA mitigation steps.",
+    source: "CISA ICS Advisory",
+    date: "2026-01-20",
+    category: "Vulnerabilities",
+    tags: ["ICS", "OT", "Schneider"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Industrial_icon.svg/512px-Industrial_icon.svg.png",
+    link: "https://www.cisa.gov/news-events/ics-advisories/icsa-26-020-01",
+  },
+  {
+    id: "cisa-icsa-25-212-01-guralp-updateb",
+    title: "ICS Advisory Update: Güralp Systems FMUS/MIN devices (Update B)",
+    description:
+      "Updated ICS advisory for Güralp Systems devices; review revisions and mitigations.",
+    details:
+      "OT patching is slow: apply compensating controls (segmentation, allowlisting, monitoring).",
+    source: "CISA ICS Advisory",
+    date: "2026-01-13",
+    category: "Vulnerabilities",
+    tags: ["ICS", "OT", "Update"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Industrial_icon.svg/512px-Industrial_icon.svg.png",
+    link: "https://www.cisa.gov/news-events/ics-advisories/icsa-25-212-01",
+  },
+
+  // ========= CLOUD & IDENTITY (Microsoft) =========
+  {
+    id: "msft-identity-2026-01-20",
+    title: "Four priorities for AI-powered identity & network access security in 2026",
+    description:
+      "Microsoft recommends identity-first controls as AI agents and automation expand.",
+    details:
+      "Focus: adaptive protection, identity hardening, safer access baselines, continuous posture improvements.",
+    source: "Microsoft Security Blog",
+    date: "2026-01-20",
+    category: "Cloud & Identity",
+    tags: ["Identity", "Zero Trust", "AI Security"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/512px-Microsoft_logo.svg.png",
+    link: "https://www.microsoft.com/en-us/security/blog/2026/01/20/four-priorities-for-ai-powered-identity-and-network-access-security-in-2026/",
+  },
+  {
+    id: "msft-agents-posture-2026-01-21",
+    title: "A new era of agents, a new era of posture",
+    description:
+      "AI agents expand attack surface; Microsoft discusses posture management for AI apps/agents.",
+    details:
+      "Treat agents like identities: least privilege, monitoring, policy enforcement, posture governance.",
+    source: "Microsoft Security Blog",
+    date: "2026-01-21",
+    category: "Cloud & Identity",
+    tags: ["AI Agents", "Posture", "Governance"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/512px-Microsoft_logo.svg.png",
+    link: "https://www.microsoft.com/en-us/security/blog/2026/01/21/new-era-of-agents-new-era-of-posture/",
+  },
+
+  // ========= POLICY / REGULATION / GEO =========
+  {
+    id: "reuters-eu-high-risk-suppliers-2026-01-20",
+    title: "EU plans to phase out 'high-risk' suppliers in critical infrastructure (Huawei focus)",
+    description:
+      "Draft revisions to EU cybersecurity rules propose phasing out equipment from high-risk suppliers.",
+    details:
+      "Aims to reduce dependence on high-risk vendors across multiple critical sectors.",
+    source: "Reuters",
+    date: "2026-01-20",
+    category: "Policy",
+    tags: ["EU", "Telecom", "Critical Infrastructure"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Flag_of_Europe.svg/640px-Flag_of_Europe.svg.png",
+    link: "https://www.reuters.com/business/media-telecom/eu-phase-out-high-risk-tech-targets-huawei-chinese-companies-2026-01-20/",
+  },
+  {
+    id: "reuters-poland-power-2026-01-15",
+    title: "Poland PM: reasons to believe Russia behind cyberattack on power system",
+    description:
+      "Poland said indicators suggest a group tied to Russian services behind the December power-sector cyberattack.",
+    details:
+      "Officials said defenses worked and critical infrastructure was not harmed; highlights ongoing CI targeting.",
+    source: "Reuters",
+    date: "2026-01-15",
+    category: "Policy",
+    tags: ["Critical Infrastructure", "Energy", "Attribution"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Flag_of_Poland.svg/640px-Flag_of_Poland.svg.png",
+    link: "https://www.reuters.com/world/reasons-believe-russia-behind-cyberattack-polish-power-system-pm-says-2026-01-15/",
+  },
+  {
+    id: "reuters-poland-power-failed-2026-01-13",
+    title: "Massive cyberattack on Polish power system in December failed, minister says",
+    description:
+      "Poland described a major attempted attack against power infrastructure communications as its largest in years.",
+    details:
+      "Focused on comms between renewable installations and distribution operators; ultimately failed.",
+    source: "Reuters",
+    date: "2026-01-13",
+    category: "Policy",
+    tags: ["Energy", "Renewables", "Infrastructure"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Flag_of_Poland.svg/640px-Flag_of_Poland.svg.png",
+    link: "https://www.reuters.com/sustainability/climate-energy/massive-cyberattack-polish-power-system-december-failed-minister-says-2026-01-13/",
+  },
+
+  // ========= PATCH / VULN NEWS (The Hacker News - still credible in security world) =========
+  {
+    id: "thn-msft-patch-tuesday-2026-01-14",
+    title: "Microsoft January 2026 Patch Tuesday fixes 114 flaws (one actively exploited)",
+    description:
+      "Security update addresses numerous Windows flaws and includes an actively exploited vulnerability.",
+    details:
+      "Patch promptly; exploitable bugs can be chained with others to escalate impact.",
+    source: "The Hacker News",
+    date: "2026-01-14",
+    category: "Vulnerabilities",
+    tags: ["Patch Tuesday", "Windows", "Zero-day"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Windows_logo_-_2012.svg/512px-Windows_logo_-_2012.svg.png",
+    link: "https://thehackernews.com/2026/01/microsoft-fixes-114-windows-flaws-in.html",
+  },
+  {
+    id: "thn-cisco-zero-day-2026-01-22",
+    title: "Cisco fixes an actively exploited zero-day (advisory-based report)",
+    description:
+      "Cisco advisory coverage about an actively exploited issue affecting devices with web-based management interface.",
+    details:
+      "If you run affected gear: patch ASAP, restrict management access, and monitor for anomalous HTTP patterns.",
+    source: "The Hacker News",
+    date: "2026-01-22",
+    category: "Vulnerabilities",
+    tags: ["Cisco", "Zero-day", "Network"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Cisco_logo.svg/512px-Cisco_logo.svg.png",
+    link: "https://thehackernews.com/2026/01/cisco-fixes-actively-exploited-zero-day.html",
+  },
+  {
+    id: "thn-cisa-kev-office-hpe-2026-01-08",
+    title: "CISA flags Microsoft Office and HPE OneView bugs as actively exploited (KEV)",
+    description:
+      "Report summarizing KEV additions impacting Microsoft Office and HPE OneView.",
+    details:
+      "Use KEV deadlines and patch guidance; verify exposure paths and apply compensating controls if needed.",
+    source: "The Hacker News",
+    date: "2026-01-08",
+    category: "Vulnerabilities",
+    tags: ["KEV", "Office", "HPE"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/512px-Microsoft_logo.svg.png",
+    link: "https://thehackernews.com/2026/01/cisa-flags-microsoft-office-and-hpe.html",
+  },
+
+  // ========= “EVERGREEN” VERIFIED LISTS (still official) =========
+  {
+    id: "cisa-advisories-index",
+    title: "CISA Cybersecurity Advisories (Official index)",
+    description:
+      "Official advisory hub: alerts, bulletins, and guidance in one place.",
+    details:
+      "Best place to keep your ‘News’ fresh because it’s continuously updated.",
+    source: "CISA",
+    date: "LIVE",
+    category: "Vulnerabilities",
+    tags: ["Advisories", "Alerts", "Official"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Seal_of_the_United_States_Department_of_Homeland_Security.svg/640px-Seal_of_the_United_States_Department_of_Homeland_Security.svg.png",
+    link: "https://www.cisa.gov/news-events/cybersecurity-advisories",
+  },
+  {
+    id: "msft-security-blog-home",
+    title: "Microsoft Security Blog (Official hub)",
+    description:
+      "Official Microsoft Security research, incidents, and defender guidance hub.",
+    details:
+      "Use this to expand News feed with verified Microsoft-authored research posts.",
+    source: "Microsoft Security Blog",
+    date: "LIVE",
+    category: "Cloud & Identity",
+    tags: ["Official", "Research", "Defender"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/512px-Microsoft_logo.svg.png",
+    link: "https://www.microsoft.com/en-us/security/blog/",
+  },
+
+  // ========= EXTRA VERIFIED ITEMS (still solid + diverse) =========
+  {
+    id: "reuters-cybersecurity-hub",
+    title: "Reuters Cybersecurity Hub (Latest list)",
+    description:
+      "Reuters’ cybersecurity topic page with continuously updated news list.",
+    details:
+      "Great for ‘Latest’ section; use for weekly updates and new incidents.",
+    source: "Reuters",
+    date: "LIVE",
+    category: "Policy",
+    tags: ["News Hub", "Incidents", "Verified"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Newspaper_icon.svg/512px-Newspaper_icon.svg.png",
+    link: "https://www.reuters.com/technology/cybersecurity/",
+  },
+  {
+    id: "msft-social-engineering-hub",
+    title: "Microsoft Threat Intel: Social engineering & phishing (topic hub)",
+    description:
+      "Microsoft’s curated hub for phishing/social engineering research and guidance.",
+    details:
+      "Use to build threat intel learning content and update News feed reliably.",
+    source: "Microsoft Security Blog",
+    date: "LIVE",
+    category: "Threat Intel",
+    tags: ["Phishing", "Social Engineering", "Intel"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/512px-Microsoft_logo.svg.png",
+    link: "https://www.microsoft.com/en-us/security/blog/threat-intelligence/social-engineering-phishing/",
+  },
+
+  // ========= MORE “SAFE” CARD IMAGES (always exists) =========
+  {
+    id: "visual-shield-generic",
+    title: "Zero Trust basics: least privilege + continuous verification",
+    description:
+      "A compact reminder card: identity hardening, least privilege, continuous verification reduce breach blast radius.",
+    details:
+      "Use as ‘knowledge card’ between news items if you want richer UX feed.",
+    source: "CyberNexus Insight",
+    date: "LIVE",
+    category: "Cloud & Identity",
+    tags: ["Zero Trust", "Least Privilege", "Best Practice"],
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Shield_icon.svg/512px-Shield_icon.svg.png",
+    link: "https://www.cisa.gov/topics/cybersecurity-best-practices",
+  },
+];
+
+  // ====== UI State ======
+  const [query, setQuery] = useState("");
+  const [tab, setTab] = useState("All"); // All | Threat Intel | Vulnerabilities | Ransomware | Policy | Cloud & Identity
+  const [active, setActive] = useState(null); // modal
+  const [favOnly, setFavOnly] = useState(false);
+
+  const [fav, setFav] = useState(() => {
+    try {
+      const raw = localStorage.getItem("cybernexus_news_fav_v1");
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("cybernexus_news_fav_v1", JSON.stringify(fav));
+    } catch {}
+  }, [fav]);
+
+  const toggleFav = (id) => {
+    setFav((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
+  };
+
+  // ====== Helpers ======
+  const tabs = useMemo(
+    () => [
+      { key: "All", label: "All", icon: FaLayerGroup },
+      { key: "Threat Intel", label: "Threat Intel", icon: FaShieldAlt },
+      { key: "Vulnerabilities", label: "Vulnerabilities", icon: FaBug },
+      { key: "Ransomware", label: "Ransomware", icon: FaSkullCrossbones },
+      { key: "Policy", label: "Policy", icon: FaGavel },
+      { key: "Cloud & Identity", label: "Cloud & Identity", icon: FaCloud },
+    ],
+    []
+  );
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+
+    let list = newsItems.filter((n) => {
+      const text = `${n.title} ${n.description} ${n.details} ${n.source} ${n.category} ${(n.tags || []).join(" ")}`.toLowerCase();
+      if (q && !text.includes(q)) return false;
+
+      if (tab !== "All" && n.category !== tab) return false;
+      if (favOnly && !fav.includes(n.id)) return false;
+
+      return true;
+    });
+
+    // sort: newest first (LIVE goes top-ish but after newest)
+    list.sort((a, b) => {
+      const da = a.date === "LIVE" ? "9999-12-31" : a.date;
+      const db = b.date === "LIVE" ? "9999-12-31" : b.date;
+      return db.localeCompare(da);
+    });
+
+    return list;
+  }, [newsItems, query, tab, favOnly, fav]);
+
+  const featured = useMemo(() => {
+    // curated highlight set
+    const pick = [
+      "msft-aitm-bec-2026-01-21",
+      "cisa-kev-2026-01-21",
+      "reuters-mustang-panda-2026-01-15",
+      "msft-identity-2026-01-20",
+      "cisa-kev-catalog-live",
+    ];
+    const map = new Map(newsItems.map((x) => [x.id, x]));
+    return pick.map((id) => map.get(id)).filter(Boolean);
+  }, [newsItems]);
+
+  const Glass = ({ className, children }) => (
+    <div
+      className={classNames(
+        "rounded-xl border-2 bg-black/55 backdrop-blur-xl",
+        "border-neon-green/40 shadow-neon",
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
+
+  const Chip = ({ active, onClick, icon: Icon, children }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      className={classNames(
+        "inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-black tracking-wider transition-all",
+        active
+          ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
+          : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green"
+      )}
+    >
+      {Icon ? <Icon className="text-[12px]" /> : null}
+      {children}
+    </button>
+  );
+
+  const Clamp2 = ({ children, className }) => (
+    <p
+      className={classNames("text-sm text-neon-green/80 leading-relaxed", className)}
+      style={{
+        display: "-webkit-box",
+        WebkitLineClamp: 2,
+        WebkitBoxOrient: "vertical",
+        overflow: "hidden",
+      }}
+    >
+      {children}
+    </p>
+  );
+
+  const formatDate = (d) => {
+    if (!d || d === "LIVE") return d || "";
+    // keep ISO but nicer
+    return d;
+  };
 
   return (
-    <div className="w-full min-h-screen bg-black font-mono text-neon-green px-4 sm:px-6 pt-6 pb-10 overflow-x-hidden">
-      <motion.div
-        className="w-full max-w-5xl mx-auto"
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.5, ease: "easeInOut" }}
-      >
-        <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-center tracking-wider text-neon-green">
-          Cybersecurity News Worldwide
-        </h2>
-        <div className="space-y-6 overflow-y-auto  flex-1 scrollbar-thin scrollbar-thumb-neon-green scrollbar-track-black">
-          {newsItems.map((news, index) => (
-            <motion.div
-              key={index}
-              className={classNames(
-                "flex flex-col sm:flex-row items-start p-4 rounded-lg border-2 border-neon-green bg-black bg-opacity-80 shadow-neon hover:animate-glitch",
-                "transition-all duration-300"
-              )}
-              initial={{ opacity: 0, x: index % 2 === 0 ? 100 : -100 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{
-                duration: 0.9,
-                delay: 0.3 + index * 0.2,
-                ease: "easeInOut",
-              }}
-              whileHover={{
-                boxShadow: "0 0 20px rgba(0, 255, 255, 0.5)",
-                borderColor: "#00f0ff",
-              }}
-            >
-              <img
-                src={news.image}
-                alt={news.title}
-                className="w-32 sm:w-40 h-24 sm:h-28 object-cover rounded-md mb-4 sm:mb-0 sm:mr-6 border border-neon-blue shadow-neon-blue"
-              />
-              <div className="flex-1">
-                <a
-                  href={news.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-lg sm:text-xl font-semibold mb-2 hover:underline text-neon-green hover:text-neon-blue"
-                >
-                  {news.title}
-                </a>
-                <p className="text-sm sm:text-base leading-relaxed mb-2 text-neon-green opacity-80">
-                  {news.description}
+    <div
+      className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden"
+      data-mode={mode}
+    >
+      {/* soft grid background */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.10]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
+          backgroundSize: "56px 56px",
+        }}
+      />
+
+      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-12">
+        {/* HERO */}
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.65, ease: "easeOut" }}
+        >
+          <Glass className="p-5 sm:p-7">
+            <div className="flex flex-col lg:flex-row lg:items-center gap-5">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3">
+                  <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
+                    <FaShieldAlt className="text-neon-blue" />
+                  </div>
+                  <div className="min-w-0">
+                    <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-neon-green truncate">
+                      Cybersecurity News
+                    </h1>
+                    <p className="mt-1 text-xs sm:text-sm text-neon-blue/90 font-bold tracking-widest truncate">
+                      LATEST • VERIFIED • PRO SOURCES
+                    </p>
+                  </div>
+                </div>
+
+                <p className="mt-4 text-sm sm:text-base text-gray-300/90 leading-relaxed">
+                  Eng yangi va ishonchli kiberxavfsizlik yangiliklari: APT, KEV/CVE,
+                  phishing, incidentlar va siyosiy/regulyator update’lar.
                 </p>
-                <p className="text-xs sm:text-sm leading-relaxed text-neon-green opacity-70">
-                  {news.details}
-                </p>
-                <p className="text-xs sm:text-sm mt-2 italic text-neon-green opacity-70">
-                  Source:{" "}
-                  <a
-                    href={news.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-neon-blue"
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Chip
+                    active={favOnly}
+                    onClick={() => setFavOnly((v) => !v)}
+                    icon={favOnly ? FaStar : FaRegStar}
                   >
-                    {news.source}
-                  </a>
+                    Favorites
+                  </Chip>
+                  <Chip
+                    active={tab === "Threat Intel"}
+                    onClick={() => setTab("Threat Intel")}
+                    icon={FaShieldAlt}
+                  >
+                    Threat Intel
+                  </Chip>
+                  <Chip
+                    active={tab === "Vulnerabilities"}
+                    onClick={() => setTab("Vulnerabilities")}
+                    icon={FaBug}
+                  >
+                    KEV / CVE
+                  </Chip>
+                </div>
+              </div>
+
+              {/* Search */}
+              <div className="w-full lg:w-[440px]">
+                <div className="relative">
+                  <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-neon-blue/80" />
+                  <input
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Qidirish: cisa, kev, phishing, microsoft, reuters..."
+                    className={classNames(
+                      "w-full rounded-xl border-2 bg-black/60 backdrop-blur px-10 py-3 text-sm",
+                      "border-neon-green/50 text-neon-green placeholder:text-gray-500",
+                      "focus:outline-none focus:border-neon-blue focus:shadow-neon-blue"
+                    )}
+                  />
+                </div>
+
+                <div className="mt-3 text-xs text-gray-400 flex items-center justify-between">
+                  <span>
+                    Natija:{" "}
+                    <span className="text-neon-green font-black">
+                      {filtered.length}
+                    </span>
+                  </span>
+                  <span className="text-neon-blue/80 font-bold tracking-widest">
+                    CLICK CARD → DETAILS
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Glass>
+        </motion.div>
+
+        {/* STICKY TABS */}
+        <div className="sticky top-0 z-30 pt-4">
+          <div className="rounded-xl border border-neon-green/25 bg-black/70 backdrop-blur-xl px-3 py-3">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
+                {tabs.map((t) => (
+                  <Chip
+                    key={t.key}
+                    active={tab === t.key}
+                    onClick={() => setTab(t.key)}
+                    icon={t.icon}
+                  >
+                    {t.label}
+                  </Chip>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setQuery("");
+                  setTab("All");
+                  setFavOnly(false);
+                }}
+                className="hidden sm:inline-flex rounded-lg border border-neon-blue/30 bg-neon-blue/10 px-3 py-2 text-xs font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* FEATURED CAROUSEL */}
+        <motion.div
+          className="mt-5"
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease: "easeOut", delay: 0.05 }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+              FEATURED
+            </h2>
+            <span className="text-[11px] text-gray-500">swipe →</span>
+          </div>
+
+          <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+            {featured.map((item) => {
+              const isFav = fav.includes(item.id);
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setActive(item)}
+                  className={classNames(
+                    "min-w-[300px] sm:min-w-[360px] lg:min-w-[420px]",
+                    "rounded-xl border-2 bg-black/70 backdrop-blur p-4 text-left",
+                    "border-neon-green/45 shadow-neon",
+                    "hover:border-neon-blue hover:shadow-neon-blue transition-all"
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center overflow-hidden shrink-0">
+                        <img
+                          src={item.imageUrl}
+                          alt={item.title}
+                          className="h-10 w-10 object-contain"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.src =
+                              "https://upload.wikimedia.org/wikipedia/commons/6/6a/Cybersecurity.png";
+                          }}
+                        />
+                      </div>
+
+                      <div className="min-w-0">
+                        <div className="text-base font-black tracking-wider text-neon-green truncate">
+                          {item.source}
+                        </div>
+                        <div className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
+                          {item.category} • {formatDate(item.date)}
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFav(item.id);
+                      }}
+                      className={classNames(
+                        "shrink-0 rounded-lg border px-2 py-2 transition-all",
+                        isFav
+                          ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
+                          : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green"
+                      )}
+                      title="Favorite"
+                      aria-label="favorite"
+                    >
+                      {isFav ? <FaStar /> : <FaRegStar />}
+                    </button>
+                  </div>
+
+                  <div className="mt-3">
+                    <div className="text-sm font-black tracking-wider text-neon-green">
+                      {item.title}
+                    </div>
+                    <Clamp2 className="mt-2">{item.description}</Clamp2>
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between">
+                    <span className="text-[11px] font-bold tracking-widest text-gray-400">
+                      QUICK VIEW
+                    </span>
+                    <span className="text-xs font-black tracking-widest text-neon-blue">
+                      OPEN →
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        {/* MAIN GRID */}
+        <motion.div
+          className="mt-6"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.08 }}
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filtered.map((item, idx) => {
+              const isFav = fav.includes(item.id);
+              return (
+                <motion.button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setActive(item)}
+                  className={classNames(
+                    "rounded-xl border-2 bg-black/70 backdrop-blur p-4 text-left",
+                    "border-neon-green/45 shadow-neon",
+                    "hover:border-neon-blue hover:shadow-neon-blue transition-all"
+                  )}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.45,
+                    delay: 0.02 + idx * 0.02,
+                    ease: "easeOut",
+                  }}
+                  whileHover={{ y: -3 }}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center overflow-hidden shrink-0">
+                        <img
+                          src={item.imageUrl}
+                          alt={item.title}
+                          className="h-10 w-10 object-contain"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.src =
+                              "https://upload.wikimedia.org/wikipedia/commons/6/6a/Cybersecurity.png";
+                          }}
+                        />
+                      </div>
+
+                      <div className="min-w-0">
+                        <h3 className="text-[13px] sm:text-sm font-black tracking-wider text-neon-green truncate">
+                          {item.title}
+                        </h3>
+                        <p className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
+                          {item.source} • {item.category} • {formatDate(item.date)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFav(item.id);
+                      }}
+                      className={classNames(
+                        "shrink-0 rounded-lg border px-2 py-2 transition-all",
+                        isFav
+                          ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
+                          : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green"
+                      )}
+                      title="Favorite"
+                      aria-label="favorite"
+                    >
+                      {isFav ? <FaStar /> : <FaRegStar />}
+                    </button>
+                  </div>
+
+                  <div className="mt-3">
+                    <Clamp2>{item.description}</Clamp2>
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {(item.tags || []).slice(0, 3).map((t) => (
+                      <span
+                        key={t}
+                        className="text-[10px] font-black tracking-widest rounded-full border border-neon-green/25 bg-black/60 px-2 py-1 text-neon-green/80"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between">
+                    <span className="text-[11px] font-bold tracking-widest text-gray-400">
+                      DETAILS
+                    </span>
+                    <span className="text-xs font-black tracking-widest text-neon-blue">
+                      OPEN →
+                    </span>
+                  </div>
+                </motion.button>
+              );
+            })}
+          </div>
+
+          {filtered.length === 0 && (
+            <div className="mt-8 text-center">
+              <div className="rounded-xl border-2 border-neon-green/35 bg-black/60 p-8 shadow-neon">
+                <div className="text-neon-blue font-black tracking-widest">
+                  NO RESULTS
+                </div>
+                <p className="mt-2 text-sm text-gray-400">
+                  Qidiruv yoki tab’ni o‘zgartirib ko‘ring.
                 </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuery("");
+                    setTab("All");
+                    setFavOnly(false);
+                  }}
+                  className="mt-5 rounded-lg border-2 border-neon-blue bg-neon-blue/10 px-4 py-2 text-xs font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
+          )}
+        </motion.div>
+      </div>
+
+      {/* MODAL */}
+      <AnimatePresence>
+        {active && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActive(null)}
+            />
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 18 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+              onClick={() => setActive(null)}
+            >
+              <div
+                className="w-full max-w-2xl rounded-xl border-2 border-neon-blue bg-black/90 backdrop-blur p-5 shadow-neon-blue"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="h-14 w-14 rounded-lg border border-neon-green/35 bg-neon-green/10 grid place-items-center overflow-hidden shrink-0">
+                      <img
+                        src={active.imageUrl}
+                        alt={active.title}
+                        className="h-11 w-11 object-contain"
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            "https://upload.wikimedia.org/wikipedia/commons/6/6a/Cybersecurity.png";
+                        }}
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-lg sm:text-xl font-black tracking-wider text-neon-green line-clamp-2">
+                        {active.title}
+                      </div>
+                      <div className="mt-2 text-xs font-bold tracking-widest text-neon-blue/90 truncate">
+                        {active.source} • {active.category} • {formatDate(active.date)}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setActive(null)}
+                    className="rounded-lg border border-neon-blue/40 bg-neon-blue/10 p-2 text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                    aria-label="close"
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+
+                <div className="mt-4 rounded-xl border border-neon-green/25 bg-black/60 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-gray-400">
+                    SUMMARY
+                  </div>
+                  <p className="mt-2 text-sm leading-relaxed text-neon-green/85">
+                    {active.description}
+                  </p>
+                </div>
+
+                <div className="mt-3 rounded-xl border border-neon-green/20 bg-black/50 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-gray-400">
+                    DETAILS
+                  </div>
+                  <p className="mt-2 text-sm leading-relaxed text-neon-green/80">
+                    {active.details}
+                  </p>
+
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {(active.tags || []).map((t) => (
+                      <span
+                        key={t}
+                        className="text-[10px] font-black tracking-widest rounded-full border border-neon-blue/25 bg-neon-blue/10 px-2 py-1 text-neon-blue/90"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                  <button
+                    type="button"
+                    onClick={() => toggleFav(active.id)}
+                    className={classNames(
+                      "flex-1 rounded-xl border-2 px-4 py-3 text-sm font-black tracking-wider transition-all",
+                      fav.includes(active.id)
+                        ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
+                        : "border-neon-green bg-black/60 text-neon-green shadow-neon hover:border-neon-blue hover:text-neon-blue"
+                    )}
+                  >
+                    {fav.includes(active.id) ? "★ Favorited" : "☆ Add to favorites"}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => window.open(active.link, "_blank", "noopener,noreferrer")}
+                    className="flex-1 rounded-xl border-2 border-neon-green bg-gradient-to-r from-neon-green to-neon-blue px-4 py-3 text-sm font-black tracking-wider text-black shadow-neon hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2"
+                  >
+                    Read source <FaExternalLinkAlt className="text-[14px]" />
+                  </button>
+                </div>
+
+                <div className="mt-3 text-center text-[11px] text-gray-500">
+                  External link opens in a new tab.
+                </div>
               </div>
             </motion.div>
-          ))}
-        </div>
-      </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* small utilities */}
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
     </div>
   );
 };

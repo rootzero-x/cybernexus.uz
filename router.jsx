@@ -8,12 +8,9 @@ import { Contact } from "./src/Pages/Contact/contact";
 import { Help } from "./src/Pages/Help/help";
 import { Error } from "./src/Pages/Error/error";
 import { Terminal } from "./src/Pages/Terminale/terminal";
-import QRCodeGenerator from "./src/Pages/Qr/qr";
-import Base64Tool from "./src/Pages/Base64/base64";
-import HashGeneral from "./src/Pages/Hash/hash";
-import UuidGenerator from "./src/Pages/UUID/uuid";
 import CertificateGenerator from "./src/Pages/Certificate/certificate";
 import Portfolio from "./src/Pages/Portfolio/portfolio";
+import { Services } from "./src/Services/services";
 
 export const Routers = () => {
   return (
@@ -26,15 +23,12 @@ export const Routers = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/help" element={<Help />} />
         <Route path="/ctf-challenge" element={<Terminal />} />
-        <Route path="/qr-code-generator" element={<QRCodeGenerator />} />
-        <Route path="/base64-code" element={<Base64Tool />} />
-        <Route path="/uuid-generator" element={<UuidGenerator />} />
-        <Route path="/hash-service" element={<HashGeneral />} />
         <Route
           path="/cybernexus-certificate"
           element={<CertificateGenerator />}
         />
         <Route path="/portfolio" element={<Portfolio />} />
+        <Route path="/services" element={<Services />} />
       </Route>
       <Route path="*" element={<Error />} />
     </Routes>

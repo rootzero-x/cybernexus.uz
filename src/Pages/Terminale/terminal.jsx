@@ -1,7 +1,21 @@
-import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+// src/pages/Terminal/Terminal.jsx
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import classNames from "classnames";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FaTerminal,
+  FaInfoCircle,
+  FaQuestionCircle,
+  FaCog,
+  FaHistory,
+  FaTrash,
+  FaSearch,
+  FaStar,
+  FaRegStar,
+} from "react-icons/fa";
 
-// Yangilangan virtual fayl tizimi
+// ──────────────────────────────────────────────
+//                FILESYSTEM (to'liq)
 const filesystem = {
   home: {
     user: {
@@ -357,55 +371,117 @@ const filesystem = {
   },
 };
 
+// ──────────────────────────────────────────────
 export const Terminal = () => {
-  const [input, setInput] = useState(" ");
+  const [input, setInput] = useState("");
   const [output, setOutput] = useState([
-    "Hacker CTF Terminaliga xush kelibsiz. Buyruqlar uchun `help` yozing.",
+    "CyberNexus CTF Terminal — xush kelibsiz",
+    "Buyruqlar ro'yxati uchun:  help  yozing",
+    "Muvaffaqiyatli flag topganlaringizni @snovden_01 ga yuboring!",
   ]);
   const [currentDir, setCurrentDir] = useState("/home/user");
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
-  const [tabCount, setTabCount] = useState(0);
+  const [activeHelp, setActiveHelp] = useState(null);
   const [aliases, setAliases] = useState({});
+  const [tabCount, setTabCount] = useState(0);
+
   const terminalRef = useRef(null);
 
-  // Copy-paste taqiqlash
-  useEffect(() => {
-    const prevent = (e) => e.preventDefault();
-    document.addEventListener("copy", prevent);
-    document.addEventListener("paste", prevent);
-    document.addEventListener("contextmenu", prevent);
-    return () => {
-      document.removeEventListener("copy", prevent);
-      document.removeEventListener("paste", prevent);
-      document.removeEventListener("contextmenu", prevent);
-    };
-  }, []);
+  // Glass + Neon komponentlar (Help.jsx dan olingan va moslashtirilgan)
+  const Glass = ({ className, children, ...props }) => (
+    <div
+      className={classNames(
+        "rounded-xl border-2 bg-black/55 backdrop-blur-xl",
+        "border-neon-green/40 shadow-neon",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </div>
+  );
 
-  // Matrix yomg‘iri effekti
-  useEffect(() => {
-    const matrix = document.querySelector(".matrix-rain");
-    if (!matrix) return;
-    for (let i = 0; i < 500; i++) {
-      const span = document.createElement("span");
-      span.textContent = String.fromCharCode(0x30a0 + Math.random() * 96);
-      span.style.left = Math.random() * 100 + "vw";
-      span.style.animationDelay = Math.random() * 5 + "s";
-      matrix.appendChild(span);
-    }
-    return () => {
-      matrix.innerHTML = "";
-    };
-  }, []);
+  const Chip = ({ active, onClick, icon: Icon, children, ...props }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      className={classNames(
+        "inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-black tracking-wider transition-all",
+        active
+          ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
+          : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green",
+        "cursor-pointer select-none",
+      )}
+      {...props}
+    >
+      {Icon && <Icon className="text-[12px]" />}
+      {children}
+    </button>
+  );
 
-  // Terminalni oxiriga avtomatik aylantirish
-  useEffect(() => {
-    if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-    }
-  }, [output]);
+  // ──────────────────────────────────────────────
+  //                HELP / COMMANDS DATA
+  const commandsHelp = useMemo(
+    () => [
+      {
+        id: "cmd-ls",
+        title: "ls — joriy jilddagi fayllarni ko‘rsatish",
+        description: "Fayllar va papkalarni ro‘yxatlaydi",
+        details:
+          "ls -a          → yashirin fayllarni ham ko‘rsatadi\n" +
+          "ls -l          → batafsil ma'lumot bilan",
+        category: "Basic",
+        tags: ["list", "files", "dir"],
+        icon: FaTerminal,
+      },
+      {
+        id: "cmd-cd",
+        title: "cd — jildlar orasida harakatlanish",
+        description: "Boshqa jildga o‘tish",
+        details:
+          "cd ..          → bir daraja yuqoriga\n" +
+          "cd ~           → home ga qaytish\n" +
+          "cd /etc        → mutlaq yo‘l bilan",
+        category: "Basic",
+        tags: ["change", "directory", "navigation"],
+        icon: FaCog,
+      },
+      {
+        id: "cmd-cat",
+        title: "cat — fayl mazmunini chiqarish",
+        description: "Fayl ichidagi matnni ekranga chiqaradi",
+        details: "cat flag.txt    → flagni o‘qish uchun eng ko‘p ishlatiladi",
+        category: "Basic",
+        tags: ["read", "file", "content"],
+        icon: FaInfoCircle,
+      },
+      {
+        id: "cmd-grep",
+        title: "grep — matn ichidan qidirish",
+        description: "Faylda kalit so‘zni qidiradi",
+        details:
+          "grep flag file.txt\n" + "grep -r flag .     → rekursiv qidiruv",
+        category: "Search",
+        tags: ["search", "pattern", "text"],
+        icon: FaSearch,
+      },
+      {
+        id: "cmd-base64",
+        title: "base64 — kodlash/dekodlash",
+        description: "Base64 formatida matn/fayl bilan ishlash",
+        details: "base64 -d file.txt   → dekodlash",
+        category: "Encoding",
+        tags: ["base64", "decode", "encode"],
+        icon: FaQuestionCircle,
+      },
+      // qolgan buyruqlar uchun shu tarzda qo'shing, hozircha misol
+    ],
+    [],
+  );
 
-  // Jild yoki faylni olish
+  // ──────────────────────────────────────────────
+  //                CORE LOGIC (to'liq, oldingi kod)
   const getNode = (path) => {
     if (!path || path === "/") return filesystem;
     const parts = path.split("/").filter((p) => p);
@@ -417,7 +493,6 @@ export const Terminal = () => {
     return node;
   };
 
-  // Yo‘lni hal qilish
   const resolvePath = (path) => {
     if (!path) return currentDir;
     const base = path.startsWith("/") ? "" : currentDir;
@@ -435,7 +510,6 @@ export const Terminal = () => {
     return fullPath || "/";
   };
 
-  // Fayl yoki jild mavjudligini tekshirish
   const pathExists = (path) => {
     if (!path || path === "/") return true;
     const parentPath = path.substring(0, path.lastIndexOf("/") || 1) || "/";
@@ -444,14 +518,12 @@ export const Terminal = () => {
     return parent && parent[name] !== undefined;
   };
 
-  // Joriy jildni qisqartirish (~ bilan)
   const getPromptDir = () => {
     if (currentDir === "/home/user") return "~";
     if (currentDir.startsWith("/home/user/")) return "~" + currentDir.slice(10);
     return currentDir;
   };
 
-  // Autofill uchun mosliklarni topish
   const getCompletions = (partial, dirPath) => {
     const node = getNode(dirPath);
     if (!node || typeof node !== "object") return [];
@@ -467,7 +539,6 @@ export const Terminal = () => {
       .sort();
   };
 
-  // Fayl uchun statistika (wc, head, tail uchun)
   const getFileStats = (content) => {
     const lines = content.split("\n");
     const words = content.split(/\s+/).filter((w) => w).length;
@@ -475,18 +546,16 @@ export const Terminal = () => {
     return { lines: lines.length, words, chars };
   };
 
-  // ROT13 dekodlash
   const rot13 = (str) => {
     return str.replace(/[a-zA-Z]/g, (c) =>
       String.fromCharCode(
         (c <= "Z" ? 90 : 122) >= c.charCodeAt(0) + 13
           ? c.charCodeAt(0) + 13
-          : c.charCodeAt(0) - 13
-      )
+          : c.charCodeAt(0) - 13,
+      ),
     );
   };
 
-  // Buyruqlarni qayta ishlash
   const handleCommand = (cmd) => {
     let newOutput = [...output];
     let command = cmd.trim();
@@ -512,7 +581,7 @@ export const Terminal = () => {
     switch (cmdName) {
       case "help":
         newOutput.push(
-          "Mavjud buyruqlar: ls, cd, cat, whoami, pwd, clear, base64, grep, sudo, mkdir, touch, rm, echo, find, mv, cp, history, man, alias, unalias, which, wc, head, tail, nano, strings, xxd"
+          "Mavjud buyruqlar: ls, cd, cat, whoami, pwd, clear, base64, grep, sudo, mkdir, touch, rm, echo, find, mv, cp, history, man, alias, unalias, which, wc, head, tail, nano, strings, xxd",
         );
         break;
       case "ls":
@@ -525,7 +594,7 @@ export const Terminal = () => {
           const node = getNode(lsPath);
           if (!node || typeof node !== "object") {
             newOutput.push(
-              `ls: cannot access '${args[0] || ""}': No such file or directory`
+              `ls: cannot access '${args[0] || ""}': No such file or directory`,
             );
           } else {
             const showHidden = args.includes("-a") || args.includes("--all");
@@ -537,7 +606,7 @@ export const Terminal = () => {
               files.forEach((file) => {
                 const isDir = typeof node[file] === "object";
                 newOutput.push(
-                  `${isDir ? "drwxr-xr-x" : "-rw-r--r--"}  user  user  ${file}`
+                  `${isDir ? "drwxr-xr-x" : "-rw-r--r--"}  user  user  ${file}`,
                 );
               });
             } else {
@@ -691,7 +760,7 @@ export const Terminal = () => {
         break;
       case "sudo":
         newOutput.push(
-          "[sudo] password for cybernexus: (try cat /root/flag.txt, /etc/secret.txt, or /root/hidden.txt)"
+          "[sudo] password for cybernexus: (try cat /root/flag.txt, /etc/secret.txt, or /root/hidden.txt)",
         );
         break;
       case "mkdir":
@@ -706,14 +775,14 @@ export const Terminal = () => {
           const dirName = dirPath.split("/").pop();
           if (!pathExists(parentPath)) {
             newOutput.push(
-              `mkdir: cannot create directory '${args[0]}': No such file or directory`
+              `mkdir: cannot create directory '${args[0]}': No such file or directory`,
             );
             return;
           }
           const parent = getNode(parentPath);
           if (parent[dirName]) {
             newOutput.push(
-              `mkdir: cannot create directory '${args[0]}': File exists`
+              `mkdir: cannot create directory '${args[0]}': File exists`,
             );
           } else {
             parent[dirName] = {};
@@ -733,7 +802,7 @@ export const Terminal = () => {
           const fileName = filePath.split("/").pop();
           if (!pathExists(parentPath)) {
             newOutput.push(
-              `touch: cannot touch '${args[0]}': No such file or directory`
+              `touch: cannot touch '${args[0]}': No such file or directory`,
             );
             return;
           }
@@ -761,7 +830,7 @@ export const Terminal = () => {
             newOutput.push(
               `rm: cannot remove '${
                 args[args[0].startsWith("-") ? 1 : 0]
-              }': No such file or directory`
+              }': No such file or directory`,
             );
             return;
           }
@@ -770,7 +839,7 @@ export const Terminal = () => {
             newOutput.push(
               `rm: cannot remove '${
                 args[args[0].startsWith("-") ? 1 : 0]
-              }': Is a directory`
+              }': Is a directory`,
             );
           } else {
             delete parent[rmName];
@@ -790,7 +859,7 @@ export const Terminal = () => {
           const fileName = filePath.split("/").pop();
           if (!pathExists(parentPath)) {
             newOutput.push(
-              `echo: cannot write to '${args[2]}': No such file or directory`
+              `echo: cannot write to '${args[2]}': No such file or directory`,
             );
             return;
           }
@@ -846,13 +915,13 @@ export const Terminal = () => {
           const destName = destPath.split("/").pop();
           if (!pathExists(srcPath)) {
             newOutput.push(
-              `mv: cannot stat '${args[0]}': No such file or directory`
+              `mv: cannot stat '${args[0]}': No such file or directory`,
             );
             return;
           }
           if (!pathExists(destParentPath)) {
             newOutput.push(
-              `mv: cannot move '${args[0]}' to '${args[1]}': No such file or directory`
+              `mv: cannot move '${args[0]}' to '${args[1]}': No such file or directory`,
             );
             return;
           }
@@ -860,7 +929,7 @@ export const Terminal = () => {
           const destParent = getNode(destParentPath);
           if (destParent[destName]) {
             newOutput.push(
-              `mv: cannot move '${args[0]}' to '${args[1]}': File exists`
+              `mv: cannot move '${args[0]}' to '${args[1]}': File exists`,
             );
           } else {
             destParent[destName] = srcParent[srcName];
@@ -885,13 +954,13 @@ export const Terminal = () => {
           const destName = destPath.split("/").pop();
           if (!pathExists(srcPath)) {
             newOutput.push(
-              `cp: cannot stat '${args[0]}': No such file or directory`
+              `cp: cannot stat '${args[0]}': No such file or directory`,
             );
             return;
           }
           if (!pathExists(destParentPath)) {
             newOutput.push(
-              `cp: cannot copy '${args[0]}' to '${args[1]}': No such file or directory`
+              `cp: cannot copy '${args[0]}' to '${args[1]}': No such file or directory`,
             );
             return;
           }
@@ -899,11 +968,11 @@ export const Terminal = () => {
           const destParent = getNode(destParentPath);
           if (destParent[destName]) {
             newOutput.push(
-              `cp: cannot copy '${args[0]}' to '${args[1]}': File exists`
+              `cp: cannot copy '${args[0]}' to '${args[1]}': File exists`,
             );
           } else {
             destParent[destName] = JSON.parse(
-              JSON.stringify(srcParent[srcName])
+              JSON.stringify(srcParent[srcName]),
             );
             newOutput.push("");
           }
@@ -949,7 +1018,7 @@ export const Terminal = () => {
           xxd: "xxd - display file in hex\nUsage: xxd <file>",
         };
         newOutput.push(
-          manuals[args[0]] || `man: no manual entry for ${args[0]}`
+          manuals[args[0]] || `man: no manual entry for ${args[0]}`,
         );
         break;
       case "alias":
@@ -957,7 +1026,7 @@ export const Terminal = () => {
           newOutput.push(
             Object.entries(aliases)
               .map(([name, value]) => `alias ${name}='${value}'`)
-              .join("\n") || "No aliases defined"
+              .join("\n") || "No aliases defined",
           );
         } else if (args[0].includes("=")) {
           const [name, value] = args[0].split("=");
@@ -1097,13 +1166,13 @@ export const Terminal = () => {
           const fileName = filePath.split("/").pop();
           if (!pathExists(parentPath)) {
             newOutput.push(
-              `nano: cannot open '${args[0]}': No such file or directory`
+              `nano: cannot open '${args[0]}': No such file or directory`,
             );
             return;
           }
           const parent = getNode(parentPath);
           newOutput.push(
-            `nano: opened ${args[0]} (type text, then press Ctrl+X to save)`
+            `nano: opened ${args[0]} (type text, then press Ctrl+X to save)`,
           );
           parent[fileName] = parent[fileName] || "";
         }
@@ -1163,14 +1232,13 @@ export const Terminal = () => {
     setTabCount(0);
   };
 
-  // Klaviatura hodisalari
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       const cmd = input.trim();
       if (cmd) {
         handleCommand(cmd);
       }
-      setInput(" ");
+      setInput("");
       setTabCount(0);
     } else if (e.key === "Tab") {
       e.preventDefault();
@@ -1198,67 +1266,261 @@ export const Terminal = () => {
     } else if (e.key === "ArrowUp") {
       if (historyIndex > 0) {
         setHistoryIndex(historyIndex - 1);
-        setInput(history[historyIndex - 1] || " ");
+        setInput(history[historyIndex - 1] || "");
       }
       setTabCount(0);
     } else if (e.key === "ArrowDown") {
       if (historyIndex < history.length - 1) {
         setHistoryIndex(historyIndex + 1);
-        setInput(history[historyIndex + 1] || " ");
+        setInput(history[historyIndex + 1] || "");
       } else {
         setHistoryIndex(history.length);
-        setInput(" ");
+        setInput("");
       }
       setTabCount(0);
     }
   };
 
+  useEffect(() => {
+    if (terminalRef.current) {
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+    }
+  }, [output]);
+
+  // ──────────────────────────────────────────────
   return (
-    <div className="w-full h-screen bg-black text-[#00ff00] font-mono px-4 pt-6 pb-10 relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="scanline"></div>
-        <div className="matrix-rain"></div>
-      </div>
-      <motion.div
-        className="w-full h-full max-w-[1600px] mx-auto border-2 border-[#00ff00] bg-black/80 p-4 rounded-lg shadow-[0_0_15px_rgba(0,255,0,0.5)] animate-fade-in-down flex flex-col"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8 }}
-      >
-        <motion.h1
-          className="text-3xl font-bold mb-4 text-center animate-pulse-glow"
+    <div
+      className="w-full min-h-screen bg-black font-mono text-neon-green overflow-hidden relative"
+      data-mode="dark"
+    >
+      {/* Soft grid fon — Help.jsx dan */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.10]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
+          backgroundSize: "56px 56px",
+        }}
+      />
+
+      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-12">
+        {/* Hero / Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+        >
+          <Glass className="p-6 sm:p-8">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                <div className="h-14 w-14 rounded-xl border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
+                  <FaTerminal className="text-neon-blue text-2xl" />
+                </div>
+                <div>
+                  <h1 className="text-3xl sm:text-4xl font-black tracking-wider text-neon-green">
+                    CTF Terminal
+                  </h1>
+                  <p className="mt-1 text-sm text-neon-blue/90 font-bold tracking-widest">
+                    HACK • LEARN • FIND FLAGS
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+                <Chip
+                  onClick={() => setActiveHelp(commandsHelp[0])} // misol uchun birinchi yordam
+                  icon={FaQuestionCircle}
+                >
+                  Commands Help
+                </Chip>
+                <Chip onClick={() => setOutput([])} icon={FaTrash}>
+                  Clear
+                </Chip>
+              </div>
+            </div>
+          </Glass>
+        </motion.div>
+
+        {/* Terminal oynasi */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mt-6"
+        >
+          <Glass className="p-0 overflow-hidden shadow-neon">
+            <div className="bg-black/70 border-b border-neon-green/30 px-4 py-3 flex items-center gap-3">
+              <div className="flex gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500/70" />
+                <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
+                <div className="w-3 h-3 rounded-full bg-green-500/70" />
+              </div>
+              <span className="text-xs font-bold tracking-widest text-neon-green/80">
+                cybernexus@ctf-terminal:~$
+              </span>
+            </div>
+
+            <div
+              ref={terminalRef}
+              className="h-[70vh] overflow-y-auto p-5 text-sm leading-relaxed whitespace-pre-wrap font-mono"
+            >
+              {output.map((line, i) => (
+                <div
+                  key={i}
+                  className={classNames(
+                    "mb-1",
+                    line.includes("$") && "text-neon-blue font-bold",
+                    line.includes("flag{") && "text-yellow-400 font-black",
+                  )}
+                >
+                  {line}
+                </div>
+              ))}
+
+              {/* Input qatori */}
+              <div className="flex items-center mt-2">
+                <span className="text-neon-blue font-black mr-2">└─$</span>
+                <input
+                  autoFocus
+                  spellCheck={false}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="flex-1 bg-transparent outline-none caret-neon-green text-neon-green"
+                />
+              </div>
+            </div>
+          </Glass>
+        </motion.div>
+
+        {/* Quick info / stats */}
+        <motion.div
+          className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
+          transition={{ delay: 0.4 }}
         >
-          Hacker CTF Terminal
-        </motion.h1>
-        <div
-          className="flex-1 overflow-y-auto p-2 bg-[#1a1a1a] border border-[#00ff00] rounded"
-          ref={terminalRef}
-        >
-          {output.map((line, i) => (
-            <div key={i} className="text-[#00ff00] whitespace-pre-wrap">
-              {line}
+          <Glass className="p-5 text-center">
+            <div className="text-xs text-neon-blue/80 font-black tracking-widest">
+              CURRENT DIR
             </div>
-          ))}
-          <div className="flex flex-col">
-            <div>┌──(cybernexus㉿cybernexus)-[{getPromptDir()}]</div>
-            <div className="flex items-center">
-              <span className="text-[#00ff00]">└─$ </span>
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="flex-1 bg-transparent outline-none text-[#00ff00] caret-[#00ff00]"
-                autoFocus
-                spellCheck="false"
-              />
+            <div className="mt-2 text-lg font-black text-neon-green">
+              {getPromptDir()}
             </div>
-          </div>
-        </div>
-      </motion.div>
+          </Glass>
+
+          <Glass className="p-5 text-center">
+            <div className="text-xs text-neon-blue/80 font-black tracking-widest">
+              COMMANDS USED
+            </div>
+            <div className="mt-2 text-lg font-black text-neon-green">
+              {history.length}
+            </div>
+          </Glass>
+
+          <Glass className="p-5 text-center">
+            <div className="text-xs text-neon-blue/80 font-black tracking-widest">
+              FLAGS FOUND
+            </div>
+            <div className="mt-2 text-lg font-black text-yellow-400">
+              0 / 90 {/* misol, real hisoblash mumkin */}
+            </div>
+          </Glass>
+        </motion.div>
+      </div>
+
+      {/* Help modal — Help.jsx dagi modal dizayniga mos */}
+      <AnimatePresence>
+        {activeHelp && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActiveHelp(null)}
+            />
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={() => setActiveHelp(null)}
+            >
+              <Glass
+                className="w-full max-w-2xl p-6"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="h-14 w-14 rounded-xl border border-neon-green/35 bg-neon-green/10 grid place-items-center">
+                      <FaQuestionCircle className="text-neon-green text-2xl" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-black tracking-wider text-neon-green">
+                        {activeHelp.title}
+                      </h2>
+                      <p className="text-sm text-neon-blue/90">
+                        {activeHelp.category}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setActiveHelp(null)}
+                    className="text-neon-green hover:text-neon-blue"
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+
+                <div className="mt-5 space-y-4">
+                  <div>
+                    <div className="text-xs font-black text-gray-400">
+                      DESCRIPTION
+                    </div>
+                    <p className="mt-1 text-neon-green/90">
+                      {activeHelp.description}
+                    </p>
+                  </div>
+                  <div>
+                    <div className="text-xs font-black text-gray-400">
+                      USAGE EXAMPLES
+                    </div>
+                    <pre className="mt-1 bg-black/60 p-3 rounded-lg text-sm text-neon-green/80 overflow-x-auto">
+                      {activeHelp.details}
+                    </pre>
+                  </div>
+                </div>
+              </Glass>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      <style jsx global>{`
+        .shadow-neon {
+          box-shadow:
+            0 0 15px rgba(0, 255, 170, 0.4),
+            0 0 30px rgba(0, 255, 170, 0.2);
+        }
+        .shadow-neon-blue {
+          box-shadow:
+            0 0 15px rgba(0, 170, 255, 0.5),
+            0 0 35px rgba(0, 170, 255, 0.25);
+        }
+        ::-webkit-scrollbar {
+          width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.4);
+        }
+        ::-webkit-scrollbar-thumb {
+          background: rgba(0, 255, 170, 0.5);
+          border-radius: 3px;
+        }
+      `}</style>
     </div>
   );
 };
+
+export default Terminal;
