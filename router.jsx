@@ -10,7 +10,7 @@ import { Error } from "./src/Pages/Error/error";
 import { Terminal } from "./src/Pages/Terminale/terminal";
 import CertificateGenerator from "./src/Pages/Certificate/certificate";
 import Portfolio from "./src/Pages/Portfolio/portfolio";
-import { Services } from "./src/Services/services";
+import { Services } from "./src/Pages/Services/Services";
 
 export const Routers = () => {
   return (

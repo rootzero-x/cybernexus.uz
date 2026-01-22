@@ -1,6 +1,6 @@
 import React, { useContext, useMemo, useState } from "react";
 import classNames from "classnames";
-import { GlobalContext } from "../GlobalState/globalstate";
+import { GlobalContext } from "../../GlobalState/globalstate";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaLayerGroup,
