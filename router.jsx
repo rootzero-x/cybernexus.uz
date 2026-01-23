@@ -1,7 +1,9 @@
+// src/router/router.jsx
 import { Routes, Route } from "react-router-dom";
+
+import { Layout } from "./src/Layout/layout";
 import { Welcome } from "./src/Pages/Welcome/welcome";
 import { App } from "./src/Pages/App/app";
-import { Layout } from "./src/Layout/layout";
 import { News } from "./src/Pages/News/news";
 import { About } from "./src/Pages/About/about";
 import { Contact } from "./src/Pages/Contact/contact";
@@ -12,24 +14,36 @@ import CertificateGenerator from "./src/Pages/Certificate/certificate";
 import Portfolio from "./src/Pages/Portfolio/portfolio";
 import { Services } from "./src/Pages/Services/Services";
 
+import Auth from "./src/Pages/Auth/Auth";
+import ProtectedRoute from "./src/components/ProtectedRoute";
+
 export const Routers = () => {
   return (
     <Routes>
+      {/* Public pages */}
       <Route element={<Layout />}>
         <Route path="/" element={<Welcome />} />
-        <Route path="premium-app" element={<App />} />
-        <Route path="/news" element={<News />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/help" element={<Help />} />
-        <Route path="/ctf-challenge" element={<Terminal />} />
-        <Route
-          path="/cybernexus-certificate"
-          element={<CertificateGenerator />}
-        />
-        <Route path="/portfolio" element={<Portfolio />} />
-        <Route path="/services" element={<Services />} />
+
+        {/* Auth page */}
+        <Route path="/auth" element={<Auth />} />
+
+        {/* Protected pages */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/premium-app" element={<App />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/ctf-challenge" element={<Terminal />} />
+          <Route
+            path="/cybernexus-certificate"
+            element={<CertificateGenerator />}
+          />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/services" element={<Services />} />
+        </Route>
       </Route>
+
       <Route path="*" element={<Error />} />
     </Routes>
   );
