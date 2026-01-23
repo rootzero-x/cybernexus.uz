@@ -1,7 +1,7 @@
 // src/pages/About/About.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion";
 import {
   FaTelegram,
   FaInstagram,
@@ -34,6 +34,7 @@ import {
  * - Modal details for feature/roadmap cards
  * - Favorites (localStorage)
  * - Minimal clean animations (fade/slide only)
+ * - Live users count from backend API
  */
 
 const fadeUp = {
@@ -65,6 +66,15 @@ export const About = () => {
   const toggleFav = (id) => {
     setFav((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
   };
+
+  // ====== Live stats from backend ======
+  const [usersCount, setUsersCount] = useState(null);
+  const usersMv = useMotionValue(0);
+  const [usersDisplay, setUsersDisplay] = useState("0");
+
+  const API_BASE =
+    import.meta.env.VITE_API_BASE ||
+    "https://694fc8f1e1918.myxvest1.ru/cybernexus/api";
 
   // ====== Modal ======
   const [active, setActive] = useState(null);
@@ -99,6 +109,66 @@ export const About = () => {
     return () => document.removeEventListener("click", onDocClick);
   }, [isPopoverOpen]);
 
+  // ====== Fetch users count from API ======
+  useEffect(() => {
+    let alive = true;
+
+    (async () => {
+      try {
+        const res = await fetch(`${API_BASE}/stats/users_count.php`, {
+          method: "GET",
+          credentials: "include",
+        });
+        const data = await res.json();
+        if (!alive) return;
+
+        const cnt = Number(data?.users_count ?? 0);
+        setUsersCount(cnt);
+
+        // 0 -> cnt animation
+        animateCount(usersMv, cnt, setUsersDisplay);
+      } catch {
+        // fallback: agar API ishlamasa 0 qoladi (UI buzilmaydi)
+        setUsersCount(0);
+        setUsersDisplay("0");
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ====== Helper functions ======
+  const formatCompact = (n) => {
+    const num = Number(n || 0);
+    if (!Number.isFinite(num)) return "0";
+    if (num < 1000) return String(num);
+    if (num < 1_000_000) {
+      const v = num / 1000;
+      return `${v >= 10 ? v.toFixed(0) : v.toFixed(1)}k`;
+    }
+    if (num < 1_000_000_000) {
+      const v = num / 1_000_000;
+      return `${v >= 10 ? v.toFixed(0) : v.toFixed(1)}M`;
+    }
+    const v = num / 1_000_000_000;
+    return `${v >= 10 ? v.toFixed(0) : v.toFixed(1)}B`;
+  };
+
+  const animateCount = (mv, to, onUpdate) => {
+    mv.set(0);
+    return animate(mv, to, {
+      duration: 1.2,
+      ease: "easeOut",
+      onUpdate: (latest) => {
+        const rounded = Math.round(latest);
+        onUpdate(formatCompact(rounded));
+      },
+    });
+  };
+
   // ====== Data ======
   const stats = useMemo(
     () => [
@@ -123,14 +193,14 @@ export const About = () => {
       {
         id: "stat-registered",
         icon: FaCheckCircle,
-        value: "1500+",
+        value: usersDisplay,
         label: "RO'YXATDAN O'TGAN",
         accent: "text-neon-blue",
         border: "border-neon-blue/40",
         bg: "bg-neon-blue/10",
       },
     ],
-    []
+    [usersDisplay]
   );
 
   const features = useMemo(
@@ -139,7 +209,7 @@ export const About = () => {
         id: "feat-cyber-knowledge",
         icon: FaLock,
         title: "KIBERXAVFSIZLIK BILIMI",
-        desc: "Zamonaviy tahdidlardan himoyalanish, xavflarni aniqlash va real amaliyotga yo‘naltirilgan bilimlar.",
+        desc: "Zamonaviy tahdidlardan himoyalanish, xavflarni aniqlash va real amaliyotga yo'naltirilgan bilimlar.",
         details:
           "Threat modeling, incident mindset, va real hayotdagi hujum zanjirlarini tushunish: password hygiene, 2FA, session security, endpoint basics, data protection.",
         tags: ["Defense", "Privacy", "Basics"],
@@ -149,7 +219,7 @@ export const About = () => {
         id: "feat-awareness",
         icon: FaShieldAlt,
         title: "CYBER AWARENESS",
-        desc: "Phishing, social engineering, account security va digital hygiene bo‘yicha mustahkam ko‘nikmalar.",
+        desc: "Phishing, social engineering, account security va digital hygiene bo'yicha mustahkam ko'nikmalar.",
         details:
           "AiTM/credential theft, fake domains, email spoofing, malicious attachments: qanday tanish, qanday tekshirish, qanday bloklash — oddiy va amaliy yondashuv.",
         tags: ["Phishing", "OSINT", "Hygiene"],
@@ -159,7 +229,7 @@ export const About = () => {
         id: "feat-tools",
         icon: FaNetworkWired,
         title: "AMALIY DASTURLAR",
-        desc: "Tarmoq tahlili, vulnerability assessment va pentesting ekotizimi bo‘yicha foydali tool’lar to‘plami.",
+        desc: "Tarmoq tahlili, vulnerability assessment va pentesting ekotizimi bo'yicha foydali tool'lar to'plami.",
         details:
           "Network fundamentals, scanning basics, vuln triage, hardening checklists. Maqsad: xavfsizlikni oshirish — zarar yetkazish emas.",
         tags: ["Tools", "Network", "Vuln"],
@@ -169,9 +239,9 @@ export const About = () => {
         id: "feat-qa",
         icon: FaGraduationCap,
         title: "SAVOL–JAVOB",
-        desc: "Mutaxassislar va community yordamida real case’lar bo‘yicha tezkor maslahatlar va yo‘nalish.",
+        desc: "Mutaxassislar va community yordamida real case'lar bo'yicha tezkor maslahatlar va yo'nalish.",
         details:
-          "Yo‘l xaritasi, resurs tavsiyalari, learning path: boshlovchi → intermediate → portfolio. Savollarni to‘g‘ri berish va debug fikrlash.",
+          "Yo'l xaritasi, resurs tavsiyalari, learning path: boshlovchi → intermediate → portfolio. Savollarni to'g'ri berish va debug fikrlash.",
         tags: ["Community", "Roadmap", "Mentor"],
         link: "https://t.me/cyber_nexuss",
       },
@@ -187,7 +257,7 @@ export const About = () => {
         title: "NEWS FEED (VERIFIED)",
         desc: "CISA / Microsoft / Reuters kabi manbalardan yangiliklar — qisqa va aniq formatda.",
         details:
-          "News bo‘limi: kategoriya, qidiruv, favorites, modal details. Maqsad: o‘qib chiqish oson, share qilish qulay.",
+          "News bo'limi: kategoriya, qidiruv, favorites, modal details. Maqsad: o'qib chiqish oson, share qilish qulay.",
         tags: ["News", "Verified", "Daily"],
         link: "https://cybernexus.uz",
       },
@@ -195,7 +265,7 @@ export const About = () => {
         id: "road-checklists",
         icon: FaClipboardCheck,
         title: "SECURITY CHECKLISTS",
-        desc: "Account security, device hardening va privacy bo‘yicha tayyor checklist’lar.",
+        desc: "Account security, device hardening va privacy bo'yicha tayyor checklist'lar.",
         details:
           "Har bir checklist: 10–20 band, real-world tavsiyalar, 2FA, password manager, backup, browser safety.",
         tags: ["Hardening", "Privacy", "Practice"],
@@ -207,7 +277,7 @@ export const About = () => {
         title: "LABS (SAFE PRACTICE)",
         desc: "Simulyatsiya va xavfsiz mashqlar: log analysis, basic forensics, phishing recognition.",
         details:
-          "Xavfsiz va qonuniy format: faqat o‘rganish va himoya uchun. Yomon niyatli yo‘riqnomalar yo‘q.",
+          "Xavfsiz va qonuniy format: faqat o'rganish va himoya uchun. Yomon niyatli yo'riqnomalar yo'q.",
         tags: ["Labs", "Learning", "Defensive"],
         link: "https://cybernexus.uz",
       },
@@ -356,9 +426,9 @@ export const About = () => {
                   </div>
 
                   <p className="mt-4 text-sm sm:text-base text-gray-300/90 leading-relaxed">
-                    Cyber Nexus — kiberxavfsizlik bo‘yicha amaliy bilimlar, verified yangiliklar
-                    va community’ni birlashtiradigan platforma. Maqsad: raqamli dunyoda xavfsiz
-                    qolish uchun aniq yo‘l-yo‘riq, resurslar va real practice.
+                    Cyber Nexus — kiberxavfsizlik bo'yicha amaliy bilimlar, verified yangiliklar
+                    va community'ni birlashtiradigan platforma. Maqsad: raqamli dunyoda xavfsiz
+                    qolish uchun aniq yo'l-yo'riq, resurslar va real practice.
                   </p>
 
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -415,7 +485,7 @@ export const About = () => {
                             {s.label}
                           </div>
                           <div className={classNames("mt-1 text-lg font-black", s.accent)}>
-                            {s.value}
+                            {s.id === "stat-registered" && usersCount === null ? "..." : s.value}
                           </div>
                         </div>
                       ))}
@@ -481,9 +551,9 @@ export const About = () => {
                     &gt;_ MISSIYAMIZ
                   </h2>
                   <p className="mt-3 text-sm sm:text-base leading-relaxed text-gray-300/90">
-                    Cyber Nexus — kiberxavfsizlikni o‘rganish va amaliyotga tatbiq qilish uchun
-                    premium platforma. Biz “verified sources + real practice + community” konseptini
-                    birlashtiramiz: yangiliklar, roadmap, checklist va o‘quv yo‘nalishlar.
+                    Cyber Nexus — kiberxavfsizlikni o'rganish va amaliyotga tatbiq qilish uchun
+                    premium platforma. Biz "verified sources + real practice + community" konseptini
+                    birlashtiramiz: yangiliklar, roadmap, checklist va o'quv yo'nalishlar.
                   </p>
 
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -541,7 +611,7 @@ export const About = () => {
                   </div>
 
                   <div className={classNames("text-4xl sm:text-5xl font-black", s.accent)}>
-                    {s.value}
+                    {s.id === "stat-registered" && usersCount === null ? "..." : s.value}
                   </div>
                   <div className="mt-2 text-xs font-black tracking-widest text-gray-400">
                     {s.label}
@@ -642,388 +712,388 @@ export const About = () => {
                       </span>
                     </div>
                   </motion.button>
-                );
-              })}
-            </div>
-          </motion.div>
-        </section>
+            );
+          })}
+        </div>
+      </motion.div>
+    </section>
 
-        {/* FEATURED ROADMAP CAROUSEL */}
-        <section
-          ref={refs.Roadmap}
-          data-section="Roadmap"
-          className="mt-10 scroll-mt-[92px]"
-        >
-          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
-                ROADMAP (HIGHLIGHTS)
-              </h2>
-              <span className="text-[11px] text-gray-500">swipe →</span>
-            </div>
+    {/* FEATURED ROADMAP CAROUSEL */}
+    <section
+      ref={refs.Roadmap}
+      data-section="Roadmap"
+      className="mt-10 scroll-mt-[92px]"
+    >
+      <motion.div variants={fadeUp} initial="hidden" animate="show" custom={4}>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+            ROADMAP (HIGHLIGHTS)
+          </h2>
+          <span className="text-[11px] text-gray-500">swipe →</span>
+        </div>
 
-            <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-              {roadmap.map((r) => {
-                const isFav = fav.includes(r.id);
-                return (
-                  <button
-                    key={r.id}
-                    type="button"
-                    onClick={() => setActive({ ...r, kind: "Roadmap" })}
-                    className={classNames(
-                      "min-w-[300px] sm:min-w-[360px] lg:min-w-[420px]",
-                      "rounded-xl border-2 bg-black/70 backdrop-blur p-4 text-left",
-                      "border-neon-green/45 shadow-neon",
-                      "hover:border-neon-blue hover:shadow-neon-blue transition-all"
-                    )}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue shrink-0">
-                          <r.icon className="text-neon-blue" />
-                        </div>
-
-                        <div className="min-w-0">
-                          <div className="text-base font-black tracking-wider text-neon-green truncate">
-                            {r.title}
-                          </div>
-                          <div className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
-                            ROADMAP • PREMIUM UX
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleFav(r.id);
-                        }}
-                        className={classNames(
-                          "shrink-0 rounded-lg border px-2 py-2 transition-all",
-                          isFav
-                            ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-                            : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green"
-                        )}
-                        title="Favorite"
-                        aria-label="favorite"
-                      >
-                        {isFav ? <FaStar /> : <FaRegStar />}
-                      </button>
-                    </div>
-
-                    <div className="mt-3">
-                      <Clamp2 className="mt-2 text-gray-300/90">{r.desc}</Clamp2>
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-between">
-                      <span className="text-[11px] font-bold tracking-widest text-gray-400">
-                        QUICK VIEW
-                      </span>
-                      <span className="text-xs font-black tracking-widest text-neon-blue">
-                        OPEN →
-                      </span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Favorites anchor */}
-            <div id="fav-anchor" className="mt-8" />
-
-            {/* Favorites summary (if any) */}
-            {fav.length > 0 && (
-              <Glass className="mt-5 p-5 sm:p-6 border-neon-blue/40 shadow-neon-blue">
-                <div className="flex items-start gap-3">
-                  <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                    <FaStar className="text-neon-blue" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
-                      FAVORITES
-                    </div>
-                    <p className="mt-2 text-sm text-gray-300/90 leading-relaxed">
-                      Siz saqlagan kartalar:{" "}
-                      <span className="text-neon-green font-black">{fav.length}</span> ta.
-                      (Keyinroq tez qaytib ko‘rish uchun.)
-                    </p>
-
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {fav.slice(0, 10).map((id) => (
-                        <span
-                          key={id}
-                          className="text-[10px] font-black tracking-widest rounded-full border border-neon-green/25 bg-black/60 px-2 py-1 text-neon-green/80"
-                        >
-                          {id}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </Glass>
-            )}
-          </motion.div>
-        </section>
-
-        {/* COMMUNITY (audience + join) */}
-        <section
-          ref={refs.Community}
-          data-section="Community"
-          className="mt-10 scroll-mt-[92px]"
-        >
-          <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}>
-            <Glass className="p-5 sm:p-7 border-neon-blue/40 shadow-neon-blue">
-              <div className="flex items-start gap-4">
-                <div className="shrink-0 h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                  <FaRocket className="text-neon-blue" />
-                </div>
-                <div className="min-w-0 w-full">
-                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-neon-blue">
-                    &gt;_ KIMLAR UCHUN?
-                  </h2>
-
-                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-gray-300/90">
-                    Cyber Nexus — boshlovchilar, talabalar va IT enthusiastlar uchun. Maqsad: tez,
-                    xavfsiz va to‘g‘ri yo‘nalishda o‘sish. “Learning → Practice → Portfolio”.
-                  </p>
-
-                  <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {["O'QUVCHILAR", "TALABALAR", "IT ENTHUSIASTS", "BO'LAJAK MUTAXASSISLAR"].map(
-                      (t, i) => (
-                        <div
-                          key={i}
-                          className="rounded-lg border border-neon-blue/35 bg-neon-blue/5 px-3 py-3 text-center"
-                        >
-                          <FaBolt className="mx-auto text-neon-blue mb-2" />
-                          <div className="text-[11px] sm:text-xs font-black tracking-widest text-gray-300">
-                            {t}
-                          </div>
-                        </div>
-                      )
-                    )}
-                  </div>
-
-                  {/* Social connect popover */}
-                  <div className="mt-6 flex justify-center">
-                    <div className="relative">
-                      <AnimatePresence>
-                        {isPopoverOpen && (
-                          <motion.div
-                            ref={popoverRef}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10, transition: { duration: 0.18 } }}
-                            className={classNames(
-                              "z-50 border-2 border-neon-blue bg-black/95 backdrop-blur rounded-xl p-5",
-                              "shadow-neon-blue",
-                              {
-                                "absolute left-1/2 -translate-x-1/2 -top-[150px] w-[320px]":
-                                  !isMobile,
-                                "fixed bottom-0 left-0 right-0 w-full rounded-b-none":
-                                  isMobile,
-                              }
-                            )}
-                          >
-                            <div className="text-center text-sm font-black tracking-widest text-neon-green">
-                              &gt; CONNECT WITH US_
-                            </div>
-
-                            <div className="mt-5 flex items-center justify-around">
-                              {socials.map((s, i) => (
-                                <a
-                                  key={i}
-                                  href={s.href}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="group flex flex-col items-center gap-2"
-                                >
-                                  <div className="rounded-lg border-2 border-neon-blue bg-neon-blue/10 p-3 transition-all duration-300 group-hover:border-neon-green group-hover:bg-neon-green/10">
-                                    <s.icon className="h-7 w-7 text-neon-blue transition-colors duration-300 group-hover:text-neon-green" />
-                                  </div>
-                                  <span className="text-[11px] font-black tracking-widest text-gray-400 group-hover:text-neon-green">
-                                    {s.label}
-                                  </span>
-                                </a>
-                              ))}
-                            </div>
-
-                            {isMobile && (
-                              <button
-                                onClick={() => setIsPopoverOpen(false)}
-                                className="mt-5 w-full rounded-lg border border-neon-blue/40 bg-neon-blue/10 py-2 text-xs font-black tracking-widest text-neon-blue"
-                              >
-                                YOPISH
-                              </button>
-                            )}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-
-                      <motion.button
-                        ref={joinBtnRef}
-                        onClick={() => setIsPopoverOpen((v) => !v)}
-                        whileTap={{ scale: 0.98 }}
-                        className={classNames(
-                          "px-7 py-3 sm:px-8 sm:py-4 rounded-xl border-2",
-                          "border-neon-green bg-gradient-to-r from-neon-green to-neon-blue",
-                          "text-black font-black tracking-wider",
-                          "shadow-neon hover:shadow-neon-blue transition-all duration-300"
-                        )}
-                      >
-                        &gt; BIZGA QO'SHILING! 🚀
-                      </motion.button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Glass>
-          </motion.div>
-        </section>
-
-        {/* FOOTER */}
-        <motion.footer
-          className="mt-12 pt-8 border-t-2 border-neon-green/30 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
-        >
-          <p className="text-xs sm:text-sm text-gray-500 mb-2 font-mono">
-            © 2025–2026 CYBER NEXUS — ALL RIGHTS RESERVED
-          </p>
-          <a
-            href="https://cybernexus.uz"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-neon-blue hover:text-neon-green transition-colors duration-300 font-black text-sm sm:text-base tracking-wider"
-          >
-            &gt; cybernexus.uz_
-          </a>
-        </motion.footer>
-      </div>
-
-      {/* MODAL (details) */}
-      <AnimatePresence>
-        {active && (
-          <>
-            <motion.div
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setActive(null)}
-            />
-            <motion.div
-              className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 18 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              onClick={() => setActive(null)}
-            >
-              <div
-                className="w-full max-w-2xl rounded-xl border-2 border-neon-blue bg-black/90 backdrop-blur p-5 shadow-neon-blue"
-                onClick={(e) => e.stopPropagation()}
+        <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+          {roadmap.map((r) => {
+            const isFav = fav.includes(r.id);
+            return (
+              <button
+                key={r.id}
+                type="button"
+                onClick={() => setActive({ ...r, kind: "Roadmap" })}
+                className={classNames(
+                  "min-w-[300px] sm:min-w-[360px] lg:min-w-[420px]",
+                  "rounded-xl border-2 bg-black/70 backdrop-blur p-4 text-left",
+                  "border-neon-green/45 shadow-neon",
+                  "hover:border-neon-blue hover:shadow-neon-blue transition-all"
+                )}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="h-14 w-14 rounded-lg border border-neon-green/35 bg-neon-green/10 grid place-items-center overflow-hidden shrink-0">
-                      {active.icon ? (
-                        <active.icon className="text-neon-green text-2xl" />
-                      ) : (
-                        <FaShieldAlt className="text-neon-green text-2xl" />
-                      )}
+                    <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue shrink-0">
+                      <r.icon className="text-neon-blue" />
                     </div>
+
                     <div className="min-w-0">
-                      <div className="text-lg sm:text-xl font-black tracking-wider text-neon-green line-clamp-2">
-                        {active.title}
+                      <div className="text-base font-black tracking-wider text-neon-green truncate">
+                        {r.title}
                       </div>
-                      <div className="mt-2 text-xs font-bold tracking-widest text-neon-blue/90 truncate">
-                        {active.kind || "DETAILS"} • CYBER NEXUS
+                      <div className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
+                        ROADMAP • PREMIUM UX
                       </div>
                     </div>
                   </div>
 
                   <button
                     type="button"
-                    onClick={() => setActive(null)}
-                    className="rounded-lg border border-neon-blue/40 bg-neon-blue/10 p-2 text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
-                    aria-label="close"
-                  >
-                    <FaTimes />
-                  </button>
-                </div>
-
-                <div className="mt-4 rounded-xl border border-neon-green/25 bg-black/60 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-gray-400">
-                    SUMMARY
-                  </div>
-                  <p className="mt-2 text-sm leading-relaxed text-neon-green/85">
-                    {active.desc}
-                  </p>
-                </div>
-
-                <div className="mt-3 rounded-xl border border-neon-green/20 bg-black/50 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-gray-400">
-                    DETAILS
-                  </div>
-                  <p className="mt-2 text-sm leading-relaxed text-neon-green/80">
-                    {active.details}
-                  </p>
-
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {(active.tags || []).map((t) => (
-                      <span
-                        key={t}
-                        className="text-[10px] font-black tracking-widest rounded-full border border-neon-blue/25 bg-neon-blue/10 px-2 py-1 text-neon-blue/90"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mt-4 flex flex-col sm:flex-row gap-3">
-                  <button
-                    type="button"
-                    onClick={() => toggleFav(active.id)}
-                    className={classNames(
-                      "flex-1 rounded-xl border-2 px-4 py-3 text-sm font-black tracking-wider transition-all",
-                      fav.includes(active.id)
-                        ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-                        : "border-neon-green bg-black/60 text-neon-green shadow-neon hover:border-neon-blue hover:text-neon-blue"
-                    )}
-                  >
-                    {fav.includes(active.id) ? "★ Favorited" : "☆ Add to favorites"}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (active.link) window.open(active.link, "_blank", "noopener,noreferrer");
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleFav(r.id);
                     }}
-                    className="flex-1 rounded-xl border-2 border-neon-green bg-gradient-to-r from-neon-green to-neon-blue px-4 py-3 text-sm font-black tracking-wider text-black shadow-neon hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2"
+                    className={classNames(
+                      "shrink-0 rounded-lg border px-2 py-2 transition-all",
+                      isFav
+                        ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
+                        : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green"
+                    )}
+                    title="Favorite"
+                    aria-label="favorite"
                   >
-                    Open <FaExternalLinkAlt className="text-[14px]" />
+                    {isFav ? <FaStar /> : <FaRegStar />}
                   </button>
                 </div>
 
-                <div className="mt-3 text-center text-[11px] text-gray-500">
-                  External link opens in a new tab.
+                <div className="mt-3">
+                  <Clamp2 className="mt-2 text-gray-300/90">{r.desc}</Clamp2>
+                </div>
+
+                <div className="mt-4 flex items-center justify-between">
+                  <span className="text-[11px] font-bold tracking-widest text-gray-400">
+                    QUICK VIEW
+                  </span>
+                  <span className="text-xs font-black tracking-widest text-neon-blue">
+                    OPEN →
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Favorites anchor */}
+        <div id="fav-anchor" className="mt-8" />
+
+        {/* Favorites summary (if any) */}
+        {fav.length > 0 && (
+          <Glass className="mt-5 p-5 sm:p-6 border-neon-blue/40 shadow-neon-blue">
+            <div className="flex items-start gap-3">
+              <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
+                <FaStar className="text-neon-blue" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+                  FAVORITES
+                </div>
+                <p className="mt-2 text-sm text-gray-300/90 leading-relaxed">
+                  Siz saqlagan kartalar:{" "}
+                  <span className="text-neon-green font-black">{fav.length}</span> ta.
+                  (Keyinroq tez qaytib ko'rish uchun.)
+                </p>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {fav.slice(0, 10).map((id) => (
+                    <span
+                      key={id}
+                      className="text-[10px] font-black tracking-widest rounded-full border border-neon-green/25 bg-black/60 px-2 py-1 text-neon-green/80"
+                    >
+                      {id}
+                    </span>
+                  ))}
                 </div>
               </div>
-            </motion.div>
-          </>
+            </div>
+          </Glass>
         )}
-      </AnimatePresence>
+      </motion.div>
+    </section>
 
-      {/* small utilities */}
-      <style>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
-    </div>
-  );
+    {/* COMMUNITY (audience + join) */}
+    <section
+      ref={refs.Community}
+      data-section="Community"
+      className="mt-10 scroll-mt-[92px]"
+    >
+      <motion.div variants={fadeUp} initial="hidden" animate="show" custom={5}>
+        <Glass className="p-5 sm:p-7 border-neon-blue/40 shadow-neon-blue">
+          <div className="flex items-start gap-4">
+            <div className="shrink-0 h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
+              <FaRocket className="text-neon-blue" />
+            </div>
+            <div className="min-w-0 w-full">
+              <h2 className="text-lg sm:text-xl font-black tracking-wider text-neon-blue">
+                &gt;_ KIMLAR UCHUN?
+              </h2>
+
+              <p className="mt-3 text-sm sm:text-base leading-relaxed text-gray-300/90">
+                Cyber Nexus — boshlovchilar, talabalar va IT enthusiastlar uchun. Maqsad: tez,
+                xavfsiz va to'g'ri yo'nalishda o'sish. "Learning → Practice → Portfolio".
+              </p>
+
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {["O'QUVCHILAR", "TALABALAR", "IT ENTHUSIASTS", "BO'LAJAK MUTAXASSISLAR"].map(
+                  (t, i) => (
+                    <div
+                      key={i}
+                      className="rounded-lg border border-neon-blue/35 bg-neon-blue/5 px-3 py-3 text-center"
+                    >
+                      <FaBolt className="mx-auto text-neon-blue mb-2" />
+                      <div className="text-[11px] sm:text-xs font-black tracking-widest text-gray-300">
+                        {t}
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+
+              {/* Social connect popover */}
+              <div className="mt-6 flex justify-center">
+                <div className="relative">
+                  <AnimatePresence>
+                    {isPopoverOpen && (
+                      <motion.div
+                        ref={popoverRef}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10, transition: { duration: 0.18 } }}
+                        className={classNames(
+                          "z-50 border-2 border-neon-blue bg-black/95 backdrop-blur rounded-xl p-5",
+                          "shadow-neon-blue",
+                          {
+                            "absolute left-1/2 -translate-x-1/2 -top-[150px] w-[320px]":
+                              !isMobile,
+                            "fixed bottom-0 left-0 right-0 w-full rounded-b-none":
+                              isMobile,
+                          }
+                        )}
+                      >
+                        <div className="text-center text-sm font-black tracking-widest text-neon-green">
+                          &gt; CONNECT WITH US_
+                        </div>
+
+                        <div className="mt-5 flex items-center justify-around">
+                          {socials.map((s, i) => (
+                            <a
+                              key={i}
+                              href={s.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group flex flex-col items-center gap-2"
+                            >
+                              <div className="rounded-lg border-2 border-neon-blue bg-neon-blue/10 p-3 transition-all duration-300 group-hover:border-neon-green group-hover:bg-neon-green/10">
+                                <s.icon className="h-7 w-7 text-neon-blue transition-colors duration-300 group-hover:text-neon-green" />
+                              </div>
+                              <span className="text-[11px] font-black tracking-widest text-gray-400 group-hover:text-neon-green">
+                                {s.label}
+                              </span>
+                            </a>
+                          ))}
+                        </div>
+
+                        {isMobile && (
+                          <button
+                            onClick={() => setIsPopoverOpen(false)}
+                            className="mt-5 w-full rounded-lg border border-neon-blue/40 bg-neon-blue/10 py-2 text-xs font-black tracking-widest text-neon-blue"
+                          >
+                            YOPISH
+                          </button>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <motion.button
+                    ref={joinBtnRef}
+                    onClick={() => setIsPopoverOpen((v) => !v)}
+                    whileTap={{ scale: 0.98 }}
+                    className={classNames(
+                      "px-7 py-3 sm:px-8 sm:py-4 rounded-xl border-2",
+                      "border-neon-green bg-gradient-to-r from-neon-green to-neon-blue",
+                      "text-black font-black tracking-wider",
+                      "shadow-neon hover:shadow-neon-blue transition-all duration-300"
+                    )}
+                  >
+                    &gt; BIZGA QO'SHILING! 🚀
+                  </motion.button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Glass>
+      </motion.div>
+    </section>
+
+    {/* FOOTER */}
+    <motion.footer
+      className="mt-12 pt-8 border-t-2 border-neon-green/30 text-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
+    >
+      <p className="text-xs sm:text-sm text-gray-500 mb-2 font-mono">
+        © 2025–2026 CYBER NEXUS — ALL RIGHTS RESERVED
+      </p>
+      <a
+        href="https://cybernexus.uz"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-neon-blue hover:text-neon-green transition-colors duration-300 font-black text-sm sm:text-base tracking-wider"
+      >
+        &gt; cybernexus.uz_
+      </a>
+    </motion.footer>
+  </div>
+
+  {/* MODAL (details) */}
+  <AnimatePresence>
+    {active && (
+      <>
+        <motion.div
+          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setActive(null)}
+        />
+        <motion.div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 18 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          onClick={() => setActive(null)}
+        >
+          <div
+            className="w-full max-w-2xl rounded-xl border-2 border-neon-blue bg-black/90 backdrop-blur p-5 shadow-neon-blue"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="h-14 w-14 rounded-lg border border-neon-green/35 bg-neon-green/10 grid place-items-center overflow-hidden shrink-0">
+                  {active.icon ? (
+                    <active.icon className="text-neon-green text-2xl" />
+                  ) : (
+                    <FaShieldAlt className="text-neon-green text-2xl" />
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-lg sm:text-xl font-black tracking-wider text-neon-green line-clamp-2">
+                    {active.title}
+                  </div>
+                  <div className="mt-2 text-xs font-bold tracking-widest text-neon-blue/90 truncate">
+                    {active.kind || "DETAILS"} • CYBER NEXUS
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setActive(null)}
+                className="rounded-lg border border-neon-blue/40 bg-neon-blue/10 p-2 text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                aria-label="close"
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            <div className="mt-4 rounded-xl border border-neon-green/25 bg-black/60 p-4">
+              <div className="text-[11px] font-black tracking-widest text-gray-400">
+                SUMMARY
+              </div>
+              <p className="mt-2 text-sm leading-relaxed text-neon-green/85">
+                {active.desc}
+              </p>
+            </div>
+
+            <div className="mt-3 rounded-xl border border-neon-green/20 bg-black/50 p-4">
+              <div className="text-[11px] font-black tracking-widest text-gray-400">
+                DETAILS
+              </div>
+              <p className="mt-2 text-sm leading-relaxed text-neon-green/80">
+                {active.details}
+              </p>
+
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(active.tags || []).map((t) => (
+                  <span
+                    key={t}
+                    className="text-[10px] font-black tracking-widest rounded-full border border-neon-blue/25 bg-neon-blue/10 px-2 py-1 text-neon-blue/90"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-4 flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={() => toggleFav(active.id)}
+                className={classNames(
+                  "flex-1 rounded-xl border-2 px-4 py-3 text-sm font-black tracking-wider transition-all",
+                  fav.includes(active.id)
+                    ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
+                    : "border-neon-green bg-black/60 text-neon-green shadow-neon hover:border-neon-blue hover:text-neon-blue"
+                )}
+              >
+                {fav.includes(active.id) ? "★ Favorited" : "☆ Add to favorites"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (active.link) window.open(active.link, "_blank", "noopener,noreferrer");
+                }}
+                className="flex-1 rounded-xl border-2 border-neon-green bg-gradient-to-r from-neon-green to-neon-blue px-4 py-3 text-sm font-black tracking-wider text-black shadow-neon hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2"
+              >
+                Open <FaExternalLinkAlt className="text-[14px]" />
+              </button>
+            </div>
+
+            <div className="mt-3 text-center text-[11px] text-gray-500">
+              External link opens in a new tab.
+            </div>
+          </div>
+        </motion.div>
+      </>
+    )}
+  </AnimatePresence>
+
+  {/* small utilities */}
+  <style>{`
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  `}</style>
+</div>
+);
 };
 
 export default About;
