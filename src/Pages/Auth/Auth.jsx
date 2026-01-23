@@ -250,20 +250,6 @@ export const Auth = () => {
                       : "Continue with Google →"}
                   </button>
 
-                  <button
-                    type="button"
-                    disabled={busy || loading}
-                    onClick={popupGoogle}
-                    className={classNames(
-                      "mt-3 w-full rounded-xl border-2 border-neon-blue/40 bg-neon-blue/10",
-                      "px-5 py-3 text-xs font-black tracking-widest text-neon-blue",
-                      "hover:border-neon-green hover:text-neon-green transition-all",
-                      (busy || loading) && "opacity-70 cursor-not-allowed",
-                    )}
-                  >
-                    Popup orqali tanlash
-                  </button>
-
                   {/* GSI mount */}
                   <div id="gsi-btn" className="hidden" />
 
@@ -318,33 +304,6 @@ export const Auth = () => {
               </div>
             ))}
           </div>
-        </motion.div>
-
-        {/* FOOTER INFO */}
-        <motion.div
-          className="mt-7"
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: "easeOut", delay: 0.08 }}
-        >
-          <Glass className="p-5 sm:p-6">
-            <div className="flex items-start gap-3">
-              <div className="h-10 w-10 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center">
-                <FaInfoCircle className="text-neon-blue" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-sm font-black tracking-widest text-neon-blue">
-                  TROUBLESHOOT
-                </div>
-                <p className="mt-2 text-sm text-gray-300/90 leading-relaxed">
-                  Agar login ishlamasa: 1) `.env` da `VITE_GOOGLE_CLIENT_ID`
-                  borligini tekshir, 2) Backend `.env` da `GOOGLE_CLIENT_ID` mos
-                  ekanini tekshir, 3) Browser’da third-party cookie blok bo‘lsa
-                  (Safari) vaqtincha test qilib ko‘r.
-                </p>
-              </div>
-            </div>
-          </Glass>
         </motion.div>
       </div>
 
