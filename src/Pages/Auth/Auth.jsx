@@ -10,7 +10,6 @@ import {
   FaShieldAlt,
   FaLock,
   FaCheckCircle,
-  FaInfoCircle,
 } from "react-icons/fa";
 import { GlobalContext } from "../../GlobalState/globalstate";
 
@@ -63,104 +62,146 @@ export const Auth = () => {
     [],
   );
 
-  const ensureGsi = () =>
+  // ====== ENV DETECTORS ======
+  const isMedianEnv = () => {
+    try {
+      const ua = (navigator.userAgent || "").toLowerCase();
+      // Median docs misoli: navigator.userAgent ichida "median" bo‘ladi
+      return ua.includes("median");
+    } catch {
+      return false;
+    }
+  };
+
+  const hasMedianSocialGoogle = () => {
+    // Median JavaScript Bridge: median.socialLogin.google.login(...)
+    // (lowercase `median` injected in native env)
+    return (
+      typeof window !== "undefined" &&
+      window.median &&
+      window.median.socialLogin &&
+      window.median.socialLogin.google &&
+      typeof window.median.socialLogin.google.login === "function"
+    );
+  };
+
+  // Browser GSI (web) detect
+  const hasWebGsi = () =>
     typeof window !== "undefined" &&
     window.google &&
     window.google.accounts &&
     window.google.accounts.id;
 
-  const startGoogle = async () => {
+  // ====== CORE LOGIN ======
+  const finishLoginWithIdToken = async (idToken) => {
+    if (!idToken) throw new Error("Google token topilmadi (idToken).");
+    await authGoogleLogin(idToken); // ✅ backend cn_session cookie set qiladi
+    await refresh(); // ✅ me.php orqali user olib keladi
+    navigate(from, { replace: true });
+  };
+
+  /**
+   * ✅ Preferred in Median APK:
+   *   median.socialLogin.google.login({ callback })
+   * Docs: JavaScript Callbacks & Server-side Redirects
+   */
+  const startGoogleMedianNative = async () => {
     setErr("");
     setBusy(true);
 
     try {
-      if (!ensureGsi()) {
+      if (!isMedianEnv() || !hasMedianSocialGoogle()) {
         throw new Error(
-          "Google script yuklanmadi. index.html ga GSI script qo‘shilganini tekshiring.",
+          "Median Social Login bridge topilmadi. APK’ni qayta build qiling (Native Plugins → Social Login yoqilgan bo‘lishi shart).",
+        );
+      }
+
+      // timeout guard (native UI ochilmay qolsa)
+      let done = false;
+      const t = setTimeout(() => {
+        if (done) return;
+        done = true;
+        setBusy(false);
+        setErr("Google login timeout. Qayta urinib ko‘ring.");
+      }, 25000);
+
+      // Median callback format providerga qarab farq qiladi.
+      // Google redirect docs’da: idToken=... type=google (server-side)
+      // JS callbackda ham odatda { idToken, type: "google", userDetails... } keladi.
+      window.median.socialLogin.google.login({
+        callback: async (resp) => {
+          try {
+            if (done) return;
+            done = true;
+            clearTimeout(t);
+
+            if (!resp) throw new Error("Google javobi bo‘sh keldi.");
+            if (resp.error) throw new Error(resp.error);
+
+            const idToken =
+              resp.idToken ||
+              resp.id_token ||
+              resp.credential || // ba’zi implementlarda shunday kelishi mumkin
+              "";
+
+            await finishLoginWithIdToken(idToken);
+          } catch (e) {
+            setErr(e?.message || "Google login failed");
+            setBusy(false);
+          }
+        },
+      });
+    } catch (e) {
+      setErr(e?.message || "Median Google login failed");
+      setBusy(false);
+    }
+  };
+
+  /**
+   * ✅ Browser (normal site) GSI flow
+   */
+  const startGoogleBrowserGsi = async () => {
+    setErr("");
+    setBusy(true);
+
+    try {
+      if (!hasWebGsi()) {
+        throw new Error(
+          "Google script yuklanmadi. (Browser) index.html ga GSI script qo‘shilganini tekshiring.",
         );
       }
 
       const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
       if (!clientId) throw new Error("VITE_GOOGLE_CLIENT_ID yo‘q (.env).");
 
-      // One-tap + popup fallback (premium UX)
       window.google.accounts.id.initialize({
         client_id: clientId,
         callback: async (resp) => {
           try {
             const credential = resp?.credential;
             if (!credential) throw new Error("Google credential topilmadi.");
-
-            await authGoogleLogin(credential); // ✅ backend cn_session cookie set qiladi
-            await refresh(); // ✅ me.php orqali user olib keladi
-            navigate(from, { replace: true });
+            await finishLoginWithIdToken(credential);
           } catch (e) {
             setErr(e?.message || "Google login failed");
-          } finally {
             setBusy(false);
           }
         },
       });
 
-      // show One Tap
-      window.google.accounts.id.prompt((n) => {
-        // Agar block bo‘lsa — popup button ishlaydi
-        // Biz baribir quyida "Sign in with Google" buttonni ko‘rsatamiz
-      });
+      // One Tap
+      window.google.accounts.id.prompt(() => {});
     } catch (e) {
       setErr(e?.message || "Google init failed");
       setBusy(false);
     }
   };
 
-  const popupGoogle = () => {
-    setErr("");
-    setBusy(true);
-
-    try {
-      if (!ensureGsi()) throw new Error("Google script yuklanmadi.");
-      const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-      if (!clientId) throw new Error("VITE_GOOGLE_CLIENT_ID yo‘q (.env).");
-
-      window.google.accounts.id.initialize({
-        client_id: clientId,
-        callback: async (resp) => {
-          try {
-            const credential = resp?.credential;
-            if (!credential) throw new Error("Google credential topilmadi.");
-            await authGoogleLogin(credential);
-            await refresh();
-            navigate(from, { replace: true });
-          } catch (e) {
-            setErr(e?.message || "Google login failed");
-          } finally {
-            setBusy(false);
-          }
-        },
-      });
-
-      // render "invisible" + click
-      window.google.accounts.id.renderButton(
-        document.getElementById("gsi-btn"),
-        {
-          theme: "outline",
-          size: "large",
-          text: "continue_with",
-          shape: "pill",
-          width: 320,
-        },
-      );
-
-      // auto click helper
-      setTimeout(() => {
-        const btn = document.querySelector("#gsi-btn div[role=button]");
-        if (btn) btn.click();
-        else setBusy(false);
-      }, 50);
-    } catch (e) {
-      setErr(e?.message || "Google popup failed");
-      setBusy(false);
-    }
+  // ✅ Single entry: decide by environment
+  const startGoogle = async () => {
+    // Median APK ichida web GSI ko‘pincha blok bo‘ladi.
+    // Shuning uchun native bridge birinchi.
+    if (isMedianEnv()) return startGoogleMedianNative();
+    return startGoogleBrowserGsi();
   };
 
   return (
@@ -250,9 +291,6 @@ export const Auth = () => {
                       : "Continue with Google →"}
                   </button>
 
-                  {/* GSI mount */}
-                  <div id="gsi-btn" className="hidden" />
-
                   <div className="mt-4 rounded-xl border border-neon-green/20 bg-black/60 p-4">
                     <div className="text-[11px] font-black tracking-widest text-gray-400">
                       NOTE
@@ -260,6 +298,11 @@ export const Auth = () => {
                     <p className="mt-2 text-sm text-neon-green/80 leading-relaxed">
                       Cookie session httpOnly bo‘lgani uchun frontend token
                       saqlamaydi — xavfsizroq.
+                    </p>
+                    <p className="mt-2 text-xs text-gray-400/80 leading-relaxed">
+                      {isMedianEnv()
+                        ? "Median APK: Native Social Login ishlaydi (web GSI shart emas)."
+                        : "Browser: Google GSI (web) ishlaydi."}
                     </p>
                   </div>
                 </div>
