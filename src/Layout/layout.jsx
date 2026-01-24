@@ -57,7 +57,7 @@ export const Layout = () => {
         {/* ✅ Download tugma faqat login bo‘lsa */}
         {canShowChrome ? (
           <a
-            href="/app-release.apk"
+            href="/cybernexus.apk"
             download
             className={classNames(
               "fixed bottom-2 right-2 z-50 flex items-center gap-1 rounded-md bg-gradient-to-r from-green-500 to-cyan-500 text-black font-mono shadow-[0_0_10px_#0ff] transition-all duration-300",
