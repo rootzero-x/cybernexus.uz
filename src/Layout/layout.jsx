@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
 import classNames from "classnames";
 import { WelcomeHeader } from "./Header";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 export const Layout = () => {
@@ -10,15 +10,18 @@ export const Layout = () => {
 
   const isAuthPage = location.pathname === "/auth";
 
-  /**
-   * ✅ Qoidalar:
-   * - /auth page: Header + Download button ko‘rinmaydi
-   * - Login bo'lmagan payt: Header + Download button ko‘rinmaydi
-   * - Loading payt: flash bo‘lmasligi uchun Header/Download ko‘rsatmaymiz (faqat loader)
-   */
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth < 450 : false,
+  );
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 450);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   const canShowChrome = !!user && !isAuthPage;
 
-  // ✅ Loading payti (session tekshiruvi) — hech narsa “flash” bo‘lmasin
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-neon-green font-mono grid place-items-center">
@@ -37,33 +40,33 @@ export const Layout = () => {
   return (
     <>
       <div className="w-full flex flex-col min-h-screen bg-black overflow-x-hidden">
-        {/* ✅ Header faqat login bo‘lsa */}
         {canShowChrome ? <WelcomeHeader /> : null}
 
         <div
           className={classNames(
             "w-full h-full overflow-y-auto",
-            // ✅ Header bo‘lsa padding qoldir
-            canShowChrome ? "pr-14 sm:pr-16" : "pr-0",
+            // ✅ IMPORTANT: endi o‘ng tomonda bo‘sh strip bo‘lmaydi
+            "pr-0",
+            // ✅ Mobile navbar fixed bo‘lgani uchun content tepaga kirib ketmasin
+            canShowChrome && isMobile ? "pt-[76px]" : "pt-0",
             {
               "animate-[fade-in_1s_ease-in-out]":
                 location.pathname !== "/cyberflow",
-            }
+            },
           )}
         >
           <Outlet />
         </div>
 
-        {/* ✅ Download tugma faqat login bo‘lsa */}
         {canShowChrome ? (
           <a
             href="/cybernexus.apk"
             download
             className={classNames(
-              "fixed bottom-2 right-2 z-50 flex items-center gap-1 rounded-md bg-gradient-to-r from-green-500 to-cyan-500 text-black font-mono shadow-[0_0_10px_#0ff] transition-all duration-300",
+              "fixed bottom-2 right-2 z-30 flex items-center gap-1 rounded-md bg-gradient-to-r from-green-500 to-cyan-500 text-black font-mono shadow-[0_0_10px_#0ff] transition-all duration-300",
               "sm:bottom-4 sm:right-4 sm:gap-2",
               "px-3 py-1 text-xs sm:px-4 sm:py-2 sm:text-sm",
-              "active:shadow-[0_0_20px_#0ff] active:animate-glitch"
+              "active:shadow-[0_0_20px_#0ff] active:animate-glitch",
             )}
           >
             <svg
@@ -86,7 +89,6 @@ export const Layout = () => {
         ) : null}
       </div>
 
-      {/* Glitch animatsiyasi uchun CSS */}
       <style>
         {`
           @keyframes glitch {
