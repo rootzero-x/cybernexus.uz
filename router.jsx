@@ -14,6 +14,7 @@ import { Terminal } from "./src/Pages/Terminale/terminal";
 import CertificateGenerator from "./src/Pages/Certificate/certificate";
 import Portfolio from "./src/Pages/Portfolio/portfolio";
 import { Services } from "./src/Pages/Services/Services";
+import { Privacy } from "./src/Pages/Privacy/Privacy";
 
 import Auth from "./src/Pages/Auth/Auth";
 import ProtectedRoute from "./src/components/ProtectedRoute";
@@ -24,6 +25,7 @@ export const Routers = () => {
       <Route element={<Layout />}>
         {/* ✅ Public: faqat Auth */}
         <Route path="/auth" element={<Auth />} />
+        <Route path="/privacy" element={<Privacy />} />
 
         {/* ✅ Protected: qolgan hammasi */}
         <Route element={<ProtectedRoute />}>
