@@ -18,6 +18,7 @@ import { Privacy } from "./src/Pages/Privacy/Privacy";
 
 import Auth from "./src/Pages/Auth/Auth";
 import ProtectedRoute from "./src/components/ProtectedRoute";
+import { TermsOfService } from "./src/Pages/Terms Of Service/termsofservice";
 
 export const Routers = () => {
   return (
@@ -26,6 +27,7 @@ export const Routers = () => {
         {/* ✅ Public: faqat Auth */}
         <Route path="/auth" element={<Auth />} />
         <Route path="/policy" element={<Privacy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
 
         {/* ✅ Protected: qolgan hammasi */}
         <Route element={<ProtectedRoute />}>
