@@ -25,7 +25,7 @@ export const Routers = () => {
       <Route element={<Layout />}>
         {/* ✅ Public: faqat Auth */}
         <Route path="/auth" element={<Auth />} />
-        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/policy" element={<Privacy />} />
 
         {/* ✅ Protected: qolgan hammasi */}
         <Route element={<ProtectedRoute />}>
