@@ -271,18 +271,9 @@ export const Help = () => {
   };
 
   return (
-    <div className="w-full min-h-screen font-mono text-signal-300 overflow-x-hidden" data-mode={mode}>
-      {/* soft grid background */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.10]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
-          backgroundSize: "56px 56px",
-        }}
-      />
+    <div className="w-full min-h-screen text-white/85 overflow-x-hidden" data-mode={mode}>
 
-      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-12">
+      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-20 pb-24">
         {/* HERO */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
@@ -297,7 +288,7 @@ export const Help = () => {
                     <FaInfoCircle className="text-cyber-300" />
                   </div>
                   <div className="min-w-0">
-                    <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-signal-300 truncate">
+                    <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white truncate">
                       Help Center
                     </h1>
                     <p className="mt-1 text-xs sm:text-sm text-cyber-300/90 font-bold tracking-widest truncate">
@@ -380,7 +371,7 @@ export const Help = () => {
                     <x.icon className="text-cyber-300" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-sm font-black tracking-wider text-signal-300 truncate">
+                    <div className="text-sm font-bold tracking-tight text-white truncate">
                       {x.label}
                     </div>
                     <div className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
@@ -455,7 +446,7 @@ export const Help = () => {
                       </div>
 
                       <div className="min-w-0">
-                        <div className="text-base font-black tracking-wider text-signal-300 truncate">
+                        <div className="text-base font-bold tracking-tight text-white truncate">
                           {item.category}
                         </div>
                         <div className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
@@ -509,7 +500,7 @@ export const Help = () => {
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <div className="text-sm font-black tracking-widest text-cyber-300">SEND A MESSAGE</div>
-                <div className="mt-1 text-xl sm:text-2xl font-black tracking-wider text-signal-300 truncate">
+                <div className="mt-1 text-xl sm:text-2xl font-bold tracking-tight text-white truncate">
                   Xabar yuborish
                 </div>
                 <p className="mt-2 text-sm text-white/55 leading-relaxed">
@@ -594,7 +585,7 @@ export const Help = () => {
                       </div>
 
                       <div className="min-w-0">
-                        <h3 className="text-[13px] sm:text-sm font-black tracking-wider text-signal-300 truncate">
+                        <h3 className="text-[13px] sm:text-sm font-bold tracking-tight text-white truncate">
                           {item.title}
                         </h3>
                         <p className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">

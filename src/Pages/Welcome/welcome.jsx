@@ -28,6 +28,7 @@ import {
   Chip,
   Section,
   Reveal,
+  CharacterPanel,
 } from "../../design";
 
 /**
@@ -247,30 +248,40 @@ export const Welcome = () => {
     <div className="pb-24 pt-14 sm:pt-20">
       {/* ---------------- Hero ---------------- */}
       <Section width="wide">
-        <Reveal>
-          <Eyebrow tone="cyber">CyberNexus Platform</Eyebrow>
-        </Reveal>
+        <div className="grid gap-8 lg:grid-cols-[1.25fr_.75fr] lg:items-center">
+          <div>
+            <Reveal>
+              <Eyebrow tone="cyber">CyberNexus Platform</Eyebrow>
+            </Reveal>
 
-        <Reveal delay={90}>
-          <Display size="xl" className="mt-5">
-            {firstName ? (
-              <>
-                Xush kelibsiz, <Accent>{firstName}</Accent>.
-              </>
-            ) : (
-              <>
-                Kiber xavfsizlikka <Accent>birinchi qadam.</Accent>
-              </>
-            )}
-          </Display>
-        </Reveal>
+            <Reveal delay={90}>
+              <Display size="xl" className="mt-5">
+                {firstName ? (
+                  <>
+                    Xush kelibsiz, <Accent>{firstName}</Accent>.
+                  </>
+                ) : (
+                  <>
+                    Kiber xavfsizlikka <Accent>birinchi qadam.</Accent>
+                  </>
+                )}
+              </Display>
+            </Reveal>
 
-        <Reveal delay={170}>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/55 sm:text-lg">
-            Amaliy mashqlar, tahlil vositalari va jamoa bilimlari — bitta
-            platformada. Quyidagi modullardan birini tanlang.
-          </p>
-        </Reveal>
+            <Reveal delay={170}>
+              <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/55 sm:text-lg">
+                Amaliy mashqlar, tahlil vositalari va jamoa bilimlari — bitta
+                platformada. Quyidagi modullardan birini tanlang.
+              </p>
+            </Reveal>
+          </div>
+
+          {/* Decorative rigged operative — lazily mounted, desktop only. */}
+          <CharacterPanel
+            className="pointer-events-none hidden h-[380px] w-full lg:block"
+            scale={1.2}
+          />
+        </div>
 
         {/* Stat strip */}
         <Reveal delay={250}>

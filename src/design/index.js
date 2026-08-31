@@ -12,3 +12,5 @@ export {
   Rule,
 } from "./primitives";
 export { default as Reveal } from "./Reveal";
+export { default as PageHero } from "./PageHero";
+export { default as CharacterPanel } from "./CharacterPanel";

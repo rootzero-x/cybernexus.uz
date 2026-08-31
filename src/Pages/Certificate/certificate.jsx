@@ -1619,17 +1619,8 @@ const questionBank = [
   // =========================================
   if (stage === "intro") {
     return (
-      <div className="w-full min-h-screen font-mono text-signal-300 overflow-x-hidden">
-        {/* soft grid background */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.10]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
-            backgroundSize: "56px 56px",
-          }}
-        />
-        <div className="relative w-full max-w-3xl mx-auto px-4 sm:px-6 py-10">
+      <div className="w-full min-h-screen text-white/85 overflow-x-hidden">
+        <div className="relative w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-20 pb-24">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1643,7 +1634,7 @@ const questionBank = [
                       <Shield className="text-cyber-300" size={22} />
                     </div>
                     <div className="min-w-0">
-                      <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-signal-300 truncate">
+                      <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white truncate">
                         CyberNexus Exam
                       </h1>
                       <p className="mt-1 text-xs sm:text-sm text-cyber-300/90 font-bold tracking-widest truncate">
@@ -1920,17 +1911,8 @@ const questionBank = [
     const passed = score >= 80;
     const correctAnswers = examQuestions.length ? Math.round((score / 100) * examQuestions.length) : 0;
     return (
-      <div className="w-full min-h-screen font-mono text-signal-300 overflow-x-hidden">
-        {/* soft grid background */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.10]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
-            backgroundSize: "56px 56px",
-          }}
-        />
-        <div className="relative w-full max-w-3xl mx-auto px-4 sm:px-6 py-10">
+      <div className="w-full min-h-screen text-white/85 overflow-x-hidden">
+        <div className="relative w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-20 pb-24">
           <motion.div
             className="w-full"
             initial={{ opacity: 0, y: 18 }}
@@ -2062,17 +2044,8 @@ const questionBank = [
   // =========================================
   if (stage === "certificate") {
     return (
-      <div className="w-full min-h-screen font-mono text-signal-300 overflow-x-hidden">
-        {/* soft grid background */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.10]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
-            backgroundSize: "56px 56px",
-          }}
-        />
-        <div className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 py-10">
+      <div className="w-full min-h-screen text-white/85 overflow-x-hidden">
+        <div className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-20 pb-24">
           <motion.div
             className="w-full"
             initial={{ opacity: 0, y: 18 }}

@@ -397,7 +397,7 @@ export const App = () => {
   );
 
   return (
-    <div className="w-full min-h-screen font-mono text-signal-300 overflow-x-hidden">
+    <div className="w-full min-h-screen text-white/85 overflow-x-hidden">
       {/* soft grid */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.10]"
@@ -408,7 +408,7 @@ export const App = () => {
         }}
       />
 
-      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-12">
+      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-20 pb-24">
         {/* HERO */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
@@ -423,7 +423,7 @@ export const App = () => {
                     <FaShieldAlt className="text-cyber-300" />
                   </div>
                   <div className="min-w-0">
-                    <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-signal-300 truncate">
+                    <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white truncate">
                       Cyber Toolkit
                     </h1>
                     <p className="mt-1 text-xs sm:text-sm text-cyber-300/90 font-bold tracking-widest truncate">
@@ -555,7 +555,7 @@ export const App = () => {
                       </div>
                       {/* ✅ FIX: min-w-0 + truncate */}
                       <div className="min-w-0">
-                        <div className="text-base font-black tracking-wider text-signal-300 truncate">
+                        <div className="text-base font-bold tracking-tight text-white truncate">
                           {app.name}
                         </div>
                         <div className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
@@ -639,7 +639,7 @@ export const App = () => {
 
                       {/* ✅ FIX: title never leaves the card */}
                       <div className="min-w-0">
-                        <h3 className="text-base font-black tracking-wider text-signal-300 truncate">
+                        <h3 className="text-base font-bold tracking-tight text-white truncate">
                           {app.name}
                         </h3>
                         <p className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
@@ -743,7 +743,7 @@ export const App = () => {
                       />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-xl font-black tracking-wider text-signal-300 truncate">
+                      <div className="text-xl font-bold tracking-tight text-white truncate">
                         {active.name}
                       </div>
                       <div className="mt-1 text-xs font-bold tracking-widest text-cyber-300/90 truncate">

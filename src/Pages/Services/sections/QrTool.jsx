@@ -94,7 +94,7 @@ export default function QrTool({ notify }) {
               <div className="text-xs font-black tracking-widest text-cyber-300/90">
                 QR CODE GENERATOR
               </div>
-              <h2 className="mt-1 text-xl sm:text-2xl font-black tracking-wider text-signal-300 truncate">
+              <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight text-white truncate">
                 QR kod yaratish
               </h2>
             </div>
@@ -157,7 +157,7 @@ export default function QrTool({ notify }) {
 
         {/* Right */}
         <div className="w-full lg:w-[420px]">
-          <div className="rounded-2xl border border-signal-500/35 bg-void-850/60 backdrop-blur p-4">
+          <div className="rounded-2xl border border-white/10 bg-white/[.035] backdrop-blur-xl p-4">
             <div className="text-[11px] font-black tracking-widest text-white/45">PREVIEW</div>
 
             <div className="mt-3 flex justify-center">

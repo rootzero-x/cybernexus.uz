@@ -76,7 +76,7 @@ export default function UuidTool({ notify }) {
               <div className="text-xs font-black tracking-widest text-cyber-300/90">
                 UUID GENERATOR
               </div>
-              <h2 className="mt-1 text-xl sm:text-2xl font-black tracking-wider text-signal-300 truncate">
+              <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight text-white truncate">
                 UUID yaratish
               </h2>
             </div>
@@ -166,13 +166,13 @@ export default function UuidTool({ notify }) {
 
         {/* Right (Results) */}
         <div className="w-full lg:w-[520px]">
-          <div className="rounded-2xl border border-signal-500/35 bg-void-850/60 backdrop-blur p-4">
+          <div className="rounded-2xl border border-white/10 bg-white/[.035] backdrop-blur-xl p-4">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <div className="text-[11px] font-black tracking-widest text-white/45">
                   RESULTS
                 </div>
-                <div className="mt-1 text-sm font-black tracking-wider text-signal-300 truncate">
+                <div className="mt-1 text-sm font-bold tracking-tight text-white truncate">
                   {total ? `${total} ta UUID` : "Hali natija yo‘q"}
                 </div>
                 {total > preview.length ? (

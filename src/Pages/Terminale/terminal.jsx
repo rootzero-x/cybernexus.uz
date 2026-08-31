@@ -1303,7 +1303,7 @@ export const Terminal = () => {
         }}
       />
 
-      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-12">
+      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-20 pb-24">
         {/* Hero / Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -1317,7 +1317,7 @@ export const Terminal = () => {
                   <FaTerminal className="text-cyber-300 text-2xl" />
                 </div>
                 <div>
-                  <h1 className="text-3xl sm:text-4xl font-black tracking-wider text-signal-300">
+                  <h1 className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-white">
                     CTF Terminal
                   </h1>
                   <p className="mt-1 text-sm text-cyber-300/90 font-bold tracking-widest">

@@ -22,6 +22,7 @@ import {
   NeonButton,
   Section,
   Reveal,
+  CharacterPanel,
 } from "../../design";
 
 // Only allow same-origin paths back, so a crafted link cannot bounce a
@@ -189,13 +190,23 @@ export const Auth = () => {
             </div>
           </div>
 
-          {/* ---------------- Right: sign-in panel ---------------- */}
-          <Reveal delay={200} y={28}>
-            <HoloCard
-              glow="cyber"
-              intensity={1.4}
-              className="relative overflow-hidden"
-            >
+          {/* ---------------- Right: character + sign-in panel ---------------- */}
+          <div className="relative flex flex-col">
+            {/* The rigged operative sits above the panel in normal flow, so it
+                reserves its own space instead of shifting the layout. It is
+                decorative and lazily mounted — the sign-in button never waits
+                on it. */}
+            <CharacterPanel
+              className="pointer-events-none mx-auto hidden h-[400px] w-full max-w-[460px] lg:block"
+              scale={1.22}
+            />
+
+            <Reveal delay={200} y={28}>
+              <HoloCard
+                glow="cyber"
+                intensity={1.4}
+                className="relative overflow-hidden lg:-mt-10"
+              >
               {/* Rotating aura behind the panel */}
               <div
                 aria-hidden="true"
@@ -266,9 +277,10 @@ export const Auth = () => {
                       : "Median APK aniqlandi, lekin Social Login bridge yoqilmagan."
                     : "Browser — Google Identity Services (rasmiy tugma)."}
                 </p>
-              </div>
-            </HoloCard>
-          </Reveal>
+                </div>
+              </HoloCard>
+            </Reveal>
+          </div>
         </div>
       </Section>
     </div>

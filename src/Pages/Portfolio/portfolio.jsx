@@ -159,16 +159,9 @@ const Portfolio = () => {
   };
 
   return (
-    <div className="w-full min-h-screen font-mono text-signal-300 overflow-x-hidden">
-      {/* soft grid background (Help-style) */}
-      <div
-        className="pointer-events-none fixed inset-0 opacity-[0.10]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
-          backgroundSize: "56px 56px",
-        }}
-      />
+    <div className="w-full min-h-screen text-white/85 overflow-x-hidden">
+      {/* The grid comes from the global Backdrop; a second one here just made
+          the moire pattern muddy. */}
 
       {/* glow blobs (subtle) */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
@@ -411,7 +404,7 @@ const Portfolio = () => {
                       <div className="text-[10px] text-white/35 font-black tracking-widest">
                         {x.k}
                       </div>
-                      <div className="mt-1 text-sm font-black tracking-wider text-signal-300 truncate">
+                      <div className="mt-1 text-sm font-bold tracking-tight text-white truncate">
                         {x.v}
                       </div>
                     </div>
@@ -658,7 +651,7 @@ const Portfolio = () => {
                           <x.icon className="text-cyber-300" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-sm font-black tracking-wider text-signal-300 truncate">
+                          <div className="text-sm font-bold tracking-tight text-white truncate">
                             {x.label}
                           </div>
                           <div className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
