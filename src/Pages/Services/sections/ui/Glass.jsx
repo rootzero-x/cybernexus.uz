@@ -5,8 +5,8 @@ export default function Glass({ className, children }) {
   return (
     <div
       className={classNames(
-        "rounded-xl border-2 bg-black/55 backdrop-blur-xl",
-        "border-neon-green/40 shadow-neon",
+        "rounded-2xl border bg-void-850/55 backdrop-blur-xl",
+        "border-signal-500/40 shadow-glow-sm",
         className
       )}
     >

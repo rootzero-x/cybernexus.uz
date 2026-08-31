@@ -268,7 +268,9 @@ export const App = () => {
   useEffect(() => {
     try {
       localStorage.setItem("cybernexus_apps_fav_v2", JSON.stringify(fav));
-    } catch {}
+    } catch {
+        /* storage unavailable — non-fatal */
+      }
   }, [fav]);
 
   const toggleFav = (name) => {
@@ -355,8 +357,8 @@ export const App = () => {
   const Glass = ({ className, children }) => (
     <div
       className={classNames(
-        "rounded-xl border-2 bg-black/55 backdrop-blur-xl",
-        "border-neon-green/40 shadow-neon",
+        "rounded-2xl border bg-void-850/55 backdrop-blur-xl",
+        "border-signal-500/40 shadow-glow-sm",
         className
       )}
     >
@@ -371,8 +373,8 @@ export const App = () => {
       className={classNames(
         "inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-black tracking-wider transition-all",
         active
-          ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-          : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green"
+          ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+          : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300"
       )}
     >
       {Icon ? <Icon className="text-[12px]" /> : null}
@@ -382,7 +384,7 @@ export const App = () => {
 
   const Clamp2 = ({ children, className }) => (
     <p
-      className={classNames("text-sm text-neon-green/80 leading-relaxed", className)}
+      className={classNames("text-sm text-signal-300/80 leading-relaxed", className)}
       style={{
         display: "-webkit-box",
         WebkitLineClamp: 2,
@@ -395,7 +397,7 @@ export const App = () => {
   );
 
   return (
-    <div className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden">
+    <div className="w-full min-h-screen font-mono text-signal-300 overflow-x-hidden">
       {/* soft grid */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.10]"
@@ -417,20 +419,20 @@ export const App = () => {
             <div className="flex flex-col lg:flex-row lg:items-center gap-5">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3">
-                  <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                    <FaShieldAlt className="text-neon-blue" />
+                  <div className="h-11 w-11 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                    <FaShieldAlt className="text-cyber-300" />
                   </div>
                   <div className="min-w-0">
-                    <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-neon-green truncate">
+                    <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-signal-300 truncate">
                       Cyber Toolkit
                     </h1>
-                    <p className="mt-1 text-xs sm:text-sm text-neon-blue/90 font-bold tracking-widest truncate">
+                    <p className="mt-1 text-xs sm:text-sm text-cyber-300/90 font-bold tracking-widest truncate">
                       PRIVACY • DEFENSE • PENTEST • MOBILE
                     </p>
                   </div>
                 </div>
 
-                <p className="mt-4 text-sm sm:text-base text-gray-300/90 leading-relaxed">
+                <p className="mt-4 text-sm sm:text-base text-white/55 leading-relaxed">
                   Eng kerakli kiberxavfsizlik ilovalari va tool’lar katalogi.
                   Qidir, filterla, “favorite”ga saqla va tez yuklab ol.
                 </p>
@@ -451,25 +453,25 @@ export const App = () => {
               {/* Search */}
               <div className="w-full lg:w-[420px]">
                 <div className="relative">
-                  <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-neon-blue/80" />
+                  <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-cyber-300/80" />
                   <input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Qidirish: tor, vpn, kali, burp..."
                     className={classNames(
-                      "w-full rounded-xl border-2 bg-black/60 backdrop-blur px-10 py-3 text-sm",
-                      "border-neon-green/50 text-neon-green placeholder:text-gray-500",
-                      "focus:outline-none focus:border-neon-blue focus:shadow-neon-blue"
+                      "w-full rounded-2xl border bg-void-850/60 backdrop-blur px-10 py-3 text-sm",
+                      "border-signal-500/50 text-signal-300 placeholder:text-white/35",
+                      "focus:outline-none focus:border-cyber-500 focus:shadow-glow-cyan"
                     )}
                   />
                 </div>
 
-                <div className="mt-3 text-xs text-gray-400 flex items-center justify-between">
+                <div className="mt-3 text-xs text-white/45 flex items-center justify-between">
                   <span>
                     Natija:{" "}
-                    <span className="text-neon-green font-black">{filtered.length}</span>
+                    <span className="text-signal-300 font-black">{filtered.length}</span>
                   </span>
-                  <span className="text-neon-blue/80 font-bold tracking-widest">
+                  <span className="text-cyber-300/80 font-bold tracking-widest">
                     CLICK CARD → DETAILS
                   </span>
                 </div>
@@ -480,7 +482,7 @@ export const App = () => {
 
         {/* STICKY TABS */}
         <div className="sticky top-0 z-30 pt-4">
-          <div className="rounded-xl border border-neon-green/25 bg-black/70 backdrop-blur-xl px-3 py-3">
+          <div className="rounded-xl border border-signal-500/25 bg-void-850/70 backdrop-blur-xl px-3 py-3">
             <div className="flex items-center justify-between gap-3">
               <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
                 {tabs.map((t) => (
@@ -502,7 +504,7 @@ export const App = () => {
                   setTab("All");
                   setFavOnly(false);
                 }}
-                className="hidden sm:inline-flex rounded-lg border border-neon-blue/30 bg-neon-blue/10 px-3 py-2 text-xs font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                className="hidden sm:inline-flex rounded-lg border border-cyber-500/30 bg-cyber-500/10 px-3 py-2 text-xs font-black tracking-widest text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
               >
                 Reset
               </button>
@@ -518,10 +520,10 @@ export const App = () => {
           transition={{ duration: 0.55, ease: "easeOut", delay: 0.05 }}
         >
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+            <h2 className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
               FEATURED
             </h2>
-            <span className="text-[11px] text-gray-500">
+            <span className="text-[11px] text-white/35">
               swipe → (mobile/tablet)
             </span>
           </div>
@@ -536,14 +538,14 @@ export const App = () => {
                   onClick={() => setActive(app)}
                   className={classNames(
                     "min-w-[280px] sm:min-w-[340px] lg:min-w-[380px]",
-                    "rounded-xl border-2 bg-black/70 backdrop-blur p-4 text-left",
-                    "border-neon-green/45 shadow-neon",
-                    "hover:border-neon-blue hover:shadow-neon-blue transition-all"
+                    "rounded-2xl border bg-void-850/70 backdrop-blur p-4 text-left",
+                    "border-signal-500/45 shadow-glow-sm",
+                    "hover:border-cyber-500 hover:shadow-glow-cyan transition-all"
                   )}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center overflow-hidden shrink-0">
+                      <div className="h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center overflow-hidden shrink-0">
                         <img
                           src={app.imageUrl}
                           alt={app.name}
@@ -553,10 +555,10 @@ export const App = () => {
                       </div>
                       {/* ✅ FIX: min-w-0 + truncate */}
                       <div className="min-w-0">
-                        <div className="text-base font-black tracking-wider text-neon-green truncate">
+                        <div className="text-base font-black tracking-wider text-signal-300 truncate">
                           {app.name}
                         </div>
-                        <div className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
+                        <div className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
                           {app.platforms}
                         </div>
                       </div>
@@ -571,8 +573,8 @@ export const App = () => {
                       className={classNames(
                         "shrink-0 rounded-lg border px-2 py-2 transition-all",
                         isFav
-                          ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-                          : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green"
+                          ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+                          : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300"
                       )}
                       title="Favorite"
                       aria-label="favorite"
@@ -586,10 +588,10 @@ export const App = () => {
                   </div>
 
                   <div className="mt-4 flex items-center justify-between">
-                    <span className="text-[11px] font-bold tracking-widest text-gray-400">
+                    <span className="text-[11px] font-bold tracking-widest text-white/45">
                       QUICK VIEW
                     </span>
-                    <span className="text-xs font-black tracking-widest text-neon-blue">
+                    <span className="text-xs font-black tracking-widest text-cyber-300">
                       OPEN →
                     </span>
                   </div>
@@ -615,9 +617,9 @@ export const App = () => {
                   type="button"
                   onClick={() => setActive(app)}
                   className={classNames(
-                    "rounded-xl border-2 bg-black/70 backdrop-blur p-4 text-left",
-                    "border-neon-green/45 shadow-neon",
-                    "hover:border-neon-blue hover:shadow-neon-blue transition-all"
+                    "rounded-2xl border bg-void-850/70 backdrop-blur p-4 text-left",
+                    "border-signal-500/45 shadow-glow-sm",
+                    "hover:border-cyber-500 hover:shadow-glow-cyan transition-all"
                   )}
                   initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -626,7 +628,7 @@ export const App = () => {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center overflow-hidden shrink-0">
+                      <div className="h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center overflow-hidden shrink-0">
                         <img
                           src={app.imageUrl}
                           alt={app.name}
@@ -637,10 +639,10 @@ export const App = () => {
 
                       {/* ✅ FIX: title never leaves the card */}
                       <div className="min-w-0">
-                        <h3 className="text-base font-black tracking-wider text-neon-green truncate">
+                        <h3 className="text-base font-black tracking-wider text-signal-300 truncate">
                           {app.name}
                         </h3>
-                        <p className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
+                        <p className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
                           {app.platforms}
                         </p>
                       </div>
@@ -655,8 +657,8 @@ export const App = () => {
                       className={classNames(
                         "shrink-0 rounded-lg border px-2 py-2 transition-all",
                         isFav
-                          ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-                          : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green"
+                          ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+                          : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300"
                       )}
                       title="Favorite"
                       aria-label="favorite"
@@ -670,10 +672,10 @@ export const App = () => {
                   </div>
 
                   <div className="mt-4 flex items-center justify-between">
-                    <span className="text-[11px] font-bold tracking-widest text-gray-400">
+                    <span className="text-[11px] font-bold tracking-widest text-white/45">
                       DETAILS
                     </span>
-                    <span className="text-xs font-black tracking-widest text-neon-blue">
+                    <span className="text-xs font-black tracking-widest text-cyber-300">
                       OPEN →
                     </span>
                   </div>
@@ -684,11 +686,11 @@ export const App = () => {
 
           {filtered.length === 0 && (
             <div className="mt-8 text-center">
-              <div className="rounded-xl border-2 border-neon-green/35 bg-black/60 p-8 shadow-neon">
-                <div className="text-neon-blue font-black tracking-widest">
+              <div className="rounded-2xl border border-signal-500/35 bg-void-850/60 p-8 shadow-glow-sm">
+                <div className="text-cyber-300 font-black tracking-widest">
                   NO RESULTS
                 </div>
-                <p className="mt-2 text-sm text-gray-400">
+                <p className="mt-2 text-sm text-white/45">
                   Qidiruv yoki tab’ni o‘zgartirib ko‘ring.
                 </p>
                 <button
@@ -698,7 +700,7 @@ export const App = () => {
                     setTab("All");
                     setFavOnly(false);
                   }}
-                  className="mt-5 rounded-lg border-2 border-neon-blue bg-neon-blue/10 px-4 py-2 text-xs font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                  className="mt-5 rounded-lg border-2 border-cyber-500 bg-cyber-500/10 px-4 py-2 text-xs font-black tracking-widest text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
                 >
                   Reset
                 </button>
@@ -713,7 +715,7 @@ export const App = () => {
         {active && (
           <>
             <motion.div
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px]"
+              className="fixed inset-0 z-40 bg-void-850/70 backdrop-blur-[2px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -728,12 +730,12 @@ export const App = () => {
               onClick={() => setActive(null)}
             >
               <div
-                className="w-full max-w-2xl rounded-xl border-2 border-neon-blue bg-black/90 backdrop-blur p-5 shadow-neon-blue"
+                className="w-full max-w-2xl rounded-2xl border border-cyber-500 bg-void-900/90 backdrop-blur p-5 shadow-glow-cyan"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="h-14 w-14 rounded-lg border border-neon-green/35 bg-neon-green/10 grid place-items-center overflow-hidden shrink-0">
+                    <div className="h-14 w-14 rounded-lg border border-signal-500/35 bg-signal-500/10 grid place-items-center overflow-hidden shrink-0">
                       <img
                         src={active.imageUrl}
                         alt={active.name}
@@ -741,10 +743,10 @@ export const App = () => {
                       />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-xl font-black tracking-wider text-neon-green truncate">
+                      <div className="text-xl font-black tracking-wider text-signal-300 truncate">
                         {active.name}
                       </div>
-                      <div className="mt-1 text-xs font-bold tracking-widest text-neon-blue/90 truncate">
+                      <div className="mt-1 text-xs font-bold tracking-widest text-cyber-300/90 truncate">
                         {active.platforms}
                       </div>
                     </div>
@@ -753,18 +755,18 @@ export const App = () => {
                   <button
                     type="button"
                     onClick={() => setActive(null)}
-                    className="rounded-lg border border-neon-blue/40 bg-neon-blue/10 p-2 text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                    className="rounded-lg border border-cyber-500/40 bg-cyber-500/10 p-2 text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
                     aria-label="close"
                   >
                     <FaTimes />
                   </button>
                 </div>
 
-                <div className="mt-4 rounded-xl border border-neon-green/25 bg-black/60 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-gray-400">
+                <div className="mt-4 rounded-xl border border-signal-500/25 bg-void-850/60 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-white/45">
                     ABOUT
                   </div>
-                  <p className="mt-2 text-sm leading-relaxed text-neon-green/85">
+                  <p className="mt-2 text-sm leading-relaxed text-signal-300/85">
                     {active.description}
                   </p>
                 </div>
@@ -774,10 +776,10 @@ export const App = () => {
                     type="button"
                     onClick={() => toggleFav(active.name)}
                     className={classNames(
-                      "flex-1 rounded-xl border-2 px-4 py-3 text-sm font-black tracking-wider transition-all",
+                      "flex-1 rounded-2xl border px-4 py-3 text-sm font-black tracking-wider transition-all",
                       fav.includes(active.name)
-                        ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-                        : "border-neon-green bg-black/60 text-neon-green shadow-neon hover:border-neon-blue hover:text-neon-blue"
+                        ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+                        : "border-signal-500 bg-void-850/60 text-signal-300 shadow-glow-sm hover:border-cyber-500 hover:text-cyber-300"
                     )}
                   >
                     {fav.includes(active.name) ? "★ Favorited" : "☆ Add to favorites"}
@@ -786,13 +788,13 @@ export const App = () => {
                   <button
                     type="button"
                     onClick={() => handleDownload(active.downloadLink)}
-                    className="flex-1 rounded-xl border-2 border-neon-green bg-gradient-to-r from-neon-green to-neon-blue px-4 py-3 text-sm font-black tracking-wider text-black shadow-neon hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2"
+                    className="flex-1 rounded-2xl border border-signal-500 bg-gradient-to-r from-signal-400 to-cyber-400 px-4 py-3 text-sm font-black tracking-wider text-black shadow-glow-sm hover:shadow-glow-cyan transition-all inline-flex items-center justify-center gap-2"
                   >
                     Yuklab olish <FaExternalLinkAlt className="text-[14px]" />
                   </button>
                 </div>
 
-                <div className="mt-3 text-center text-[11px] text-gray-500">
+                <div className="mt-3 text-center text-[11px] text-white/35">
                   External link opens in new tab.
                 </div>
               </div>

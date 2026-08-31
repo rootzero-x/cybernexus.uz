@@ -65,7 +65,9 @@ export const About = () => {
   useEffect(() => {
     try {
       localStorage.setItem("cybernexus_about_fav_v1", JSON.stringify(fav));
-    } catch {}
+    } catch {
+        /* storage unavailable — non-fatal */
+      }
   }, [fav]);
 
   const toggleFav = (id) => {
@@ -192,18 +194,18 @@ export const About = () => {
         icon: FaUsers,
         value: "2",
         label: "SUBDOMAINLAR",
-        accent: "text-neon-green",
-        border: "border-neon-green/40",
-        bg: "bg-neon-green/10",
+        accent: "text-signal-300",
+        border: "border-signal-500/40",
+        bg: "bg-signal-500/10",
       },
       {
         id: "stat-registered",
         icon: FaCheckCircle,
         value: usersDisplay,
         label: "RO'YXATDAN O'TGAN",
-        accent: "text-neon-blue",
-        border: "border-neon-blue/40",
-        bg: "bg-neon-blue/10",
+        accent: "text-cyber-300",
+        border: "border-cyber-500/40",
+        bg: "bg-cyber-500/10",
       },
     ],
     [usersDisplay],
@@ -373,8 +375,8 @@ export const About = () => {
   const Glass = ({ className, children }) => (
     <div
       className={classNames(
-        "rounded-xl border-2 bg-black/55 backdrop-blur-xl",
-        "border-neon-green/40 shadow-neon",
+        "rounded-2xl border bg-void-850/55 backdrop-blur-xl",
+        "border-signal-500/40 shadow-glow-sm",
         className,
       )}
     >
@@ -389,8 +391,8 @@ export const About = () => {
       className={classNames(
         "inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-black tracking-wider transition-all",
         active
-          ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-          : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green",
+          ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+          : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300",
       )}
     >
       {Icon ? <Icon className="text-[12px]" /> : null}
@@ -401,7 +403,7 @@ export const About = () => {
   const Clamp2 = ({ children, className }) => (
     <p
       className={classNames(
-        "text-sm text-neon-green/80 leading-relaxed",
+        "text-sm text-signal-300/80 leading-relaxed",
         className,
       )}
       style={{
@@ -416,7 +418,7 @@ export const About = () => {
   );
 
   return (
-    <div className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden">
+    <div className="w-full min-h-screen font-mono text-signal-300 overflow-x-hidden">
       {/* soft grid background */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.10]"
@@ -440,20 +442,20 @@ export const About = () => {
               <div className="flex flex-col lg:flex-row lg:items-center gap-5">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3">
-                    <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                      <FaShieldAlt className="text-neon-blue" />
+                    <div className="h-11 w-11 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                      <FaShieldAlt className="text-cyber-300" />
                     </div>
                     <div className="min-w-0">
-                      <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-neon-green truncate">
+                      <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-signal-300 truncate">
                         Cyber Nexus
                       </h1>
-                      <p className="mt-1 text-xs sm:text-sm text-neon-blue/90 font-bold tracking-widest truncate">
+                      <p className="mt-1 text-xs sm:text-sm text-cyber-300/90 font-bold tracking-widest truncate">
                         ABOUT • ROADMAP • COMMUNITY
                       </p>
                     </div>
                   </div>
 
-                  <p className="mt-4 text-sm sm:text-base text-gray-300/90 leading-relaxed">
+                  <p className="mt-4 text-sm sm:text-base text-white/55 leading-relaxed">
                     Cyber Nexus — kiberxavfsizlik bo'yicha amaliy bilimlar,
                     verified yangiliklar va community'ni birlashtiradigan
                     platforma. Maqsad: raqamli dunyoda xavfsiz qolish uchun aniq
@@ -495,7 +497,7 @@ export const About = () => {
 
                 {/* Right side badge */}
                 <div className="w-full lg:w-[440px]">
-                  <div className="rounded-xl border-2 border-yellow-400/60 bg-yellow-400/10 p-4 shadow-[0_0_24px_rgba(250,204,21,0.18)]">
+                  <div className="rounded-2xl border border-yellow-400/60 bg-yellow-400/10 p-4 shadow-[0_0_24px_rgba(250,204,21,0.18)]">
                     <div className="flex items-center gap-3">
                       <div className="h-12 w-12 rounded-lg border border-yellow-400/60 bg-yellow-400/10 grid place-items-center">
                         <FaTrophy className="text-yellow-400 text-xl" />
@@ -507,7 +509,7 @@ export const About = () => {
                         <div className="text-sm sm:text-base font-black text-white tracking-wider truncate">
                           VILOYAT BOSQICHI
                         </div>
-                        <div className="mt-1 text-[11px] font-bold tracking-widest text-gray-300 truncate">
+                        <div className="mt-1 text-[11px] font-bold tracking-widest text-white/60 truncate">
                           PROGRESS • REAL RESULTS • COMMUNITY
                         </div>
                       </div>
@@ -518,11 +520,11 @@ export const About = () => {
                         <div
                           key={s.id}
                           className={classNames(
-                            "rounded-lg border bg-black/60 px-3 py-3 text-center",
+                            "rounded-lg border bg-void-850/60 px-3 py-3 text-center",
                             s.border,
                           )}
                         >
-                          <div className="text-[10px] font-black tracking-widest text-gray-400">
+                          <div className="text-[10px] font-black tracking-widest text-white/45">
                             {s.label}
                           </div>
                           <div
@@ -540,11 +542,11 @@ export const About = () => {
                     </div>
                   </div>
 
-                  <div className="mt-3 text-xs text-gray-400 flex items-center justify-between">
-                    <span className="text-neon-green/80 font-bold tracking-widest">
+                  <div className="mt-3 text-xs text-white/45 flex items-center justify-between">
+                    <span className="text-signal-300/80 font-bold tracking-widest">
                       CLICK CARDS → DETAILS
                     </span>
-                    <span className="text-neon-blue/80 font-bold tracking-widest">
+                    <span className="text-cyber-300/80 font-bold tracking-widest">
                       PREMIUM UI
                     </span>
                   </div>
@@ -556,7 +558,7 @@ export const About = () => {
 
         {/* STICKY SECTION TABS */}
         <div className="sticky top-0 z-30 pt-4">
-          <div className="rounded-xl border border-neon-green/25 bg-black/70 backdrop-blur-xl px-3 py-3">
+          <div className="rounded-xl border border-signal-500/25 bg-void-850/70 backdrop-blur-xl px-3 py-3">
             <div className="flex items-center justify-between gap-3">
               <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
                 {sectionTabs.map((t) => (
@@ -574,7 +576,7 @@ export const About = () => {
               <button
                 type="button"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                className="hidden sm:inline-flex rounded-lg border border-neon-blue/30 bg-neon-blue/10 px-3 py-2 text-xs font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                className="hidden sm:inline-flex rounded-lg border border-cyber-500/30 bg-cyber-500/10 px-3 py-2 text-xs font-black tracking-widest text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
               >
                 TOP
               </button>
@@ -596,14 +598,14 @@ export const About = () => {
           >
             <Glass className="p-5 sm:p-7">
               <div className="flex items-start gap-4">
-                <div className="shrink-0 h-12 w-12 rounded-lg border border-neon-green/40 bg-neon-green/10 grid place-items-center shadow-neon">
-                  <FaShieldAlt className="text-neon-green" />
+                <div className="shrink-0 h-12 w-12 rounded-lg border border-signal-500/40 bg-signal-500/10 grid place-items-center shadow-glow-sm">
+                  <FaShieldAlt className="text-signal-300" />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-neon-green">
+                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-signal-300">
                     &gt;_ MISSIYAMIZ
                   </h2>
-                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-gray-300/90">
+                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-white/55">
                     Cyber Nexus — kiberxavfsizlikni o'rganish va amaliyotga
                     tatbiq qilish uchun premium platforma. Biz "verified sources
                     + real practice + community" konseptini birlashtiramiz:
@@ -652,10 +654,10 @@ export const About = () => {
             custom={2}
           >
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+              <h2 className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
                 REAL NATIJALAR
               </h2>
-              <span className="text-[11px] text-gray-500">
+              <span className="text-[11px] text-white/35">
                 trusted growth →
               </span>
             </div>
@@ -672,8 +674,8 @@ export const About = () => {
                     ease: "easeOut",
                   }}
                   className={classNames(
-                    "rounded-xl border-2 bg-black/70 backdrop-blur p-5 text-center",
-                    "shadow-neon transition-all hover:border-neon-blue hover:shadow-neon-blue",
+                    "rounded-2xl border bg-void-850/70 backdrop-blur p-5 text-center",
+                    "shadow-glow-sm transition-all hover:border-cyber-500 hover:shadow-glow-cyan",
                     s.border,
                   )}
                 >
@@ -697,7 +699,7 @@ export const About = () => {
                       ? "..."
                       : s.value}
                   </div>
-                  <div className="mt-2 text-xs font-black tracking-widest text-gray-400">
+                  <div className="mt-2 text-xs font-black tracking-widest text-white/45">
                     {s.label}
                   </div>
                 </motion.div>
@@ -719,19 +721,26 @@ export const About = () => {
             custom={3}
           >
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-green">
+              <h2 className="text-sm sm:text-base font-black tracking-widest text-signal-300">
                 PLATFORM IMKONIYATLARI
               </h2>
-              <span className="text-[11px] text-gray-500">click → details</span>
+              <span className="text-[11px] text-white/35">click → details</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {features.map((f, idx) => {
                 const isFav = fav.includes(f.id);
                 return (
-                  <motion.button
+                  <motion.div
                     key={f.id}
-                    type="button"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        e.currentTarget.click();
+                      }
+                    }}
                     onClick={() => setActive({ ...f, kind: "Feature" })}
                     initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -742,21 +751,21 @@ export const About = () => {
                     }}
                     whileHover={{ y: -3 }}
                     className={classNames(
-                      "rounded-xl border-2 bg-black/70 backdrop-blur p-5 text-left",
-                      "border-neon-green/45 shadow-neon",
-                      "hover:border-neon-blue hover:shadow-neon-blue transition-all",
+                      "rounded-2xl border bg-void-850/70 backdrop-blur p-5 text-left",
+                      "border-signal-500/45 shadow-glow-sm",
+                      "hover:border-cyber-500 hover:shadow-glow-cyan transition-all",
                     )}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue shrink-0">
-                          <f.icon className="text-neon-blue" />
+                        <div className="h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan shrink-0">
+                          <f.icon className="text-cyber-300" />
                         </div>
                         <div className="min-w-0">
                           <div className="text-sm sm:text-base font-black tracking-wider text-white truncate">
                             {f.title}
                           </div>
-                          <div className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
+                          <div className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
                             FEATURE • DEFENSIVE • PRACTICAL
                           </div>
                         </div>
@@ -771,8 +780,8 @@ export const About = () => {
                         className={classNames(
                           "shrink-0 rounded-lg border px-2 py-2 transition-all",
                           isFav
-                            ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-                            : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green",
+                            ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+                            : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300",
                         )}
                         title="Favorite"
                         aria-label="favorite"
@@ -782,14 +791,14 @@ export const About = () => {
                     </div>
 
                     <div className="mt-3">
-                      <Clamp2 className="text-gray-300/90">{f.desc}</Clamp2>
+                      <Clamp2 className="text-white/55">{f.desc}</Clamp2>
                     </div>
 
                     <div className="mt-4 flex flex-wrap gap-2">
                       {(f.tags || []).slice(0, 3).map((t) => (
                         <span
                           key={t}
-                          className="text-[10px] font-black tracking-widest rounded-full border border-neon-green/25 bg-black/60 px-2 py-1 text-neon-green/80"
+                          className="text-[10px] font-black tracking-widest rounded-full border border-signal-500/25 bg-void-850/60 px-2 py-1 text-signal-300/80"
                         >
                           {t}
                         </span>
@@ -797,14 +806,14 @@ export const About = () => {
                     </div>
 
                     <div className="mt-4 flex items-center justify-between">
-                      <span className="text-[11px] font-bold tracking-widest text-gray-400">
+                      <span className="text-[11px] font-bold tracking-widest text-white/45">
                         DETAILS
                       </span>
-                      <span className="text-xs font-black tracking-widest text-neon-blue">
+                      <span className="text-xs font-black tracking-widest text-cyber-300">
                         OPEN →
                       </span>
                     </div>
-                  </motion.button>
+                  </motion.div>
                 );
               })}
             </div>
@@ -824,38 +833,45 @@ export const About = () => {
             custom={4}
           >
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+              <h2 className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
                 ROADMAP (HIGHLIGHTS)
               </h2>
-              <span className="text-[11px] text-gray-500">swipe →</span>
+              <span className="text-[11px] text-white/35">swipe →</span>
             </div>
 
             <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
               {roadmap.map((r) => {
                 const isFav = fav.includes(r.id);
                 return (
-                  <button
+                  <div
                     key={r.id}
-                    type="button"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        e.currentTarget.click();
+                      }
+                    }}
                     onClick={() => setActive({ ...r, kind: "Roadmap" })}
                     className={classNames(
                       "min-w-[300px] sm:min-w-[360px] lg:min-w-[420px]",
-                      "rounded-xl border-2 bg-black/70 backdrop-blur p-4 text-left",
-                      "border-neon-green/45 shadow-neon",
-                      "hover:border-neon-blue hover:shadow-neon-blue transition-all",
+                      "rounded-2xl border bg-void-850/70 backdrop-blur p-4 text-left",
+                      "border-signal-500/45 shadow-glow-sm",
+                      "hover:border-cyber-500 hover:shadow-glow-cyan transition-all",
                     )}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue shrink-0">
-                          <r.icon className="text-neon-blue" />
+                        <div className="h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan shrink-0">
+                          <r.icon className="text-cyber-300" />
                         </div>
 
                         <div className="min-w-0">
-                          <div className="text-base font-black tracking-wider text-neon-green truncate">
+                          <div className="text-base font-black tracking-wider text-signal-300 truncate">
                             {r.title}
                           </div>
-                          <div className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
+                          <div className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
                             ROADMAP • PREMIUM UX
                           </div>
                         </div>
@@ -870,8 +886,8 @@ export const About = () => {
                         className={classNames(
                           "shrink-0 rounded-lg border px-2 py-2 transition-all",
                           isFav
-                            ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-                            : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green",
+                            ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+                            : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300",
                         )}
                         title="Favorite"
                         aria-label="favorite"
@@ -881,20 +897,20 @@ export const About = () => {
                     </div>
 
                     <div className="mt-3">
-                      <Clamp2 className="mt-2 text-gray-300/90">
+                      <Clamp2 className="mt-2 text-white/55">
                         {r.desc}
                       </Clamp2>
                     </div>
 
                     <div className="mt-4 flex items-center justify-between">
-                      <span className="text-[11px] font-bold tracking-widest text-gray-400">
+                      <span className="text-[11px] font-bold tracking-widest text-white/45">
                         QUICK VIEW
                       </span>
-                      <span className="text-xs font-black tracking-widest text-neon-blue">
+                      <span className="text-xs font-black tracking-widest text-cyber-300">
                         OPEN →
                       </span>
                     </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>
@@ -904,18 +920,18 @@ export const About = () => {
 
             {/* Favorites summary (if any) */}
             {fav.length > 0 && (
-              <Glass className="mt-5 p-5 sm:p-6 border-neon-blue/40 shadow-neon-blue">
+              <Glass className="mt-5 p-5 sm:p-6 border-cyber-500/40 shadow-glow-cyan">
                 <div className="flex items-start gap-3">
-                  <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                    <FaStar className="text-neon-blue" />
+                  <div className="h-11 w-11 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                    <FaStar className="text-cyber-300" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+                    <div className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
                       FAVORITES
                     </div>
-                    <p className="mt-2 text-sm text-gray-300/90 leading-relaxed">
+                    <p className="mt-2 text-sm text-white/55 leading-relaxed">
                       Siz saqlagan kartalar:{" "}
-                      <span className="text-neon-green font-black">
+                      <span className="text-signal-300 font-black">
                         {fav.length}
                       </span>{" "}
                       ta. (Keyinroq tez qaytib ko'rish uchun.)
@@ -925,7 +941,7 @@ export const About = () => {
                       {fav.slice(0, 10).map((id) => (
                         <span
                           key={id}
-                          className="text-[10px] font-black tracking-widest rounded-full border border-neon-green/25 bg-black/60 px-2 py-1 text-neon-green/80"
+                          className="text-[10px] font-black tracking-widest rounded-full border border-signal-500/25 bg-void-850/60 px-2 py-1 text-signal-300/80"
                         >
                           {id}
                         </span>
@@ -950,17 +966,17 @@ export const About = () => {
             animate="show"
             custom={5}
           >
-            <Glass className="p-5 sm:p-7 border-neon-blue/40 shadow-neon-blue">
+            <Glass className="p-5 sm:p-7 border-cyber-500/40 shadow-glow-cyan">
               <div className="flex items-start gap-4">
-                <div className="shrink-0 h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                  <FaRocket className="text-neon-blue" />
+                <div className="shrink-0 h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                  <FaRocket className="text-cyber-300" />
                 </div>
                 <div className="min-w-0 w-full">
-                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-neon-blue">
+                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-cyber-300">
                     &gt;_ KIMLAR UCHUN?
                   </h2>
 
-                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-gray-300/90">
+                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-white/55">
                     Cyber Nexus — boshlovchilar, talabalar va IT enthusiastlar
                     uchun. Maqsad: tez, xavfsiz va to'g'ri yo'nalishda o'sish.
                     "Learning → Practice → Portfolio".
@@ -975,10 +991,10 @@ export const About = () => {
                     ].map((t, i) => (
                       <div
                         key={i}
-                        className="rounded-lg border border-neon-blue/35 bg-neon-blue/5 px-3 py-3 text-center"
+                        className="rounded-lg border border-cyber-500/35 bg-cyber-500/5 px-3 py-3 text-center"
                       >
-                        <FaBolt className="mx-auto text-neon-blue mb-2" />
-                        <div className="text-[11px] sm:text-xs font-black tracking-widest text-gray-300">
+                        <FaBolt className="mx-auto text-cyber-300 mb-2" />
+                        <div className="text-[11px] sm:text-xs font-black tracking-widest text-white/60">
                           {t}
                         </div>
                       </div>
@@ -1000,8 +1016,8 @@ export const About = () => {
                               transition: { duration: 0.18 },
                             }}
                             className={classNames(
-                              "z-50 border-2 border-neon-blue bg-black/95 backdrop-blur rounded-xl p-5",
-                              "shadow-neon-blue",
+                              "z-50 border-2 border-cyber-500 bg-black/95 backdrop-blur rounded-xl p-5",
+                              "shadow-glow-cyan",
                               {
                                 "absolute left-1/2 -translate-x-1/2 -top-[150px] w-[320px]":
                                   !isMobile,
@@ -1010,7 +1026,7 @@ export const About = () => {
                               },
                             )}
                           >
-                            <div className="text-center text-sm font-black tracking-widest text-neon-green">
+                            <div className="text-center text-sm font-black tracking-widest text-signal-300">
                               &gt; CONNECT WITH US_
                             </div>
 
@@ -1023,10 +1039,10 @@ export const About = () => {
                                   rel="noopener noreferrer"
                                   className="group flex flex-col items-center gap-2"
                                 >
-                                  <div className="rounded-lg border-2 border-neon-blue bg-neon-blue/10 p-3 transition-all duration-300 group-hover:border-neon-green group-hover:bg-neon-green/10">
-                                    <s.icon className="h-7 w-7 text-neon-blue transition-colors duration-300 group-hover:text-neon-green" />
+                                  <div className="rounded-lg border-2 border-cyber-500 bg-cyber-500/10 p-3 transition-all duration-300 group-hover:border-signal-500 group-hover:bg-signal-500/10">
+                                    <s.icon className="h-7 w-7 text-cyber-300 transition-colors duration-300 group-hover:text-signal-300" />
                                   </div>
-                                  <span className="text-[11px] font-black tracking-widest text-gray-400 group-hover:text-neon-green">
+                                  <span className="text-[11px] font-black tracking-widest text-white/45 group-hover:text-signal-300">
                                     {s.label}
                                   </span>
                                 </a>
@@ -1036,7 +1052,7 @@ export const About = () => {
                             {isMobile && (
                               <button
                                 onClick={() => setIsPopoverOpen(false)}
-                                className="mt-5 w-full rounded-lg border border-neon-blue/40 bg-neon-blue/10 py-2 text-xs font-black tracking-widest text-neon-blue"
+                                className="mt-5 w-full rounded-lg border border-cyber-500/40 bg-cyber-500/10 py-2 text-xs font-black tracking-widest text-cyber-300"
                               >
                                 YOPISH
                               </button>
@@ -1050,10 +1066,10 @@ export const About = () => {
                         onClick={() => setIsPopoverOpen((v) => !v)}
                         whileTap={{ scale: 0.98 }}
                         className={classNames(
-                          "px-7 py-3 sm:px-8 sm:py-4 rounded-xl border-2",
-                          "border-neon-green bg-gradient-to-r from-neon-green to-neon-blue",
+                          "px-7 py-3 sm:px-8 sm:py-4 rounded-2xl border",
+                          "border-signal-500 bg-gradient-to-r from-signal-400 to-cyber-400",
                           "text-black font-black tracking-wider",
-                          "shadow-neon hover:shadow-neon-blue transition-all duration-300",
+                          "shadow-glow-sm hover:shadow-glow-cyan transition-all duration-300",
                         )}
                       >
                         &gt; BIZGA QO'SHILING! 🚀
@@ -1068,19 +1084,19 @@ export const About = () => {
 
         {/* FOOTER */}
         <motion.footer
-          className="mt-12 pt-8 border-t-2 border-neon-green/30 text-center"
+          className="mt-12 pt-8 border-t-2 border-signal-500/30 text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
         >
-          <p className="text-xs sm:text-sm text-gray-500 mb-2 font-mono">
+          <p className="text-xs sm:text-sm text-white/35 mb-2 font-mono">
             © 2025–2026 CYBER NEXUS — ALL RIGHTS RESERVED
           </p>
           <a
             href="https://cybernexus.uz"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-neon-blue hover:text-neon-green transition-colors duration-300 font-black text-sm sm:text-base tracking-wider"
+            className="text-cyber-300 hover:text-signal-300 transition-colors duration-300 font-black text-sm sm:text-base tracking-wider"
           >
             &gt; cybernexus.uz_
           </a>
@@ -1092,7 +1108,7 @@ export const About = () => {
         {active && (
           <>
             <motion.div
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px]"
+              className="fixed inset-0 z-40 bg-void-850/70 backdrop-blur-[2px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -1107,23 +1123,23 @@ export const About = () => {
               onClick={() => setActive(null)}
             >
               <div
-                className="w-full max-w-2xl rounded-xl border-2 border-neon-blue bg-black/90 backdrop-blur p-5 shadow-neon-blue"
+                className="w-full max-w-2xl rounded-2xl border border-cyber-500 bg-void-900/90 backdrop-blur p-5 shadow-glow-cyan"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="h-14 w-14 rounded-lg border border-neon-green/35 bg-neon-green/10 grid place-items-center overflow-hidden shrink-0">
+                    <div className="h-14 w-14 rounded-lg border border-signal-500/35 bg-signal-500/10 grid place-items-center overflow-hidden shrink-0">
                       {active.icon ? (
-                        <active.icon className="text-neon-green text-2xl" />
+                        <active.icon className="text-signal-300 text-2xl" />
                       ) : (
-                        <FaShieldAlt className="text-neon-green text-2xl" />
+                        <FaShieldAlt className="text-signal-300 text-2xl" />
                       )}
                     </div>
                     <div className="min-w-0">
-                      <div className="text-lg sm:text-xl font-black tracking-wider text-neon-green line-clamp-2">
+                      <div className="text-lg sm:text-xl font-black tracking-wider text-signal-300 line-clamp-2">
                         {active.title}
                       </div>
-                      <div className="mt-2 text-xs font-bold tracking-widest text-neon-blue/90 truncate">
+                      <div className="mt-2 text-xs font-bold tracking-widest text-cyber-300/90 truncate">
                         {active.kind || "DETAILS"} • CYBER NEXUS
                       </div>
                     </div>
@@ -1132,27 +1148,27 @@ export const About = () => {
                   <button
                     type="button"
                     onClick={() => setActive(null)}
-                    className="rounded-lg border border-neon-blue/40 bg-neon-blue/10 p-2 text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                    className="rounded-lg border border-cyber-500/40 bg-cyber-500/10 p-2 text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
                     aria-label="close"
                   >
                     <FaTimes />
                   </button>
                 </div>
 
-                <div className="mt-4 rounded-xl border border-neon-green/25 bg-black/60 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-gray-400">
+                <div className="mt-4 rounded-xl border border-signal-500/25 bg-void-850/60 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-white/45">
                     SUMMARY
                   </div>
-                  <p className="mt-2 text-sm leading-relaxed text-neon-green/85">
+                  <p className="mt-2 text-sm leading-relaxed text-signal-300/85">
                     {active.desc}
                   </p>
                 </div>
 
-                <div className="mt-3 rounded-xl border border-neon-green/20 bg-black/50 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-gray-400">
+                <div className="mt-3 rounded-xl border border-signal-500/20 bg-void-850/50 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-white/45">
                     DETAILS
                   </div>
-                  <p className="mt-2 text-sm leading-relaxed text-neon-green/80">
+                  <p className="mt-2 text-sm leading-relaxed text-signal-300/80">
                     {active.details}
                   </p>
 
@@ -1160,7 +1176,7 @@ export const About = () => {
                     {(active.tags || []).map((t) => (
                       <span
                         key={t}
-                        className="text-[10px] font-black tracking-widest rounded-full border border-neon-blue/25 bg-neon-blue/10 px-2 py-1 text-neon-blue/90"
+                        className="text-[10px] font-black tracking-widest rounded-full border border-cyber-500/25 bg-cyber-500/10 px-2 py-1 text-cyber-300/90"
                       >
                         {t}
                       </span>
@@ -1173,10 +1189,10 @@ export const About = () => {
                     type="button"
                     onClick={() => toggleFav(active.id)}
                     className={classNames(
-                      "flex-1 rounded-xl border-2 px-4 py-3 text-sm font-black tracking-wider transition-all",
+                      "flex-1 rounded-2xl border px-4 py-3 text-sm font-black tracking-wider transition-all",
                       fav.includes(active.id)
-                        ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-                        : "border-neon-green bg-black/60 text-neon-green shadow-neon hover:border-neon-blue hover:text-neon-blue",
+                        ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+                        : "border-signal-500 bg-void-850/60 text-signal-300 shadow-glow-sm hover:border-cyber-500 hover:text-cyber-300",
                     )}
                   >
                     {fav.includes(active.id)
@@ -1194,13 +1210,13 @@ export const About = () => {
                           "noopener,noreferrer",
                         );
                     }}
-                    className="flex-1 rounded-xl border-2 border-neon-green bg-gradient-to-r from-neon-green to-neon-blue px-4 py-3 text-sm font-black tracking-wider text-black shadow-neon hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2"
+                    className="flex-1 rounded-2xl border border-signal-500 bg-gradient-to-r from-signal-400 to-cyber-400 px-4 py-3 text-sm font-black tracking-wider text-black shadow-glow-sm hover:shadow-glow-cyan transition-all inline-flex items-center justify-center gap-2"
                   >
                     Open <FaExternalLinkAlt className="text-[14px]" />
                   </button>
                 </div>
 
-                <div className="mt-3 text-center text-[11px] text-gray-500">
+                <div className="mt-3 text-center text-[11px] text-white/35">
                   External link opens in a new tab.
                 </div>
               </div>

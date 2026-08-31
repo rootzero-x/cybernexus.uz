@@ -429,7 +429,9 @@ const newsItems = [
   useEffect(() => {
     try {
       localStorage.setItem("cybernexus_news_fav_v1", JSON.stringify(fav));
-    } catch {}
+    } catch {
+        /* storage unavailable — non-fatal */
+      }
   }, [fav]);
 
   const toggleFav = (id) => {
@@ -488,8 +490,8 @@ const newsItems = [
   const Glass = ({ className, children }) => (
     <div
       className={classNames(
-        "rounded-xl border-2 bg-black/55 backdrop-blur-xl",
-        "border-neon-green/40 shadow-neon",
+        "rounded-2xl border bg-void-850/55 backdrop-blur-xl",
+        "border-signal-500/40 shadow-glow-sm",
         className
       )}
     >
@@ -504,8 +506,8 @@ const newsItems = [
       className={classNames(
         "inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-black tracking-wider transition-all",
         active
-          ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-          : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green"
+          ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+          : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300"
       )}
     >
       {Icon ? <Icon className="text-[12px]" /> : null}
@@ -515,7 +517,7 @@ const newsItems = [
 
   const Clamp2 = ({ children, className }) => (
     <p
-      className={classNames("text-sm text-neon-green/80 leading-relaxed", className)}
+      className={classNames("text-sm text-signal-300/80 leading-relaxed", className)}
       style={{
         display: "-webkit-box",
         WebkitLineClamp: 2,
@@ -535,7 +537,7 @@ const newsItems = [
 
   return (
     <div
-      className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden"
+      className="w-full min-h-screen font-mono text-signal-300 overflow-x-hidden"
       data-mode={mode}
     >
       {/* soft grid background */}
@@ -559,20 +561,20 @@ const newsItems = [
             <div className="flex flex-col lg:flex-row lg:items-center gap-5">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3">
-                  <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                    <FaShieldAlt className="text-neon-blue" />
+                  <div className="h-11 w-11 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                    <FaShieldAlt className="text-cyber-300" />
                   </div>
                   <div className="min-w-0">
-                    <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-neon-green truncate">
+                    <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-signal-300 truncate">
                       Cybersecurity News
                     </h1>
-                    <p className="mt-1 text-xs sm:text-sm text-neon-blue/90 font-bold tracking-widest truncate">
+                    <p className="mt-1 text-xs sm:text-sm text-cyber-300/90 font-bold tracking-widest truncate">
                       LATEST • VERIFIED • PRO SOURCES
                     </p>
                   </div>
                 </div>
 
-                <p className="mt-4 text-sm sm:text-base text-gray-300/90 leading-relaxed">
+                <p className="mt-4 text-sm sm:text-base text-white/55 leading-relaxed">
                   Eng yangi va ishonchli kiberxavfsizlik yangiliklari: APT, KEV/CVE,
                   phishing, incidentlar va siyosiy/regulyator update’lar.
                 </p>
@@ -605,27 +607,27 @@ const newsItems = [
               {/* Search */}
               <div className="w-full lg:w-[440px]">
                 <div className="relative">
-                  <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-neon-blue/80" />
+                  <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-cyber-300/80" />
                   <input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Qidirish: cisa, kev, phishing, microsoft, reuters..."
                     className={classNames(
-                      "w-full rounded-xl border-2 bg-black/60 backdrop-blur px-10 py-3 text-sm",
-                      "border-neon-green/50 text-neon-green placeholder:text-gray-500",
-                      "focus:outline-none focus:border-neon-blue focus:shadow-neon-blue"
+                      "w-full rounded-2xl border bg-void-850/60 backdrop-blur px-10 py-3 text-sm",
+                      "border-signal-500/50 text-signal-300 placeholder:text-white/35",
+                      "focus:outline-none focus:border-cyber-500 focus:shadow-glow-cyan"
                     )}
                   />
                 </div>
 
-                <div className="mt-3 text-xs text-gray-400 flex items-center justify-between">
+                <div className="mt-3 text-xs text-white/45 flex items-center justify-between">
                   <span>
                     Natija:{" "}
-                    <span className="text-neon-green font-black">
+                    <span className="text-signal-300 font-black">
                       {filtered.length}
                     </span>
                   </span>
-                  <span className="text-neon-blue/80 font-bold tracking-widest">
+                  <span className="text-cyber-300/80 font-bold tracking-widest">
                     CLICK CARD → DETAILS
                   </span>
                 </div>
@@ -636,7 +638,7 @@ const newsItems = [
 
         {/* STICKY TABS */}
         <div className="sticky top-0 z-30 pt-4">
-          <div className="rounded-xl border border-neon-green/25 bg-black/70 backdrop-blur-xl px-3 py-3">
+          <div className="rounded-xl border border-signal-500/25 bg-void-850/70 backdrop-blur-xl px-3 py-3">
             <div className="flex items-center justify-between gap-3">
               <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
                 {tabs.map((t) => (
@@ -658,7 +660,7 @@ const newsItems = [
                   setTab("All");
                   setFavOnly(false);
                 }}
-                className="hidden sm:inline-flex rounded-lg border border-neon-blue/30 bg-neon-blue/10 px-3 py-2 text-xs font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                className="hidden sm:inline-flex rounded-lg border border-cyber-500/30 bg-cyber-500/10 px-3 py-2 text-xs font-black tracking-widest text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
               >
                 Reset
               </button>
@@ -674,30 +676,37 @@ const newsItems = [
           transition={{ duration: 0.55, ease: "easeOut", delay: 0.05 }}
         >
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+            <h2 className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
               FEATURED
             </h2>
-            <span className="text-[11px] text-gray-500">swipe →</span>
+            <span className="text-[11px] text-white/35">swipe →</span>
           </div>
 
           <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
             {featured.map((item) => {
               const isFav = fav.includes(item.id);
               return (
-                <button
+                <div
                   key={item.id}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      e.currentTarget.click();
+                    }
+                  }}
                   onClick={() => setActive(item)}
                   className={classNames(
                     "min-w-[300px] sm:min-w-[360px] lg:min-w-[420px]",
-                    "rounded-xl border-2 bg-black/70 backdrop-blur p-4 text-left",
-                    "border-neon-green/45 shadow-neon",
-                    "hover:border-neon-blue hover:shadow-neon-blue transition-all"
+                    "rounded-2xl border bg-void-850/70 backdrop-blur p-4 text-left",
+                    "border-signal-500/45 shadow-glow-sm",
+                    "hover:border-cyber-500 hover:shadow-glow-cyan transition-all"
                   )}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center overflow-hidden shrink-0">
+                      <div className="h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center overflow-hidden shrink-0">
                         <img
                           src={item.imageUrl}
                           alt={item.title}
@@ -711,10 +720,10 @@ const newsItems = [
                       </div>
 
                       <div className="min-w-0">
-                        <div className="text-base font-black tracking-wider text-neon-green truncate">
+                        <div className="text-base font-black tracking-wider text-signal-300 truncate">
                           {item.source}
                         </div>
-                        <div className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
+                        <div className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
                           {item.category} • {formatDate(item.date)}
                         </div>
                       </div>
@@ -729,8 +738,8 @@ const newsItems = [
                       className={classNames(
                         "shrink-0 rounded-lg border px-2 py-2 transition-all",
                         isFav
-                          ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-                          : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green"
+                          ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+                          : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300"
                       )}
                       title="Favorite"
                       aria-label="favorite"
@@ -740,21 +749,21 @@ const newsItems = [
                   </div>
 
                   <div className="mt-3">
-                    <div className="text-sm font-black tracking-wider text-neon-green">
+                    <div className="text-sm font-black tracking-wider text-signal-300">
                       {item.title}
                     </div>
                     <Clamp2 className="mt-2">{item.description}</Clamp2>
                   </div>
 
                   <div className="mt-4 flex items-center justify-between">
-                    <span className="text-[11px] font-bold tracking-widest text-gray-400">
+                    <span className="text-[11px] font-bold tracking-widest text-white/45">
                       QUICK VIEW
                     </span>
-                    <span className="text-xs font-black tracking-widest text-neon-blue">
+                    <span className="text-xs font-black tracking-widest text-cyber-300">
                       OPEN →
                     </span>
                   </div>
-                </button>
+                </div>
               );
             })}
           </div>
@@ -771,14 +780,21 @@ const newsItems = [
             {filtered.map((item, idx) => {
               const isFav = fav.includes(item.id);
               return (
-                <motion.button
+                <motion.div
                   key={item.id}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      e.currentTarget.click();
+                    }
+                  }}
                   onClick={() => setActive(item)}
                   className={classNames(
-                    "rounded-xl border-2 bg-black/70 backdrop-blur p-4 text-left",
-                    "border-neon-green/45 shadow-neon",
-                    "hover:border-neon-blue hover:shadow-neon-blue transition-all"
+                    "rounded-2xl border bg-void-850/70 backdrop-blur p-4 text-left",
+                    "border-signal-500/45 shadow-glow-sm",
+                    "hover:border-cyber-500 hover:shadow-glow-cyan transition-all"
                   )}
                   initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -791,7 +807,7 @@ const newsItems = [
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center overflow-hidden shrink-0">
+                      <div className="h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center overflow-hidden shrink-0">
                         <img
                           src={item.imageUrl}
                           alt={item.title}
@@ -805,10 +821,10 @@ const newsItems = [
                       </div>
 
                       <div className="min-w-0">
-                        <h3 className="text-[13px] sm:text-sm font-black tracking-wider text-neon-green truncate">
+                        <h3 className="text-[13px] sm:text-sm font-black tracking-wider text-signal-300 truncate">
                           {item.title}
                         </h3>
-                        <p className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
+                        <p className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
                           {item.source} • {item.category} • {formatDate(item.date)}
                         </p>
                       </div>
@@ -823,8 +839,8 @@ const newsItems = [
                       className={classNames(
                         "shrink-0 rounded-lg border px-2 py-2 transition-all",
                         isFav
-                          ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-                          : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green"
+                          ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+                          : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300"
                       )}
                       title="Favorite"
                       aria-label="favorite"
@@ -841,7 +857,7 @@ const newsItems = [
                     {(item.tags || []).slice(0, 3).map((t) => (
                       <span
                         key={t}
-                        className="text-[10px] font-black tracking-widest rounded-full border border-neon-green/25 bg-black/60 px-2 py-1 text-neon-green/80"
+                        className="text-[10px] font-black tracking-widest rounded-full border border-signal-500/25 bg-void-850/60 px-2 py-1 text-signal-300/80"
                       >
                         {t}
                       </span>
@@ -849,25 +865,25 @@ const newsItems = [
                   </div>
 
                   <div className="mt-4 flex items-center justify-between">
-                    <span className="text-[11px] font-bold tracking-widest text-gray-400">
+                    <span className="text-[11px] font-bold tracking-widest text-white/45">
                       DETAILS
                     </span>
-                    <span className="text-xs font-black tracking-widest text-neon-blue">
+                    <span className="text-xs font-black tracking-widest text-cyber-300">
                       OPEN →
                     </span>
                   </div>
-                </motion.button>
+                </motion.div>
               );
             })}
           </div>
 
           {filtered.length === 0 && (
             <div className="mt-8 text-center">
-              <div className="rounded-xl border-2 border-neon-green/35 bg-black/60 p-8 shadow-neon">
-                <div className="text-neon-blue font-black tracking-widest">
+              <div className="rounded-2xl border border-signal-500/35 bg-void-850/60 p-8 shadow-glow-sm">
+                <div className="text-cyber-300 font-black tracking-widest">
                   NO RESULTS
                 </div>
-                <p className="mt-2 text-sm text-gray-400">
+                <p className="mt-2 text-sm text-white/45">
                   Qidiruv yoki tab’ni o‘zgartirib ko‘ring.
                 </p>
                 <button
@@ -877,7 +893,7 @@ const newsItems = [
                     setTab("All");
                     setFavOnly(false);
                   }}
-                  className="mt-5 rounded-lg border-2 border-neon-blue bg-neon-blue/10 px-4 py-2 text-xs font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                  className="mt-5 rounded-lg border-2 border-cyber-500 bg-cyber-500/10 px-4 py-2 text-xs font-black tracking-widest text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
                 >
                   Reset
                 </button>
@@ -892,7 +908,7 @@ const newsItems = [
         {active && (
           <>
             <motion.div
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px]"
+              className="fixed inset-0 z-40 bg-void-850/70 backdrop-blur-[2px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -907,12 +923,12 @@ const newsItems = [
               onClick={() => setActive(null)}
             >
               <div
-                className="w-full max-w-2xl rounded-xl border-2 border-neon-blue bg-black/90 backdrop-blur p-5 shadow-neon-blue"
+                className="w-full max-w-2xl rounded-2xl border border-cyber-500 bg-void-900/90 backdrop-blur p-5 shadow-glow-cyan"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="h-14 w-14 rounded-lg border border-neon-green/35 bg-neon-green/10 grid place-items-center overflow-hidden shrink-0">
+                    <div className="h-14 w-14 rounded-lg border border-signal-500/35 bg-signal-500/10 grid place-items-center overflow-hidden shrink-0">
                       <img
                         src={active.imageUrl}
                         alt={active.title}
@@ -924,10 +940,10 @@ const newsItems = [
                       />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-lg sm:text-xl font-black tracking-wider text-neon-green line-clamp-2">
+                      <div className="text-lg sm:text-xl font-black tracking-wider text-signal-300 line-clamp-2">
                         {active.title}
                       </div>
-                      <div className="mt-2 text-xs font-bold tracking-widest text-neon-blue/90 truncate">
+                      <div className="mt-2 text-xs font-bold tracking-widest text-cyber-300/90 truncate">
                         {active.source} • {active.category} • {formatDate(active.date)}
                       </div>
                     </div>
@@ -936,27 +952,27 @@ const newsItems = [
                   <button
                     type="button"
                     onClick={() => setActive(null)}
-                    className="rounded-lg border border-neon-blue/40 bg-neon-blue/10 p-2 text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                    className="rounded-lg border border-cyber-500/40 bg-cyber-500/10 p-2 text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
                     aria-label="close"
                   >
                     <FaTimes />
                   </button>
                 </div>
 
-                <div className="mt-4 rounded-xl border border-neon-green/25 bg-black/60 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-gray-400">
+                <div className="mt-4 rounded-xl border border-signal-500/25 bg-void-850/60 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-white/45">
                     SUMMARY
                   </div>
-                  <p className="mt-2 text-sm leading-relaxed text-neon-green/85">
+                  <p className="mt-2 text-sm leading-relaxed text-signal-300/85">
                     {active.description}
                   </p>
                 </div>
 
-                <div className="mt-3 rounded-xl border border-neon-green/20 bg-black/50 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-gray-400">
+                <div className="mt-3 rounded-xl border border-signal-500/20 bg-void-850/50 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-white/45">
                     DETAILS
                   </div>
-                  <p className="mt-2 text-sm leading-relaxed text-neon-green/80">
+                  <p className="mt-2 text-sm leading-relaxed text-signal-300/80">
                     {active.details}
                   </p>
 
@@ -964,7 +980,7 @@ const newsItems = [
                     {(active.tags || []).map((t) => (
                       <span
                         key={t}
-                        className="text-[10px] font-black tracking-widest rounded-full border border-neon-blue/25 bg-neon-blue/10 px-2 py-1 text-neon-blue/90"
+                        className="text-[10px] font-black tracking-widest rounded-full border border-cyber-500/25 bg-cyber-500/10 px-2 py-1 text-cyber-300/90"
                       >
                         {t}
                       </span>
@@ -977,10 +993,10 @@ const newsItems = [
                     type="button"
                     onClick={() => toggleFav(active.id)}
                     className={classNames(
-                      "flex-1 rounded-xl border-2 px-4 py-3 text-sm font-black tracking-wider transition-all",
+                      "flex-1 rounded-2xl border px-4 py-3 text-sm font-black tracking-wider transition-all",
                       fav.includes(active.id)
-                        ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-                        : "border-neon-green bg-black/60 text-neon-green shadow-neon hover:border-neon-blue hover:text-neon-blue"
+                        ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+                        : "border-signal-500 bg-void-850/60 text-signal-300 shadow-glow-sm hover:border-cyber-500 hover:text-cyber-300"
                     )}
                   >
                     {fav.includes(active.id) ? "★ Favorited" : "☆ Add to favorites"}
@@ -989,13 +1005,13 @@ const newsItems = [
                   <button
                     type="button"
                     onClick={() => window.open(active.link, "_blank", "noopener,noreferrer")}
-                    className="flex-1 rounded-xl border-2 border-neon-green bg-gradient-to-r from-neon-green to-neon-blue px-4 py-3 text-sm font-black tracking-wider text-black shadow-neon hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2"
+                    className="flex-1 rounded-2xl border border-signal-500 bg-gradient-to-r from-signal-400 to-cyber-400 px-4 py-3 text-sm font-black tracking-wider text-black shadow-glow-sm hover:shadow-glow-cyan transition-all inline-flex items-center justify-center gap-2"
                   >
                     Read source <FaExternalLinkAlt className="text-[14px]" />
                   </button>
                 </div>
 
-                <div className="mt-3 text-center text-[11px] text-gray-500">
+                <div className="mt-3 text-center text-[11px] text-white/35">
                   External link opens in a new tab.
                 </div>
               </div>

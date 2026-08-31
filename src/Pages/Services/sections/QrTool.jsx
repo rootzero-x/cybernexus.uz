@@ -87,26 +87,26 @@ export default function QrTool({ notify }) {
         {/* Left */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3">
-            <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-              <FaQrcode className="text-neon-blue" />
+            <div className="h-11 w-11 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+              <FaQrcode className="text-cyber-300" />
             </div>
             <div className="min-w-0">
-              <div className="text-xs font-black tracking-widest text-neon-blue/90">
+              <div className="text-xs font-black tracking-widest text-cyber-300/90">
                 QR CODE GENERATOR
               </div>
-              <h2 className="mt-1 text-xl sm:text-2xl font-black tracking-wider text-neon-green truncate">
+              <h2 className="mt-1 text-xl sm:text-2xl font-black tracking-wider text-signal-300 truncate">
                 QR kod yaratish
               </h2>
             </div>
           </div>
 
-          <p className="mt-3 text-sm text-gray-300/90 leading-relaxed">
+          <p className="mt-3 text-sm text-white/55 leading-relaxed">
             URL yoki matn kiriting. Xavfsizlik uchun “javascript:” va “data:” kabi xavfli
             prefixlar bloklanadi.
           </p>
 
           <div className="mt-4">
-            <div className="text-[11px] font-black tracking-widest text-gray-400">
+            <div className="text-[11px] font-black tracking-widest text-white/45">
               INPUT (URL yoki text)
             </div>
             <input
@@ -114,9 +114,9 @@ export default function QrTool({ notify }) {
               onChange={(e) => setInput(e.target.value)}
               placeholder="https://cybernexus.uz yoki matn..."
               className={classNames(
-                "mt-2 w-full rounded-xl border-2 bg-black/60 backdrop-blur px-4 py-3 text-sm",
-                "border-neon-green/35 text-neon-green placeholder:text-gray-500",
-                "focus:outline-none focus:border-neon-blue focus:shadow-neon-blue"
+                "mt-2 w-full rounded-2xl border bg-void-850/60 backdrop-blur px-4 py-3 text-sm",
+                "border-signal-500/35 text-signal-300 placeholder:text-white/35",
+                "focus:outline-none focus:border-cyber-500 focus:shadow-glow-cyan"
               )}
             />
           </div>
@@ -126,8 +126,8 @@ export default function QrTool({ notify }) {
               type="button"
               onClick={generate}
               className={classNames(
-                "flex-1 rounded-xl border-2 border-neon-green bg-gradient-to-r from-neon-green to-neon-blue",
-                "px-5 py-3 text-sm font-black tracking-widest text-black shadow-neon hover:shadow-neon-blue transition-all"
+                "flex-1 rounded-2xl border border-signal-500 bg-gradient-to-r from-signal-400 to-cyber-400",
+                "px-5 py-3 text-sm font-black tracking-widest text-black shadow-glow-sm hover:shadow-glow-cyan transition-all"
               )}
               whileHover={{ y: -2 }}
               whileTap={{ scale: 0.98 }}
@@ -141,30 +141,30 @@ export default function QrTool({ notify }) {
                 setInput("");
                 setValue("");
               }}
-              className="rounded-xl border-2 border-neon-blue/40 bg-neon-blue/10 px-5 py-3 text-sm font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+              className="rounded-2xl border border-cyber-500/40 bg-cyber-500/10 px-5 py-3 text-sm font-black tracking-widest text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
             >
               Reset
             </button>
           </div>
 
-          <div className="mt-4 rounded-xl border border-neon-green/20 bg-black/50 p-4">
-            <div className="flex items-center gap-2 text-xs font-black tracking-widest text-gray-400">
-              <FaShieldAlt className="text-neon-blue/80" /> STATUS
+          <div className="mt-4 rounded-xl border border-signal-500/20 bg-void-850/50 p-4">
+            <div className="flex items-center gap-2 text-xs font-black tracking-widest text-white/45">
+              <FaShieldAlt className="text-cyber-300/80" /> STATUS
             </div>
-            <div className="mt-2 text-sm text-neon-green/80">{status}</div>
+            <div className="mt-2 text-sm text-signal-300/80">{status}</div>
           </div>
         </div>
 
         {/* Right */}
         <div className="w-full lg:w-[420px]">
-          <div className="rounded-xl border-2 border-neon-green/35 bg-black/60 backdrop-blur p-4">
-            <div className="text-[11px] font-black tracking-widest text-gray-400">PREVIEW</div>
+          <div className="rounded-2xl border border-signal-500/35 bg-void-850/60 backdrop-blur p-4">
+            <div className="text-[11px] font-black tracking-widest text-white/45">PREVIEW</div>
 
             <div className="mt-3 flex justify-center">
               <AnimatePresence>
                 {value ? (
                   <motion.div
-                    className="rounded-xl border-2 border-neon-green bg-white p-4 shadow-neon"
+                    className="rounded-2xl border border-signal-500 bg-white p-4 shadow-glow-sm"
                     initial={{ opacity: 0, scale: 0.92 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.92 }}
@@ -179,8 +179,8 @@ export default function QrTool({ notify }) {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <div className="text-neon-blue font-black tracking-widest">NO QR</div>
-                    <div className="mt-2 text-sm text-gray-400">Input kiriting va Generate bosing.</div>
+                    <div className="text-cyber-300 font-black tracking-widest">NO QR</div>
+                    <div className="mt-2 text-sm text-white/45">Input kiriting va Generate bosing.</div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -191,16 +191,16 @@ export default function QrTool({ notify }) {
               onClick={download}
               disabled={!value}
               className={classNames(
-                "mt-4 w-full rounded-xl border-2 px-5 py-3 text-sm font-black tracking-widest transition-all inline-flex items-center justify-center gap-2",
+                "mt-4 w-full rounded-2xl border px-5 py-3 text-sm font-black tracking-widest transition-all inline-flex items-center justify-center gap-2",
                 value
-                  ? "border-neon-green bg-gradient-to-r from-neon-green to-neon-blue text-black shadow-neon hover:shadow-neon-blue"
-                  : "border-white/10 bg-white/[0.03] text-gray-500 cursor-not-allowed"
+                  ? "border-signal-500 bg-gradient-to-r from-signal-400 to-cyber-400 text-black shadow-glow-sm hover:shadow-glow-cyan"
+                  : "border-white/10 bg-white/[0.03] text-white/35 cursor-not-allowed"
               )}
             >
               <FaDownload /> Download PNG
             </button>
 
-            <div className="mt-3 text-[11px] text-gray-500 text-center">
+            <div className="mt-3 text-[11px] text-white/35 text-center">
               Ogohlantirish: noma’lum QR’larni skan qilmang.
             </div>
           </div>

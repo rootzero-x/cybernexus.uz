@@ -1,54 +1,77 @@
-// src/router/router.jsx
+// router.jsx
+import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 
 import { Layout } from "./src/Layout/layout";
-
-import { Welcome } from "./src/Pages/Welcome/welcome";
-import { App } from "./src/Pages/App/app";
-import { News } from "./src/Pages/News/news";
-import { About } from "./src/Pages/About/about";
-import { Contact } from "./src/Pages/Contact/contact";
-import { Help } from "./src/Pages/Help/help";
-import { Error } from "./src/Pages/Error/error";
-import { Terminal } from "./src/Pages/Terminale/terminal";
-import CertificateGenerator from "./src/Pages/Certificate/certificate";
-import Portfolio from "./src/Pages/Portfolio/portfolio";
-import { Services } from "./src/Pages/Services/Services";
-import { Privacy } from "./src/Pages/Privacy/Privacy";
-
-import Auth from "./src/Pages/Auth/Auth";
 import ProtectedRoute from "./src/components/ProtectedRoute";
-import { TermsOfService } from "./src/Pages/Terms Of Service/termsofservice";
+import Auth from "./src/Pages/Auth/Auth";
+
+/**
+ * Every page below the auth screen is code-split.
+ *
+ * The whole app used to ship as one ~825 KB bundle, so a visitor waited for the
+ * certificate generator and the CTF terminal before the login button could
+ * render. Auth and Layout stay eager because they are on the critical path.
+ */
+const Welcome = lazy(() => import("./src/Pages/Welcome/welcome"));
+const App = lazy(() => import("./src/Pages/App/app"));
+const News = lazy(() => import("./src/Pages/News/news"));
+const About = lazy(() => import("./src/Pages/About/about"));
+const Contact = lazy(() => import("./src/Pages/Contact/contact"));
+const Help = lazy(() => import("./src/Pages/Help/help"));
+const ErrorPage = lazy(() => import("./src/Pages/Error/error"));
+const Terminal = lazy(() => import("./src/Pages/Terminale/terminal"));
+const CertificateGenerator = lazy(() => import("./src/Pages/Certificate/certificate"));
+const Portfolio = lazy(() => import("./src/Pages/Portfolio/portfolio"));
+const Services = lazy(() => import("./src/Pages/Services/Services"));
+const Privacy = lazy(() => import("./src/Pages/Privacy/Privacy"));
+const TermsOfService = lazy(() => import("./src/Pages/Terms Of Service/termsofservice"));
+
+function RouteFallback() {
+  return (
+    <div className="grid min-h-[60vh] place-items-center">
+      <div className="flex flex-col items-center gap-4">
+        <span className="relative h-12 w-12">
+          <span className="absolute inset-0 rounded-full border border-signal-500/20" />
+          <span className="absolute inset-0 animate-spin-slow rounded-full border-2 border-transparent border-t-signal-400" />
+        </span>
+        <span className="text-[11px] font-bold uppercase tracking-[.22em] text-white/35">
+          Yuklanmoqda
+        </span>
+      </div>
+    </div>
+  );
+}
 
 export const Routers = () => {
   return (
-    <Routes>
-      <Route element={<Layout />}>
-        {/* ✅ Public: faqat Auth */}
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/policy" element={<Privacy />} />
-        <Route path="/terms-of-service" element={<TermsOfService />} />
+    <Suspense fallback={<RouteFallback />}>
+      <Routes>
+        <Route element={<Layout />}>
+          {/* Public */}
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/policy" element={<Privacy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
 
-        {/* ✅ Protected: qolgan hammasi */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Welcome />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/help" element={<Help />} />
-
-          <Route path="/premium-app" element={<App />} />
-          <Route path="/news" element={<News />} />
-          <Route path="/ctf-challenge" element={<Terminal />} />
-          <Route
-            path="/cybernexus-certificate"
-            element={<CertificateGenerator />}
-          />
-          <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/services" element={<Services />} />
+          {/* Protected */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Welcome />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/help" element={<Help />} />
+            <Route path="/premium-app" element={<App />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/ctf-challenge" element={<Terminal />} />
+            <Route path="/cybernexus-certificate" element={<CertificateGenerator />} />
+            <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/services" element={<Services />} />
+          </Route>
         </Route>
-      </Route>
 
-      <Route path="*" element={<Error />} />
-    </Routes>
+        <Route path="*" element={<ErrorPage />} />
+      </Routes>
+    </Suspense>
   );
 };
+
+export default Routers;

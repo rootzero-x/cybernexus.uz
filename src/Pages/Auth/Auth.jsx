@@ -1,359 +1,276 @@
 // src/Pages/Auth/Auth.jsx
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import classNames from "classnames";
-import { motion } from "framer-motion";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ShieldCheck, Lock, UserPlus, Fingerprint, AlertTriangle } from "lucide-react";
+
 import { AuthContext } from "../../context/AuthContext";
 import { authGoogleLogin } from "../../api/auth";
+import { isMedianEnv, hasMedianGoogleBridge, medianGoogleLogin } from "../../api/google";
+import GoogleSignInButton from "../../components/GoogleSignInButton";
 import {
-  FaGoogle,
-  FaShieldAlt,
-  FaLock,
-  FaCheckCircle,
-} from "react-icons/fa";
-import { GlobalContext } from "../../GlobalState/globalstate";
+  HoloCard,
+  Eyebrow,
+  Display,
+  Accent,
+  NeonButton,
+  Section,
+  Reveal,
+} from "../../design";
+
+// Only allow same-origin paths back, so a crafted link cannot bounce a
+// freshly-authenticated user off to another site.
+function safeRedirect(from) {
+  if (typeof from !== "string") return "/";
+  if (!from.startsWith("/") || from.startsWith("//")) return "/";
+  if (from === "/auth") return "/";
+  return from;
+}
+
+const FEATURES = [
+  {
+    icon: ShieldCheck,
+    title: "Secure Session",
+    text: "Token SHA-256 bilan hashlanadi, faqat hash serverda saqlanadi.",
+  },
+  {
+    icon: Lock,
+    title: "Protected Routes",
+    text: "Ruxsatsiz kirish urinishlari /auth ga qaytariladi.",
+  },
+  {
+    icon: UserPlus,
+    title: "Auto Register",
+    text: "Birinchi marta kirsangiz, hisob avtomatik yaratiladi.",
+  },
+];
 
 export const Auth = () => {
-  const { mode } = useContext(GlobalContext);
   const { user, loading, refresh } = useContext(AuthContext);
 
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from || "/";
+  const from = useMemo(() => safeRedirect(location.state?.from), [location.state]);
 
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
 
-  // ✅ Agar session bo‘lsa /auth’da ushlab turmaymiz
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+
   useEffect(() => {
     if (!loading && user) navigate(from, { replace: true });
   }, [loading, user, navigate, from]);
 
-  const Glass = ({ className, children }) => (
-    <div
-      className={classNames(
-        "rounded-xl border-2 bg-black/55 backdrop-blur-xl",
-        "border-neon-green/40 shadow-neon",
-        className,
-      )}
-    >
-      {children}
-    </div>
+  const finishLogin = useCallback(
+    async (idToken) => {
+      if (!idToken) throw new Error("Google token topilmadi.");
+      await authGoogleLogin(idToken);
+      await refresh();
+      if (mounted.current) navigate(from, { replace: true });
+    },
+    [refresh, navigate, from],
   );
 
-  const FEATURES = useMemo(
-    () => [
-      {
-        icon: FaShieldAlt,
-        title: "Secure Session",
-        text: "Cookie-based session (httpOnly) orqali xavfsiz autentifikatsiya.",
-      },
-      {
-        icon: FaLock,
-        title: "Protected Routes",
-        text: "Ruxsatsiz kirishlar /auth ga qaytariladi (path traversal bo‘lsa ham).",
-      },
-      {
-        icon: FaCheckCircle,
-        title: "Auto Register/Login",
-        text: "Google tanlansa: bor bo‘lsa login, yo‘q bo‘lsa avtomatik register.",
-      },
-    ],
-    [],
+  const handleCredential = useCallback(
+    async (credential) => {
+      if (!mounted.current) return;
+      setErr("");
+      setBusy(true);
+      try {
+        await finishLogin(credential);
+      } catch (e) {
+        if (mounted.current) {
+          setErr(e?.message || "Google login muvaffaqiyatsiz.");
+          setBusy(false);
+        }
+      }
+    },
+    [finishLogin],
   );
 
-  // ====== ENV DETECTORS ======
-  const isMedianEnv = () => {
-    try {
-      const ua = (navigator.userAgent || "").toLowerCase();
-      // Median docs misoli: navigator.userAgent ichida "median" bo‘ladi
-      return ua.includes("median");
-    } catch {
-      return false;
-    }
-  };
+  const handleGoogleError = useCallback((message) => {
+    if (mounted.current) setErr(message);
+  }, []);
 
-  const hasMedianSocialGoogle = () => {
-    // Median JavaScript Bridge: median.socialLogin.google.login(...)
-    // (lowercase `median` injected in native env)
-    return (
-      typeof window !== "undefined" &&
-      window.median &&
-      window.median.socialLogin &&
-      window.median.socialLogin.google &&
-      typeof window.median.socialLogin.google.login === "function"
-    );
-  };
-
-  // Browser GSI (web) detect
-  const hasWebGsi = () =>
-    typeof window !== "undefined" &&
-    window.google &&
-    window.google.accounts &&
-    window.google.accounts.id;
-
-  // ====== CORE LOGIN ======
-  const finishLoginWithIdToken = async (idToken) => {
-    if (!idToken) throw new Error("Google token topilmadi (idToken).");
-    await authGoogleLogin(idToken); // ✅ backend cn_session cookie set qiladi
-    await refresh(); // ✅ me.php orqali user olib keladi
-    navigate(from, { replace: true });
-  };
-
-  /**
-   * ✅ Preferred in Median APK:
-   *   median.socialLogin.google.login({ callback })
-   * Docs: JavaScript Callbacks & Server-side Redirects
-   */
-  const startGoogleMedianNative = async () => {
+  const startMedianLogin = useCallback(async () => {
     setErr("");
     setBusy(true);
-
     try {
-      if (!isMedianEnv() || !hasMedianSocialGoogle()) {
-        throw new Error(
-          "Median Social Login bridge topilmadi. APK’ni qayta build qiling (Native Plugins → Social Login yoqilgan bo‘lishi shart).",
-        );
-      }
-
-      // timeout guard (native UI ochilmay qolsa)
-      let done = false;
-      const t = setTimeout(() => {
-        if (done) return;
-        done = true;
+      const idToken = await medianGoogleLogin();
+      await finishLogin(idToken);
+    } catch (e) {
+      if (mounted.current) {
+        setErr(e?.message || "Google login muvaffaqiyatsiz.");
         setBusy(false);
-        setErr("Google login timeout. Qayta urinib ko‘ring.");
-      }, 25000);
-
-      // Median callback format providerga qarab farq qiladi.
-      // Google redirect docs’da: idToken=... type=google (server-side)
-      // JS callbackda ham odatda { idToken, type: "google", userDetails... } keladi.
-      window.median.socialLogin.google.login({
-        callback: async (resp) => {
-          try {
-            if (done) return;
-            done = true;
-            clearTimeout(t);
-
-            if (!resp) throw new Error("Google javobi bo‘sh keldi.");
-            if (resp.error) throw new Error(resp.error);
-
-            const idToken =
-              resp.idToken ||
-              resp.id_token ||
-              resp.credential || // ba’zi implementlarda shunday kelishi mumkin
-              "";
-
-            await finishLoginWithIdToken(idToken);
-          } catch (e) {
-            setErr(e?.message || "Google login failed");
-            setBusy(false);
-          }
-        },
-      });
-    } catch (e) {
-      setErr(e?.message || "Median Google login failed");
-      setBusy(false);
-    }
-  };
-
-  /**
-   * ✅ Browser (normal site) GSI flow
-   */
-  const startGoogleBrowserGsi = async () => {
-    setErr("");
-    setBusy(true);
-
-    try {
-      if (!hasWebGsi()) {
-        throw new Error(
-          "Google script yuklanmadi. (Browser) index.html ga GSI script qo‘shilganini tekshiring.",
-        );
       }
-
-      const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-      if (!clientId) throw new Error("VITE_GOOGLE_CLIENT_ID yo‘q (.env).");
-
-      window.google.accounts.id.initialize({
-        client_id: clientId,
-        callback: async (resp) => {
-          try {
-            const credential = resp?.credential;
-            if (!credential) throw new Error("Google credential topilmadi.");
-            await finishLoginWithIdToken(credential);
-          } catch (e) {
-            setErr(e?.message || "Google login failed");
-            setBusy(false);
-          }
-        },
-      });
-
-      // One Tap
-      window.google.accounts.id.prompt(() => {});
-    } catch (e) {
-      setErr(e?.message || "Google init failed");
-      setBusy(false);
     }
-  };
+  }, [finishLogin]);
 
-  // ✅ Single entry: decide by environment
-  const startGoogle = async () => {
-    // Median APK ichida web GSI ko‘pincha blok bo‘ladi.
-    // Shuning uchun native bridge birinchi.
-    if (isMedianEnv()) return startGoogleMedianNative();
-    return startGoogleBrowserGsi();
-  };
+  const inMedian = isMedianEnv();
 
   return (
-    <div
-      className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden"
-      data-mode={mode}
-    >
-      {/* soft grid */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.10]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
-          backgroundSize: "56px 56px",
-        }}
-      />
+    <div className="relative flex min-h-screen items-center py-16 sm:py-20">
+      <Section width="wide">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.15fr_.85fr] lg:gap-16">
+          {/* ---------------- Left: identity ---------------- */}
+          <div>
+            <Reveal>
+              <Eyebrow tone="cyber">Secure Access · Google Identity</Eyebrow>
+            </Reveal>
 
-      <div className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-14">
-        {/* HERO */}
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, ease: "easeOut" }}
-        >
-          <Glass className="p-5 sm:p-7">
-            <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3">
-                  <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                    <FaShieldAlt className="text-neon-blue" />
-                  </div>
-                  <div className="min-w-0">
-                    <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-neon-green truncate">
-                      CyberNexus Auth
-                    </h1>
-                    <p className="mt-1 text-xs sm:text-sm text-neon-blue/90 font-bold tracking-widest truncate">
-                      GOOGLE • SECURE SESSION • PROTECTED ROUTES
-                    </p>
-                  </div>
-                </div>
+            <Reveal delay={80}>
+              <Display size="xl" className="mt-5">
+                Kirish nuqtasi{" "}
+                <Accent>himoyalangan.</Accent>
+              </Display>
+            </Reveal>
 
-                <p className="mt-4 text-sm sm:text-base text-gray-300/90 leading-relaxed">
-                  Platformaga kirish uchun Google orqali davom etasiz. Agar
-                  oldin kirgan bo‘lsangiz — login, bo‘lmasa — avtomatik
-                  ro‘yxatdan o‘tadi.
-                </p>
+            <Reveal delay={160}>
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/55 sm:text-lg">
+                CyberNexus platformasiga Google hisobingiz orqali kiring. Avval
+                kirgan bo'lsangiz — session tiklanadi, birinchi marta bo'lsa —
+                hisob avtomatik ochiladi.
+              </p>
+            </Reveal>
 
-                {err ? (
-                  <div className="mt-4 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-                    <div className="font-black tracking-wider">Xatolik</div>
-                    <div className="mt-1 text-red-200/90">{err}</div>
-                  </div>
-                ) : null}
-              </div>
-
-              {/* RIGHT: Login Card */}
-              <div className="w-full lg:w-[420px]">
-                <div className="rounded-xl border-2 border-neon-blue/40 bg-black/70 backdrop-blur p-5 shadow-neon-blue">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg border border-neon-green/35 bg-neon-green/10 grid place-items-center">
-                      <FaGoogle className="text-neon-green" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-sm font-black tracking-widest text-neon-blue">
-                        SIGN IN
-                      </div>
-                      <div className="text-lg font-black tracking-wider text-neon-green truncate">
-                        Google orqali kirish
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    disabled={busy || loading}
-                    onClick={startGoogle}
-                    className={classNames(
-                      "mt-4 w-full rounded-xl border-2 border-neon-green",
-                      "bg-gradient-to-r from-neon-green to-neon-blue",
-                      "px-5 py-3 text-sm font-black tracking-widest text-black shadow-neon",
-                      "hover:shadow-neon-blue transition-all",
-                      (busy || loading) && "opacity-70 cursor-not-allowed",
-                    )}
-                  >
-                    {busy || loading
-                      ? "Tekshirilmoqda..."
-                      : "Continue with Google →"}
-                  </button>
-
-                  <div className="mt-4 rounded-xl border border-neon-green/20 bg-black/60 p-4">
-                    <div className="text-[11px] font-black tracking-widest text-gray-400">
-                      NOTE
-                    </div>
-                    <p className="mt-2 text-sm text-neon-green/80 leading-relaxed">
-                      Cookie session httpOnly bo‘lgani uchun frontend token
-                      saqlamaydi — xavfsizroq.
-                    </p>
-                    <p className="mt-2 text-xs text-gray-400/80 leading-relaxed">
-                      {isMedianEnv()
-                        ? "Median APK: Native Social Login ishlaydi (web GSI shart emas)."
-                        : "Browser: Google GSI (web) ishlaydi."}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Glass>
-        </motion.div>
-
-        {/* FEATURES */}
-        <motion.div
-          className="mt-6"
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: "easeOut", delay: 0.05 }}
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {FEATURES.map((f) => (
+            {err ? (
               <div
-                key={f.title}
-                className={classNames(
-                  "rounded-xl border-2 bg-black/70 backdrop-blur p-4 text-left",
-                  "border-neon-green/40 shadow-neon",
-                  "hover:border-neon-blue hover:shadow-neon-blue transition-all",
-                )}
+                role="alert"
+                className="mt-8 flex gap-3 rounded-2xl border border-plasma/40 bg-plasma/10 p-4 backdrop-blur-xl"
               >
-                <div className="flex items-center gap-3">
-                  <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                    <f.icon className="text-neon-blue" />
+                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-plasma" />
+                <div className="min-w-0">
+                  <div className="text-xs font-bold uppercase tracking-[.18em] text-plasma">
+                    Xatolik
                   </div>
-                  <div className="min-w-0">
-                    <div className="text-sm font-black tracking-wider text-neon-green truncate">
-                      {f.title}
+                  <p className="mt-1 break-words text-sm text-white/70">{err}</p>
+                </div>
+              </div>
+            ) : null}
+
+            <div className="mt-10 grid gap-3 sm:grid-cols-3">
+              {FEATURES.map((f, i) => (
+                <Reveal key={f.title} delay={240 + i * 90}>
+                  <HoloCard
+                    glow={i === 1 ? "cyber" : "signal"}
+                    className="h-full"
+                    padded={false}
+                  >
+                    <div className="p-4">
+                      <f.icon
+                        className={
+                          i === 1
+                            ? "h-5 w-5 text-cyber-400"
+                            : "h-5 w-5 text-signal-400"
+                        }
+                      />
+                      <div className="mt-3 text-sm font-bold text-white">
+                        {f.title}
+                      </div>
+                      <p className="mt-1.5 text-xs leading-relaxed text-white/45">
+                        {f.text}
+                      </p>
                     </div>
-                    <div className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
-                      CYBERNEXUS SECURITY
-                    </div>
+                  </HoloCard>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+
+          {/* ---------------- Right: sign-in panel ---------------- */}
+          <Reveal delay={200} y={28}>
+            <HoloCard
+              glow="cyber"
+              intensity={1.4}
+              className="relative overflow-hidden"
+            >
+              {/* Rotating aura behind the panel */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute -inset-24 -z-10 animate-spin-slow opacity-40"
+                style={{
+                  background:
+                    "conic-gradient(from 0deg, transparent, rgba(0,255,157,.22), transparent 30%, rgba(0,229,255,.20), transparent 60%)",
+                }}
+              />
+
+              <div className="flex items-center gap-3">
+                <div className="grid h-11 w-11 place-items-center rounded-xl border border-signal-500/30 bg-signal-500/10">
+                  <Fingerprint className="h-5 w-5 text-signal-400" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-[11px] font-bold uppercase tracking-[.22em] text-cyber-400">
+                    Sign in
+                  </div>
+                  <div className="font-display text-lg font-bold text-white">
+                    Google orqali davom eting
                   </div>
                 </div>
-                <p className="mt-3 text-sm text-gray-300/90 leading-relaxed">
-                  {f.text}
+              </div>
+
+              <div className="my-6 h-px bg-gradient-to-r from-transparent via-white/12 to-transparent" />
+
+              <div className="min-h-[60px]">
+                {inMedian ? (
+                  <NeonButton
+                    onClick={startMedianLogin}
+                    disabled={busy || loading}
+                    className="w-full"
+                    size="lg"
+                  >
+                    {busy ? "Tekshirilmoqda..." : "Continue with Google"}
+                  </NeonButton>
+                ) : (
+                  <div
+                    className={
+                      busy
+                        ? "pointer-events-none flex justify-center opacity-50"
+                        : "flex justify-center"
+                    }
+                  >
+                    <GoogleSignInButton
+                      onCredential={handleCredential}
+                      onError={handleGoogleError}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {busy ? (
+                <div className="mt-4 flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-[.22em] text-cyber-400">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyber-400" />
+                  Session ochilmoqda
+                </div>
+              ) : null}
+
+              <div className="mt-6 rounded-xl border border-white/8 bg-black/30 p-4">
+                <div className="text-[10px] font-bold uppercase tracking-[.22em] text-white/35">
+                  Environment
+                </div>
+                <p className="mt-2 text-xs leading-relaxed text-white/45">
+                  {inMedian
+                    ? hasMedianGoogleBridge()
+                      ? "Median APK — native social login faol."
+                      : "Median APK aniqlandi, lekin Social Login bridge yoqilmagan."
+                    : "Browser — Google Identity Services (rasmiy tugma)."}
                 </p>
               </div>
-            ))}
-          </div>
-        </motion.div>
-      </div>
-
-      <style>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
+            </HoloCard>
+          </Reveal>
+        </div>
+      </Section>
     </div>
   );
 };

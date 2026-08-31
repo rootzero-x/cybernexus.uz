@@ -18,7 +18,7 @@ import { SiHackthebox } from "react-icons/si";
  * - Premium sections: Hero / About / Projects / Contact / Footer
  *
  * Notes:
- * - Uses your existing Tailwind tokens: neon-green, neon-blue, shadow-neon, shadow-neon-blue
+ * - Uses your existing Tailwind tokens: neon-green, neon-blue, shadow-glow-sm, shadow-glow-cyan
  * - Image paths: /snowden.jpg, /cyber.jpg (keep in public/)
  */
 
@@ -102,8 +102,8 @@ const Portfolio = () => {
   const Glass = ({ className, children }) => (
     <div
       className={classNames(
-        "rounded-xl border-2 bg-black/55 backdrop-blur-xl",
-        "border-neon-green/40 shadow-neon",
+        "rounded-2xl border bg-void-850/55 backdrop-blur-xl",
+        "border-signal-500/40 shadow-glow-sm",
         className,
       )}
     >
@@ -118,8 +118,8 @@ const Portfolio = () => {
       className={classNames(
         "inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-black tracking-wider transition-all",
         active
-          ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-          : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green",
+          ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+          : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300",
         className,
       )}
     >
@@ -129,7 +129,7 @@ const Portfolio = () => {
   );
 
   const Tag = ({ children }) => (
-    <span className="text-[10px] font-black tracking-widest rounded-full border border-neon-green/25 bg-black/60 px-2 py-1 text-neon-green/80">
+    <span className="text-[10px] font-black tracking-widest rounded-full border border-signal-500/25 bg-void-850/60 px-2 py-1 text-signal-300/80">
       {children}
     </span>
   );
@@ -139,15 +139,15 @@ const Portfolio = () => {
       type="button"
       onClick={() => open(href)}
       className={classNames(
-        "rounded-xl border-2 bg-black/70 backdrop-blur p-3",
-        "border-neon-green/35 shadow-neon",
-        "hover:border-neon-blue hover:shadow-neon-blue transition-all",
+        "rounded-2xl border bg-void-850/70 backdrop-blur p-3",
+        "border-signal-500/35 shadow-glow-sm",
+        "hover:border-cyber-500 hover:shadow-glow-cyan transition-all",
         "inline-flex items-center justify-center",
       )}
       aria-label={label}
       title={label}
     >
-      <Icon className="text-neon-blue text-xl" />
+      <Icon className="text-cyber-300 text-xl" />
     </button>
   );
 
@@ -159,7 +159,7 @@ const Portfolio = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden">
+    <div className="w-full min-h-screen font-mono text-signal-300 overflow-x-hidden">
       {/* soft grid background (Help-style) */}
       <div
         className="pointer-events-none fixed inset-0 opacity-[0.10]"
@@ -172,9 +172,9 @@ const Portfolio = () => {
 
       {/* glow blobs (subtle) */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-neon-blue/20 rounded-full blur-3xl opacity-30" />
-        <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-neon-green/20 rounded-full blur-3xl opacity-25" />
-        <div className="absolute top-2/3 right-1/4 w-64 h-64 bg-neon-blue/10 rounded-full blur-3xl opacity-25" />
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-cyber-500/20 rounded-full blur-3xl opacity-30" />
+        <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-signal-500/20 rounded-full blur-3xl opacity-25" />
+        <div className="absolute top-2/3 right-1/4 w-64 h-64 bg-cyber-500/10 rounded-full blur-3xl opacity-25" />
       </div>
 
       <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-16">
@@ -185,7 +185,7 @@ const Portfolio = () => {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="sticky top-0 z-30 pt-2"
         >
-          <div className="rounded-xl border border-neon-green/25 bg-black/70 backdrop-blur-xl px-3 py-3">
+          <div className="rounded-xl border border-signal-500/25 bg-void-850/70 backdrop-blur-xl px-3 py-3">
             <div className="flex items-center justify-between gap-3">
               <button
                 type="button"
@@ -193,14 +193,14 @@ const Portfolio = () => {
                 className="flex items-center gap-2"
                 aria-label="Go to top"
               >
-                <div className="h-10 w-10 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                  <SiHackthebox className="text-neon-blue text-xl" />
+                <div className="h-10 w-10 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                  <SiHackthebox className="text-cyber-300 text-xl" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-sm sm:text-base font-black tracking-wider text-neon-green leading-tight">
+                  <div className="text-sm sm:text-base font-black tracking-wider text-signal-300 leading-tight">
                     CYBERNEXUS
                   </div>
-                  <div className="text-[10px] sm:text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
+                  <div className="text-[10px] sm:text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
                     PORTFOLIO • SECURITY • DEV
                   </div>
                 </div>
@@ -270,15 +270,15 @@ const Portfolio = () => {
               <Glass className="p-5 sm:p-7">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <div className="text-[11px] font-bold tracking-widest text-neon-blue/90">
+                    <div className="text-[11px] font-bold tracking-widest text-cyber-300/90">
                       ETHICAL HACKER • SECURITY RESEARCHER • FULL STACK
                     </div>
-                    <h1 className="mt-2 text-3xl sm:text-4xl lg:text-5xl font-black tracking-wider text-neon-green leading-tight">
-                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-neon-green to-neon-blue">
+                    <h1 className="mt-2 text-3xl sm:text-4xl lg:text-5xl font-black tracking-wider text-signal-300 leading-tight">
+                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-signal-400 to-cyber-400">
                         Oyatullokh
                       </span>
                     </h1>
-                    <p className="mt-3 text-sm sm:text-base text-gray-300/90 leading-relaxed max-w-xl">
+                    <p className="mt-3 text-sm sm:text-base text-white/55 leading-relaxed max-w-xl">
                       I build secure systems, research vulnerabilities
                       responsibly, and ship premium web products with strong
                       security foundations.
@@ -326,10 +326,10 @@ const Portfolio = () => {
                         type="button"
                         onClick={() => scrollToId("projects")}
                         className={classNames(
-                          "flex-1 rounded-xl border-2 border-neon-green",
-                          "bg-gradient-to-r from-neon-green to-neon-blue",
-                          "px-5 py-3 text-sm font-black tracking-widest text-black shadow-neon",
-                          "hover:shadow-neon-blue transition-all",
+                          "flex-1 rounded-2xl border border-signal-500",
+                          "bg-gradient-to-r from-signal-400 to-cyber-400",
+                          "px-5 py-3 text-sm font-black tracking-widest text-black shadow-glow-sm",
+                          "hover:shadow-glow-cyan transition-all",
                         )}
                       >
                         VIEW PROJECTS
@@ -339,9 +339,9 @@ const Portfolio = () => {
                         type="button"
                         onClick={() => scrollToId("contact")}
                         className={classNames(
-                          "flex-1 rounded-xl border-2 px-5 py-3 text-sm font-black tracking-widest transition-all",
-                          "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue",
-                          "hover:border-neon-green hover:text-neon-green",
+                          "flex-1 rounded-2xl border px-5 py-3 text-sm font-black tracking-widest transition-all",
+                          "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan",
+                          "hover:border-signal-500 hover:text-signal-300",
                         )}
                       >
                         CONTACT
@@ -350,8 +350,8 @@ const Portfolio = () => {
                   </div>
 
                   <div className="hidden sm:block shrink-0">
-                    <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                      <SiHackthebox className="text-neon-blue text-2xl" />
+                    <div className="h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                      <SiHackthebox className="text-cyber-300 text-2xl" />
                     </div>
                   </div>
                 </div>
@@ -369,21 +369,21 @@ const Portfolio = () => {
               <Glass className="p-5 sm:p-7">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-[11px] font-bold tracking-widest text-neon-blue/90">
+                    <div className="text-[11px] font-bold tracking-widest text-cyber-300/90">
                       PROFILE PREVIEW
                     </div>
-                    <div className="mt-1 text-xl sm:text-2xl font-black tracking-wider text-neon-green">
+                    <div className="mt-1 text-xl sm:text-2xl font-black tracking-wider text-signal-300">
                       Premium Card
                     </div>
                   </div>
-                  <div className="text-[11px] text-gray-500 font-bold tracking-widest">
+                  <div className="text-[11px] text-white/35 font-bold tracking-widest">
                     GLASS • NEON
                   </div>
                 </div>
 
                 <div className="mt-5 relative w-full max-w-md mx-auto">
-                  <div className="absolute inset-0 border-2 border-neon-green/60 rounded-xl rotate-2" />
-                  <div className="relative rounded-xl overflow-hidden border border-neon-blue/25 bg-black/60">
+                  <div className="absolute inset-0 border-2 border-signal-500/60 rounded-xl rotate-2" />
+                  <div className="relative rounded-xl overflow-hidden border border-cyber-500/25 bg-void-850/60">
                     <div className="aspect-square w-full">
                       <img
                         src="/snowden.jpg"
@@ -406,12 +406,12 @@ const Portfolio = () => {
                   ].map((x) => (
                     <div
                       key={x.k}
-                      className="rounded-xl border border-neon-green/25 bg-black/60 p-3"
+                      className="rounded-xl border border-signal-500/25 bg-void-850/60 p-3"
                     >
-                      <div className="text-[10px] text-gray-500 font-black tracking-widest">
+                      <div className="text-[10px] text-white/35 font-black tracking-widest">
                         {x.k}
                       </div>
-                      <div className="mt-1 text-sm font-black tracking-wider text-neon-green truncate">
+                      <div className="mt-1 text-sm font-black tracking-wider text-signal-300 truncate">
                         {x.v}
                       </div>
                     </div>
@@ -432,23 +432,23 @@ const Portfolio = () => {
             custom={0}
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+              <h2 className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
                 ABOUT
               </h2>
-              <span className="text-[11px] text-gray-500">who am i →</span>
+              <span className="text-[11px] text-white/35">who am i →</span>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
               <Glass className="p-5 sm:p-7">
-                <div className="text-xl sm:text-2xl font-black tracking-wider text-neon-green">
+                <div className="text-xl sm:text-2xl font-black tracking-wider text-signal-300">
                   About me
                 </div>
-                <p className="mt-3 text-sm sm:text-base text-gray-300/90 leading-relaxed">
+                <p className="mt-3 text-sm sm:text-base text-white/55 leading-relaxed">
                   I’m a security enthusiast focused on ethical hacking and
                   secure software development. I research vulnerabilities
                   responsibly, build hardened apps, and love clean, premium UI.
                 </p>
-                <p className="mt-3 text-sm sm:text-base text-gray-300/90 leading-relaxed">
+                <p className="mt-3 text-sm sm:text-base text-white/55 leading-relaxed">
                   When I’m not breaking things (ethically), I’m building secure
                   products and contributing to security tooling.
                 </p>
@@ -477,15 +477,15 @@ const Portfolio = () => {
               <Glass className="p-5 sm:p-7">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-[11px] font-bold tracking-widest text-neon-blue/90">
+                    <div className="text-[11px] font-bold tracking-widest text-cyber-300/90">
                       CURRENTLY
                     </div>
-                    <div className="mt-1 text-xl sm:text-2xl font-black tracking-wider text-neon-green">
+                    <div className="mt-1 text-xl sm:text-2xl font-black tracking-wider text-signal-300">
                       Doing now
                     </div>
                   </div>
-                  <div className="h-10 w-10 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                    <SiHackthebox className="text-neon-blue text-xl" />
+                  <div className="h-10 w-10 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                    <SiHackthebox className="text-cyber-300 text-xl" />
                   </div>
                 </div>
 
@@ -502,10 +502,10 @@ const Portfolio = () => {
                       whileInView="show"
                       viewport={{ once: true }}
                       custom={i}
-                      className="rounded-xl border border-neon-green/20 bg-black/60 p-4"
+                      className="rounded-xl border border-signal-500/20 bg-void-850/60 p-4"
                     >
-                      <div className="text-sm font-black tracking-wider text-neon-green">
-                        <span className="text-neon-blue/90">➜</span> {line}
+                      <div className="text-sm font-black tracking-wider text-signal-300">
+                        <span className="text-cyber-300/90">➜</span> {line}
                       </div>
                     </motion.div>
                   ))}
@@ -525,10 +525,10 @@ const Portfolio = () => {
             custom={0}
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+              <h2 className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
                 FEATURED PROJECTS
               </h2>
-              <span className="text-[11px] text-gray-500">click card →</span>
+              <span className="text-[11px] text-white/35">click card →</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -538,9 +538,9 @@ const Portfolio = () => {
                   type="button"
                   onClick={() => setActive(p)}
                   className={classNames(
-                    "rounded-xl border-2 bg-black/70 backdrop-blur text-left overflow-hidden",
-                    "border-neon-green/45 shadow-neon",
-                    "hover:border-neon-blue hover:shadow-neon-blue transition-all",
+                    "rounded-2xl border bg-void-850/70 backdrop-blur text-left overflow-hidden",
+                    "border-signal-500/45 shadow-glow-sm",
+                    "hover:border-cyber-500 hover:shadow-glow-cyan transition-all",
                   )}
                   variants={springy}
                   initial="hidden"
@@ -549,7 +549,7 @@ const Portfolio = () => {
                   custom={idx}
                   whileHover={{ y: -3 }}
                 >
-                  <div className="h-44 w-full bg-black/50 border-b border-neon-green/15 overflow-hidden">
+                  <div className="h-44 w-full bg-void-850/50 border-b border-signal-500/15 overflow-hidden">
                     <img
                       src={p.image}
                       alt={p.title}
@@ -559,17 +559,17 @@ const Portfolio = () => {
                       }}
                     />
                     <div className="h-full w-full grid place-items-center bg-gradient-to-br from-black/30 to-black">
-                      <span className="text-gray-500 text-xs font-bold tracking-widest">
+                      <span className="text-white/35 text-xs font-bold tracking-widest">
                         /public/cyber.jpg
                       </span>
                     </div>
                   </div>
 
                   <div className="p-5">
-                    <div className="text-base font-black tracking-wider text-neon-green">
+                    <div className="text-base font-black tracking-wider text-signal-300">
                       {p.title}
                     </div>
-                    <p className="mt-2 text-sm text-gray-300/90 leading-relaxed line-clamp-3">
+                    <p className="mt-2 text-sm text-white/55 leading-relaxed line-clamp-3">
                       {p.description}
                     </p>
 
@@ -577,7 +577,7 @@ const Portfolio = () => {
                       {p.tags.map((t) => (
                         <span
                           key={t}
-                          className="text-[10px] font-black tracking-widest rounded-full border border-neon-blue/25 bg-neon-blue/10 px-2 py-1 text-neon-blue/90"
+                          className="text-[10px] font-black tracking-widest rounded-full border border-cyber-500/25 bg-cyber-500/10 px-2 py-1 text-cyber-300/90"
                         >
                           {t}
                         </span>
@@ -585,10 +585,10 @@ const Portfolio = () => {
                     </div>
 
                     <div className="mt-5 flex items-center justify-between">
-                      <span className="text-[11px] font-bold tracking-widest text-gray-400">
+                      <span className="text-[11px] font-bold tracking-widest text-white/45">
                         DETAILS
                       </span>
-                      <span className="text-xs font-black tracking-widest text-neon-blue">
+                      <span className="text-xs font-black tracking-widest text-cyber-300">
                         OPEN →
                       </span>
                     </div>
@@ -609,18 +609,18 @@ const Portfolio = () => {
             custom={0}
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+              <h2 className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
                 CONTACT
               </h2>
-              <span className="text-[11px] text-gray-500">reach out →</span>
+              <span className="text-[11px] text-white/35">reach out →</span>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
               <Glass className="p-5 sm:p-7">
-                <div className="text-xl sm:text-2xl font-black tracking-wider text-neon-green">
+                <div className="text-xl sm:text-2xl font-black tracking-wider text-signal-300">
                   Get in touch
                 </div>
-                <p className="mt-3 text-sm sm:text-base text-gray-300/90 leading-relaxed">
+                <p className="mt-3 text-sm sm:text-base text-white/55 leading-relaxed">
                   Working together or security question? Reach me via social
                   channels.
                 </p>
@@ -648,20 +648,20 @@ const Portfolio = () => {
                       type="button"
                       onClick={() => open(x.href)}
                       className={classNames(
-                        "rounded-xl border-2 bg-black/70 backdrop-blur p-4 text-left",
-                        "border-neon-green/35 shadow-neon",
-                        "hover:border-neon-blue hover:shadow-neon-blue transition-all",
+                        "rounded-2xl border bg-void-850/70 backdrop-blur p-4 text-left",
+                        "border-signal-500/35 shadow-glow-sm",
+                        "hover:border-cyber-500 hover:shadow-glow-cyan transition-all",
                       )}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                          <x.icon className="text-neon-blue" />
+                        <div className="h-10 w-10 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                          <x.icon className="text-cyber-300" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-sm font-black tracking-wider text-neon-green truncate">
+                          <div className="text-sm font-black tracking-wider text-signal-300 truncate">
                             {x.label}
                           </div>
-                          <div className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
+                          <div className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
                             OPEN →
                           </div>
                         </div>
@@ -675,10 +675,10 @@ const Portfolio = () => {
               <Glass className="p-5 sm:p-7">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <div className="text-[11px] font-bold tracking-widest text-neon-blue/90">
+                    <div className="text-[11px] font-bold tracking-widest text-cyber-300/90">
                       SEND A MESSAGE
                     </div>
-                    <div className="mt-1 text-xl sm:text-2xl font-black tracking-wider text-neon-green">
+                    <div className="mt-1 text-xl sm:text-2xl font-black tracking-wider text-signal-300">
                       Email quick send
                     </div>
                   </div>
@@ -700,7 +700,7 @@ const Portfolio = () => {
                   </div>
                 </div>
 
-                <p className="mt-3 text-sm text-gray-300/90 leading-relaxed">
+                <p className="mt-3 text-sm text-white/55 leading-relaxed">
                   Form submit qilmaydi — “Open Email” bosilganda mail client
                   ochiladi.
                 </p>
@@ -708,9 +708,9 @@ const Portfolio = () => {
                 <div className="mt-5 grid gap-3">
                   <input
                     className={classNames(
-                      "w-full rounded-xl border-2 bg-black/60 backdrop-blur px-4 py-3 text-sm",
-                      "border-neon-green/35 text-neon-green placeholder:text-gray-500",
-                      "focus:outline-none focus:border-neon-blue focus:shadow-neon-blue",
+                      "w-full rounded-2xl border bg-void-850/60 backdrop-blur px-4 py-3 text-sm",
+                      "border-signal-500/35 text-signal-300 placeholder:text-white/35",
+                      "focus:outline-none focus:border-cyber-500 focus:shadow-glow-cyan",
                     )}
                     placeholder="Subject (masalan: Collaboration / Security question)"
                     defaultValue="CyberNexus — Portfolio contact"
@@ -719,9 +719,9 @@ const Portfolio = () => {
 
                   <textarea
                     className={classNames(
-                      "w-full min-h-[140px] rounded-xl border-2 bg-black/60 backdrop-blur px-4 py-3 text-sm",
-                      "border-neon-green/35 text-neon-green placeholder:text-gray-500",
-                      "focus:outline-none focus:border-neon-blue focus:shadow-neon-blue",
+                      "w-full min-h-[140px] rounded-2xl border bg-void-850/60 backdrop-blur px-4 py-3 text-sm",
+                      "border-signal-500/35 text-signal-300 placeholder:text-white/35",
+                      "focus:outline-none focus:border-cyber-500 focus:shadow-glow-cyan",
                     )}
                     placeholder="Message..."
                     id="cnx-body"
@@ -742,15 +742,15 @@ const Portfolio = () => {
                       window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
                     }}
                     className={classNames(
-                      "rounded-xl border-2 border-neon-green bg-gradient-to-r from-neon-green to-neon-blue",
-                      "px-5 py-3 text-sm font-black tracking-widest text-black shadow-neon",
-                      "hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2",
+                      "rounded-2xl border border-signal-500 bg-gradient-to-r from-signal-400 to-cyber-400",
+                      "px-5 py-3 text-sm font-black tracking-widest text-black shadow-glow-sm",
+                      "hover:shadow-glow-cyan transition-all inline-flex items-center justify-center gap-2",
                     )}
                   >
                     Open Email <FaExternalLinkAlt className="text-[14px]" />
                   </button>
 
-                  <div className="text-[11px] text-gray-500 text-center">
+                  <div className="text-[11px] text-white/35 text-center">
                     External email app opens (no data stored).
                   </div>
                 </div>
@@ -766,16 +766,16 @@ const Portfolio = () => {
           whileInView="show"
           viewport={{ once: true }}
           custom={0}
-          className="mt-12 pt-8 border-t border-neon-green/15"
+          className="mt-12 pt-8 border-t border-signal-500/15"
         >
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <SiHackthebox className="text-neon-blue text-xl" />
-              <span className="text-sm font-black tracking-wider text-neon-green">
+              <SiHackthebox className="text-cyber-300 text-xl" />
+              <span className="text-sm font-black tracking-wider text-signal-300">
                 CYBERNEXUS
               </span>
             </div>
-            <div className="text-gray-500 text-xs font-bold tracking-widest">
+            <div className="text-white/35 text-xs font-bold tracking-widest">
               © {new Date().getFullYear()} Oyatullokh. All rights reserved.
             </div>
           </div>
@@ -787,7 +787,7 @@ const Portfolio = () => {
         {active && (
           <>
             <motion.div
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px]"
+              className="fixed inset-0 z-40 bg-void-850/70 backdrop-blur-[2px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -802,15 +802,15 @@ const Portfolio = () => {
               onClick={() => setActive(null)}
             >
               <div
-                className="w-full max-w-2xl rounded-xl border-2 border-neon-blue bg-black/90 backdrop-blur p-5 shadow-neon-blue"
+                className="w-full max-w-2xl rounded-2xl border border-cyber-500 bg-void-900/90 backdrop-blur p-5 shadow-glow-cyan"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="text-[11px] font-bold tracking-widest text-neon-blue/90">
+                    <div className="text-[11px] font-bold tracking-widest text-cyber-300/90">
                       PROJECT
                     </div>
-                    <div className="mt-1 text-lg sm:text-xl font-black tracking-wider text-neon-green line-clamp-2">
+                    <div className="mt-1 text-lg sm:text-xl font-black tracking-wider text-signal-300 line-clamp-2">
                       {active.title}
                     </div>
                   </div>
@@ -818,30 +818,30 @@ const Portfolio = () => {
                   <button
                     type="button"
                     onClick={() => setActive(null)}
-                    className="rounded-lg border border-neon-blue/40 bg-neon-blue/10 px-3 py-2 text-xs font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                    className="rounded-lg border border-cyber-500/40 bg-cyber-500/10 px-3 py-2 text-xs font-black tracking-widest text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
                   >
                     CLOSE
                   </button>
                 </div>
 
-                <div className="mt-4 rounded-xl border border-neon-green/20 bg-black/60 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-gray-400">
+                <div className="mt-4 rounded-xl border border-signal-500/20 bg-void-850/60 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-white/45">
                     DESCRIPTION
                   </div>
-                  <p className="mt-2 text-sm leading-relaxed text-neon-green/85">
+                  <p className="mt-2 text-sm leading-relaxed text-signal-300/85">
                     {active.description}
                   </p>
                 </div>
 
-                <div className="mt-3 rounded-xl border border-neon-green/15 bg-black/50 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-gray-400">
+                <div className="mt-3 rounded-xl border border-signal-500/15 bg-void-850/50 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-white/45">
                     TECH
                   </div>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {(active.tags || []).map((t) => (
                       <span
                         key={t}
-                        className="text-[10px] font-black tracking-widest rounded-full border border-neon-blue/25 bg-neon-blue/10 px-2 py-1 text-neon-blue/90"
+                        className="text-[10px] font-black tracking-widest rounded-full border border-cyber-500/25 bg-cyber-500/10 px-2 py-1 text-cyber-300/90"
                       >
                         {t}
                       </span>
@@ -853,7 +853,7 @@ const Portfolio = () => {
                   <button
                     type="button"
                     onClick={() => open("https://uzstudents.uz")}
-                    className="flex-1 rounded-xl border-2 border-neon-green bg-gradient-to-r from-neon-green to-neon-blue px-4 py-3 text-sm font-black tracking-wider text-black shadow-neon hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2"
+                    className="flex-1 rounded-2xl border border-signal-500 bg-gradient-to-r from-signal-400 to-cyber-400 px-4 py-3 text-sm font-black tracking-wider text-black shadow-glow-sm hover:shadow-glow-cyan transition-all inline-flex items-center justify-center gap-2"
                   >
                     Open Platform <FaExternalLinkAlt className="text-[14px]" />
                   </button>
@@ -862,16 +862,16 @@ const Portfolio = () => {
                     type="button"
                     onClick={() => setActive(null)}
                     className={classNames(
-                      "flex-1 rounded-xl border-2 px-4 py-3 text-sm font-black tracking-wider transition-all",
-                      "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue",
-                      "hover:border-neon-green hover:text-neon-green",
+                      "flex-1 rounded-2xl border px-4 py-3 text-sm font-black tracking-wider transition-all",
+                      "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan",
+                      "hover:border-signal-500 hover:text-signal-300",
                     )}
                   >
                     Back
                   </button>
                 </div>
 
-                <div className="mt-3 text-center text-[11px] text-gray-500">
+                <div className="mt-3 text-center text-[11px] text-white/35">
                   ESC to close • Click outside to close
                 </div>
               </div>

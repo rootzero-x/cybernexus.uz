@@ -59,7 +59,7 @@ export const Services = () => {
 
   return (
     <div
-      className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden"
+      className="w-full min-h-screen font-mono text-signal-300 overflow-x-hidden"
       data-mode={mode}
     >
       {/* soft grid background */}
@@ -83,20 +83,20 @@ export const Services = () => {
             <div className="flex flex-col lg:flex-row lg:items-center gap-5">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3">
-                  <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                    <FaLayerGroup className="text-neon-blue" />
+                  <div className="h-11 w-11 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                    <FaLayerGroup className="text-cyber-300" />
                   </div>
                   <div className="min-w-0">
-                    <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-neon-green truncate">
+                    <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-signal-300 truncate">
                       Services
                     </h1>
-                    <p className="mt-1 text-xs sm:text-sm text-neon-blue/90 font-bold tracking-widest truncate">
+                    <p className="mt-1 text-xs sm:text-sm text-cyber-300/90 font-bold tracking-widest truncate">
                       TOOLS • UTILITIES • SECURITY-FRIENDLY
                     </p>
                   </div>
                 </div>
 
-                <p className="mt-4 text-sm sm:text-base text-gray-300/90 leading-relaxed">
+                <p className="mt-4 text-sm sm:text-base text-white/55 leading-relaxed">
                   CyberNexus’ning foydali utilitalari: UUID generator, QR code
                   generator, Hash generator va Base64 encoder/decoder. Hammasi
                   bir xil premium dizaynda.
@@ -144,26 +144,26 @@ export const Services = () => {
 
               {/* Right info card */}
               <div className="w-full lg:w-[440px]">
-                <div className="rounded-xl border-2 border-neon-green/40 bg-black/60 backdrop-blur p-4 shadow-neon">
-                  <div className="text-xs font-black tracking-widest text-neon-blue">
+                <div className="rounded-2xl border border-signal-500/40 bg-void-850/60 backdrop-blur p-4 shadow-glow-sm">
+                  <div className="text-xs font-black tracking-widest text-cyber-300">
                     CURRENT TOOL
                   </div>
-                  <div className="mt-2 text-lg font-black tracking-wider text-neon-green">
+                  <div className="mt-2 text-lg font-black tracking-wider text-signal-300">
                     {tabs.find((t) => t.key === tab)?.label || "UUID"}
                   </div>
-                  <div className="mt-2 text-sm text-gray-300/90 leading-relaxed">
+                  <div className="mt-2 text-sm text-white/55 leading-relaxed">
                     Sticky tabs orqali tez almashing. Natijalarni 1-click
                     nusxalash, download va xavfsiz input tekshiruvlari bor.
                   </div>
 
                   <div className="mt-3 flex flex-wrap gap-2">
-                    <span className="text-[10px] font-black tracking-widest rounded-full border border-neon-green/25 bg-black/60 px-2 py-1 text-neon-green/80">
+                    <span className="text-[10px] font-black tracking-widest rounded-full border border-signal-500/25 bg-void-850/60 px-2 py-1 text-signal-300/80">
                       NO ADS
                     </span>
-                    <span className="text-[10px] font-black tracking-widest rounded-full border border-neon-blue/25 bg-neon-blue/10 px-2 py-1 text-neon-blue/90">
+                    <span className="text-[10px] font-black tracking-widest rounded-full border border-cyber-500/25 bg-cyber-500/10 px-2 py-1 text-cyber-300/90">
                       PREMIUM UI
                     </span>
-                    <span className="text-[10px] font-black tracking-widest rounded-full border border-neon-green/25 bg-black/60 px-2 py-1 text-neon-green/80">
+                    <span className="text-[10px] font-black tracking-widest rounded-full border border-signal-500/25 bg-void-850/60 px-2 py-1 text-signal-300/80">
                       COPY / DOWNLOAD
                     </span>
                   </div>
@@ -175,7 +175,7 @@ export const Services = () => {
 
         {/* STICKY TABS */}
         <div className="sticky top-0 z-30 pt-4">
-          <div className="rounded-xl border border-neon-green/25 bg-black/70 backdrop-blur-xl px-3 py-3">
+          <div className="rounded-xl border border-signal-500/25 bg-void-850/70 backdrop-blur-xl px-3 py-3">
             <div className="flex items-center justify-between gap-3">
               <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
                 {tabs.map((t) => (
@@ -193,7 +193,7 @@ export const Services = () => {
               <button
                 type="button"
                 onClick={() => setAbout(true)}
-                className="hidden sm:inline-flex rounded-lg border border-neon-blue/30 bg-neon-blue/10 px-3 py-2 text-xs font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                className="hidden sm:inline-flex rounded-lg border border-cyber-500/30 bg-cyber-500/10 px-3 py-2 text-xs font-black tracking-widest text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
               >
                 Tips
               </button>
@@ -217,7 +217,7 @@ export const Services = () => {
         {about && (
           <>
             <motion.div
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px]"
+              className="fixed inset-0 z-40 bg-void-850/70 backdrop-blur-[2px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -232,19 +232,19 @@ export const Services = () => {
               onClick={() => setAbout(false)}
             >
               <div
-                className="w-full max-w-2xl rounded-xl border-2 border-neon-blue bg-black/90 backdrop-blur p-5 shadow-neon-blue"
+                className="w-full max-w-2xl rounded-2xl border border-cyber-500 bg-void-900/90 backdrop-blur p-5 shadow-glow-cyan"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg border border-neon-green/35 bg-neon-green/10 grid place-items-center">
-                      <FaShieldAlt className="text-neon-green text-xl" />
+                    <div className="h-12 w-12 rounded-lg border border-signal-500/35 bg-signal-500/10 grid place-items-center">
+                      <FaShieldAlt className="text-signal-300 text-xl" />
                     </div>
                     <div>
-                      <div className="text-lg sm:text-xl font-black tracking-wider text-neon-green">
+                      <div className="text-lg sm:text-xl font-black tracking-wider text-signal-300">
                         Security tips (Services)
                       </div>
-                      <div className="mt-1 text-xs font-bold tracking-widest text-neon-blue/90">
+                      <div className="mt-1 text-xs font-bold tracking-widest text-cyber-300/90">
                         SAFE INPUT • RESPONSIBLE USE
                       </div>
                     </div>
@@ -253,21 +253,21 @@ export const Services = () => {
                   <button
                     type="button"
                     onClick={() => setAbout(false)}
-                    className="rounded-lg border border-neon-blue/40 bg-neon-blue/10 p-2 text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                    className="rounded-lg border border-cyber-500/40 bg-cyber-500/10 p-2 text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
                     aria-label="close"
                   >
                     <FaTimes />
                   </button>
                 </div>
 
-                <div className="mt-4 rounded-xl border border-neon-green/25 bg-black/60 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-gray-400">
+                <div className="mt-4 rounded-xl border border-signal-500/25 bg-void-850/60 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-white/45">
                     RECOMMENDATIONS
                   </div>
-                  <ul className="mt-3 space-y-2 text-sm text-neon-green/80 leading-relaxed list-disc pl-5">
+                  <ul className="mt-3 space-y-2 text-sm text-signal-300/80 leading-relaxed list-disc pl-5">
                     <li>
                       QR: faqat ishonchli URL’lardan foydalaning.{" "}
-                      <span className="text-neon-blue/90 font-bold">
+                      <span className="text-cyber-300/90 font-bold">
                         http/https
                       </span>
                       bo‘lmagan “javascript:” yoki “data:” kabi xavfli prefixlar
@@ -276,7 +276,7 @@ export const Services = () => {
                     <li>
                       Hash: MD5/SHA1 eski algoritmlar (legacy). Muhim xavfsizlik
                       ishlarida odatda
-                      <span className="text-neon-blue/90 font-bold">
+                      <span className="text-cyber-300/90 font-bold">
                         {" "}
                         SHA-256
                       </span>{" "}
@@ -302,8 +302,8 @@ export const Services = () => {
                       )
                     }
                     className={classNames(
-                      "mt-4 w-full rounded-xl border-2 border-neon-green bg-gradient-to-r from-neon-green to-neon-blue",
-                      "px-4 py-3 text-sm font-black tracking-wider text-black shadow-neon hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2",
+                      "mt-4 w-full rounded-2xl border border-signal-500 bg-gradient-to-r from-signal-400 to-cyber-400",
+                      "px-4 py-3 text-sm font-black tracking-wider text-black shadow-glow-sm hover:shadow-glow-cyan transition-all inline-flex items-center justify-center gap-2",
                     )}
                   >
                     Open CyberNexus{" "}
@@ -311,7 +311,7 @@ export const Services = () => {
                   </button>
                 </div>
 
-                <div className="mt-3 text-center text-[11px] text-gray-500">
+                <div className="mt-3 text-center text-[11px] text-white/35">
                   Tips oynasi — faqat tavsiya. Loyihada security doim birinchi
                   o‘rinda.
                 </div>

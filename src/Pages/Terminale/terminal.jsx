@@ -392,8 +392,8 @@ export const Terminal = () => {
   const Glass = ({ className, children, ...props }) => (
     <div
       className={classNames(
-        "rounded-xl border-2 bg-black/55 backdrop-blur-xl",
-        "border-neon-green/40 shadow-neon",
+        "rounded-2xl border bg-void-850/55 backdrop-blur-xl",
+        "border-signal-500/40 shadow-glow-sm",
         className,
       )}
       {...props}
@@ -409,8 +409,8 @@ export const Terminal = () => {
       className={classNames(
         "inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-black tracking-wider transition-all",
         active
-          ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-          : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green",
+          ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+          : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300",
         "cursor-pointer select-none",
       )}
       {...props}
@@ -1290,7 +1290,7 @@ export const Terminal = () => {
   // ──────────────────────────────────────────────
   return (
     <div
-      className="w-full min-h-screen bg-black font-mono text-neon-green overflow-hidden relative"
+      className="w-full min-h-screen font-mono text-signal-300 overflow-hidden relative"
       data-mode="dark"
     >
       {/* Soft grid fon — Help.jsx dan */}
@@ -1313,14 +1313,14 @@ export const Terminal = () => {
           <Glass className="p-6 sm:p-8">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
               <div className="flex items-center gap-4">
-                <div className="h-14 w-14 rounded-xl border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                  <FaTerminal className="text-neon-blue text-2xl" />
+                <div className="h-14 w-14 rounded-xl border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                  <FaTerminal className="text-cyber-300 text-2xl" />
                 </div>
                 <div>
-                  <h1 className="text-3xl sm:text-4xl font-black tracking-wider text-neon-green">
+                  <h1 className="text-3xl sm:text-4xl font-black tracking-wider text-signal-300">
                     CTF Terminal
                   </h1>
-                  <p className="mt-1 text-sm text-neon-blue/90 font-bold tracking-widest">
+                  <p className="mt-1 text-sm text-cyber-300/90 font-bold tracking-widest">
                     HACK • LEARN • FIND FLAGS
                   </p>
                 </div>
@@ -1348,14 +1348,14 @@ export const Terminal = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="mt-6"
         >
-          <Glass className="p-0 overflow-hidden shadow-neon">
-            <div className="bg-black/70 border-b border-neon-green/30 px-4 py-3 flex items-center gap-3">
+          <Glass className="p-0 overflow-hidden shadow-glow-sm">
+            <div className="bg-void-850/70 border-b border-signal-500/30 px-4 py-3 flex items-center gap-3">
               <div className="flex gap-2">
                 <div className="w-3 h-3 rounded-full bg-red-500/70" />
                 <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
                 <div className="w-3 h-3 rounded-full bg-green-500/70" />
               </div>
-              <span className="text-xs font-bold tracking-widest text-neon-green/80">
+              <span className="text-xs font-bold tracking-widest text-signal-300/80">
                 cybernexus@ctf-terminal:~$
               </span>
             </div>
@@ -1369,7 +1369,7 @@ export const Terminal = () => {
                   key={i}
                   className={classNames(
                     "mb-1",
-                    line.includes("$") && "text-neon-blue font-bold",
+                    line.includes("$") && "text-cyber-300 font-bold",
                     line.includes("flag{") && "text-yellow-400 font-black",
                   )}
                 >
@@ -1379,14 +1379,14 @@ export const Terminal = () => {
 
               {/* Input qatori */}
               <div className="flex items-center mt-2">
-                <span className="text-neon-blue font-black mr-2">└─$</span>
+                <span className="text-cyber-300 font-black mr-2">└─$</span>
                 <input
                   autoFocus
                   spellCheck={false}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  className="flex-1 bg-transparent outline-none caret-neon-green text-neon-green"
+                  className="flex-1 bg-transparent outline-none caret-neon-green text-signal-300"
                 />
               </div>
             </div>
@@ -1401,25 +1401,25 @@ export const Terminal = () => {
           transition={{ delay: 0.4 }}
         >
           <Glass className="p-5 text-center">
-            <div className="text-xs text-neon-blue/80 font-black tracking-widest">
+            <div className="text-xs text-cyber-300/80 font-black tracking-widest">
               CURRENT DIR
             </div>
-            <div className="mt-2 text-lg font-black text-neon-green">
+            <div className="mt-2 text-lg font-black text-signal-300">
               {getPromptDir()}
             </div>
           </Glass>
 
           <Glass className="p-5 text-center">
-            <div className="text-xs text-neon-blue/80 font-black tracking-widest">
+            <div className="text-xs text-cyber-300/80 font-black tracking-widest">
               COMMANDS USED
             </div>
-            <div className="mt-2 text-lg font-black text-neon-green">
+            <div className="mt-2 text-lg font-black text-signal-300">
               {history.length}
             </div>
           </Glass>
 
           <Glass className="p-5 text-center">
-            <div className="text-xs text-neon-blue/80 font-black tracking-widest">
+            <div className="text-xs text-cyber-300/80 font-black tracking-widest">
               FLAGS FOUND
             </div>
             <div className="mt-2 text-lg font-black text-yellow-400">
@@ -1434,7 +1434,7 @@ export const Terminal = () => {
         {activeHelp && (
           <>
             <motion.div
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px]"
+              className="fixed inset-0 z-40 bg-void-850/70 backdrop-blur-[2px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -1453,21 +1453,21 @@ export const Terminal = () => {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-4">
-                    <div className="h-14 w-14 rounded-xl border border-neon-green/35 bg-neon-green/10 grid place-items-center">
-                      <FaQuestionCircle className="text-neon-green text-2xl" />
+                    <div className="h-14 w-14 rounded-xl border border-signal-500/35 bg-signal-500/10 grid place-items-center">
+                      <FaQuestionCircle className="text-signal-300 text-2xl" />
                     </div>
                     <div>
-                      <h2 className="text-xl font-black tracking-wider text-neon-green">
+                      <h2 className="text-xl font-black tracking-wider text-signal-300">
                         {activeHelp.title}
                       </h2>
-                      <p className="text-sm text-neon-blue/90">
+                      <p className="text-sm text-cyber-300/90">
                         {activeHelp.category}
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={() => setActiveHelp(null)}
-                    className="text-neon-green hover:text-neon-blue"
+                    className="text-signal-300 hover:text-cyber-300"
                   >
                     <FaTimes />
                   </button>
@@ -1475,18 +1475,18 @@ export const Terminal = () => {
 
                 <div className="mt-5 space-y-4">
                   <div>
-                    <div className="text-xs font-black text-gray-400">
+                    <div className="text-xs font-black text-white/45">
                       DESCRIPTION
                     </div>
-                    <p className="mt-1 text-neon-green/90">
+                    <p className="mt-1 text-signal-300/90">
                       {activeHelp.description}
                     </p>
                   </div>
                   <div>
-                    <div className="text-xs font-black text-gray-400">
+                    <div className="text-xs font-black text-white/45">
                       USAGE EXAMPLES
                     </div>
-                    <pre className="mt-1 bg-black/60 p-3 rounded-lg text-sm text-neon-green/80 overflow-x-auto">
+                    <pre className="mt-1 bg-void-850/60 p-3 rounded-lg text-sm text-signal-300/80 overflow-x-auto">
                       {activeHelp.details}
                     </pre>
                   </div>
@@ -1498,12 +1498,12 @@ export const Terminal = () => {
       </AnimatePresence>
 
       <style jsx global>{`
-        .shadow-neon {
+        .shadow-glow-sm {
           box-shadow:
             0 0 15px rgba(0, 255, 170, 0.4),
             0 0 30px rgba(0, 255, 170, 0.2);
         }
-        .shadow-neon-blue {
+        .shadow-glow-cyan {
           box-shadow:
             0 0 15px rgba(0, 170, 255, 0.5),
             0 0 35px rgba(0, 170, 255, 0.25);
