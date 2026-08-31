@@ -532,9 +532,16 @@ export const App = () => {
             {featured.map((app) => {
               const isFav = fav.includes(app.name);
               return (
-                <button
+                <div
                   key={app.name}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      e.currentTarget.click();
+                    }
+                  }}
                   onClick={() => setActive(app)}
                   className={classNames(
                     "min-w-[280px] sm:min-w-[340px] lg:min-w-[380px]",
@@ -595,7 +602,7 @@ export const App = () => {
                       OPEN →
                     </span>
                   </div>
-                </button>
+                </div>
               );
             })}
           </div>
@@ -612,9 +619,16 @@ export const App = () => {
             {filtered.map((app, idx) => {
               const isFav = fav.includes(app.name);
               return (
-                <motion.button
+                <motion.div
                   key={app.name}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      e.currentTarget.click();
+                    }
+                  }}
                   onClick={() => setActive(app)}
                   className={classNames(
                     "rounded-2xl border bg-void-850/70 backdrop-blur p-4 text-left",
@@ -679,7 +693,7 @@ export const App = () => {
                       OPEN →
                     </span>
                   </div>
-                </motion.button>
+                </motion.div>
               );
             })}
           </div>

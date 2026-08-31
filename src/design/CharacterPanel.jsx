@@ -36,16 +36,18 @@ export default function CharacterPanel({
   glow = true,
 }) {
   const ref = useRef(null);
-  const [show, setShow] = useState(false);
+
+  // Decided once at mount rather than inside the effect: a browser with no
+  // IntersectionObserver should mount the scene on the first render, not be
+  // pushed through an extra render pass to get there.
+  const [show, setShow] = useState(
+    () => canRun3D() && !("IntersectionObserver" in window),
+  );
 
   useEffect(() => {
     const el = ref.current;
     if (!el || !canRun3D()) return;
-
-    if (!("IntersectionObserver" in window)) {
-      setShow(true);
-      return;
-    }
+    if (!("IntersectionObserver" in window)) return; // already showing
 
     const io = new IntersectionObserver(
       (entries) => {

@@ -482,9 +482,16 @@ export const Contact = () => {
             {featured.map((item) => {
               const isFav = fav.includes(item.id);
               return (
-                <button
+                <div
                   key={item.id}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      e.currentTarget.click();
+                    }
+                  }}
                   onClick={() => setActive(item)}
                   className={classNames(
                     "min-w-[300px] sm:min-w-[360px] lg:min-w-[420px]",
@@ -552,7 +559,7 @@ export const Contact = () => {
                       OPEN →
                     </span>
                   </div>
-                </button>
+                </div>
               );
             })}
           </div>
@@ -569,9 +576,16 @@ export const Contact = () => {
             {filtered.map((item, idx) => {
               const isFav = fav.includes(item.id);
               return (
-                <motion.button
+                <motion.div
                   key={item.id}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      e.currentTarget.click();
+                    }
+                  }}
                   onClick={() => setActive(item)}
                   className={classNames(
                     "rounded-2xl border bg-void-850/70 backdrop-blur p-4 text-left",
@@ -659,7 +673,7 @@ export const Contact = () => {
                       OPEN →
                     </span>
                   </div>
-                </motion.button>
+                </motion.div>
               );
             })}
           </div>

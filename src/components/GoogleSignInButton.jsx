@@ -27,13 +27,14 @@ function GoogleSignInButtonBase({ onCredential, onError, width = 320 }) {
   onCredentialRef.current = onCredential;
   onErrorRef.current = onError;
 
-  const [status, setStatus] = useState("loading"); // loading | ready | failed
+  // A missing client id is knowable before the first paint, so it starts in
+  // the failed state rather than flashing "loading" and then failing.
+  const [status, setStatus] = useState(() => (CLIENT_ID ? "loading" : "failed"));
 
   useEffect(() => {
     if (rendered.current) return;
 
     if (!CLIENT_ID) {
-      setStatus("failed");
       onErrorRef.current?.("VITE_GOOGLE_CLIENT_ID sozlanmagan (.env).");
       return;
     }

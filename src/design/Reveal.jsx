@@ -3,9 +3,25 @@ import React, { useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 
 /**
+ * True when this browser cannot (or should not) animate the reveal, so the
+ * content must be visible from the very first paint.
+ *
+ * Read once during lazy state initialisation rather than inside an effect:
+ * setting state synchronously in an effect would render the element hidden for
+ * a frame and only then reveal it, which is a visible flash for exactly the
+ * users who asked for less motion.
+ */
+function shouldSkipAnimation() {
+  if (typeof window === "undefined") return true; // SSR / prerender
+  if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return true;
+  if (!("IntersectionObserver" in window)) return true;
+  return false;
+}
+
+/**
  * Reveals its children the first time they scroll into view.
  *
- * Uses IntersectionObserver rather than a scroll listener so a long page with
+ * Uses IntersectionObserver rather than a scroll listener, so a long page with
  * dozens of revealing blocks costs nothing per frame, and disconnects as soon
  * as an element has appeared — the animation is a one-shot, not a toggle.
  */
@@ -19,22 +35,12 @@ export default function Reveal({
   ...rest
 }) {
   const ref = useRef(null);
-  const [shown, setShown] = useState(false);
+  const [shown, setShown] = useState(shouldSkipAnimation);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-
-    // Honour reduced motion by skipping straight to the final state.
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
-      setShown(true);
-      return;
-    }
-
-    if (!("IntersectionObserver" in window)) {
-      setShown(true);
-      return;
-    }
+    if (shouldSkipAnimation()) return; // already visible
 
     const io = new IntersectionObserver(
       (entries) => {

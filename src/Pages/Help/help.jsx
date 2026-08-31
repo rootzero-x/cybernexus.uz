@@ -428,9 +428,16 @@ export const Help = () => {
               const isFav = fav.includes(item.id);
               const Icon = item.icon || FaInfoCircle;
               return (
-                <button
+                <div
                   key={item.id}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      e.currentTarget.click();
+                    }
+                  }}
                   onClick={() => setActive(item)}
                   className={classNames(
                     "min-w-[300px] sm:min-w-[360px] lg:min-w-[420px]",
@@ -483,7 +490,7 @@ export const Help = () => {
                     <span className="text-[11px] font-bold tracking-widest text-white/45">QUICK VIEW</span>
                     <span className="text-xs font-black tracking-widest text-cyber-300">OPEN →</span>
                   </div>
-                </button>
+                </div>
               );
             })}
           </div>
@@ -560,9 +567,16 @@ export const Help = () => {
               const Icon = item.icon || FaInfoCircle;
 
               return (
-                <motion.button
+                <motion.div
                   key={item.id}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      e.currentTarget.click();
+                    }
+                  }}
                   onClick={() => setActive(item)}
                   className={classNames(
                     "rounded-2xl border bg-void-850/70 backdrop-blur p-4 text-left",
@@ -632,7 +646,7 @@ export const Help = () => {
                     <span className="text-[11px] font-bold tracking-widest text-white/45">DETAILS</span>
                     <span className="text-xs font-black tracking-widest text-cyber-300">OPEN →</span>
                   </div>
-                </motion.button>
+                </motion.div>
               );
             })}
           </div>

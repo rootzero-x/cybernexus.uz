@@ -1,3 +1,18 @@
+/*
+ * react-three-fiber works by mutating live three.js objects (camera, meshes,
+ * materials) from inside useFrame, and by seeding geometry with Math.random()
+ * inside useMemo. Those are the library's intended patterns, but the newer
+ * react-hooks compiler rules read them as impure renders and illegal
+ * mutations. They are disabled for these two files only.
+ */
+ 
+/*
+ * react-three-fiber works by mutating live three.js objects (camera, meshes,
+ * materials) from inside useFrame, and by seeding geometry with Math.random()
+ * inside useMemo. Those are the library's intended patterns, but the newer
+ * react-hooks compiler rules read them as impure renders and illegal
+ * mutations. They are disabled for this file only.
+ */
 // src/design/scene/CharacterStage.jsx
 import React, { Suspense, useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";

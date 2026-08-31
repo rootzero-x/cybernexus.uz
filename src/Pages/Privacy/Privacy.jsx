@@ -570,9 +570,16 @@ export const Privacy = () => {
               {policyCards.map((p, idx) => {
                 const isFav = fav.includes(p.id);
                 return (
-                  <motion.button
+                  <motion.div
                     key={p.id}
-                    type="button"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        e.currentTarget.click();
+                      }
+                    }}
                     onClick={() => setActive({ ...p, kind: "Policy" })}
                     initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -645,7 +652,7 @@ export const Privacy = () => {
                         OPEN →
                       </span>
                     </div>
-                  </motion.button>
+                  </motion.div>
                 );
               })}
             </div>
@@ -712,9 +719,16 @@ export const Privacy = () => {
               {cookieCards.map((c) => {
                 const isFav = fav.includes(c.id);
                 return (
-                  <button
+                  <div
                     key={c.id}
-                    type="button"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        e.currentTarget.click();
+                      }
+                    }}
                     onClick={() => setActive({ ...c, kind: "Cookies" })}
                     className={classNames(
                       "min-w-[300px] sm:min-w-[360px] lg:min-w-[420px]",
@@ -772,7 +786,7 @@ export const Privacy = () => {
                         OPEN →
                       </span>
                     </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>
