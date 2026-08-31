@@ -59,7 +59,9 @@ export const Privacy = () => {
   useEffect(() => {
     try {
       localStorage.setItem("cybernexus_privacy_fav_v1", JSON.stringify(fav));
-    } catch {}
+    } catch {
+        /* storage unavailable — non-fatal */
+      }
   }, [fav]);
 
   const toggleFav = (id) => {
@@ -101,8 +103,8 @@ export const Privacy = () => {
     <div
       ref={ref}
       className={classNames(
-        "rounded-xl border-2 bg-black/55 backdrop-blur-xl",
-        "border-neon-green/40 shadow-neon",
+        "rounded-2xl border bg-void-850/55 backdrop-blur-xl",
+        "border-signal-500/40 shadow-glow-sm",
         className,
       )}
       {...rest}
@@ -119,8 +121,8 @@ export const Privacy = () => {
       className={classNames(
         "inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-black tracking-wider transition-all",
         isActive
-          ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-          : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green",
+          ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+          : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300",
       )}
     >
       {Icon ? <Icon className="text-[12px]" /> : null}
@@ -131,7 +133,7 @@ export const Privacy = () => {
   const Clamp2 = ({ children, className }) => (
     <p
       className={classNames(
-        "text-sm text-neon-green/80 leading-relaxed",
+        "text-sm text-signal-300/80 leading-relaxed",
         className,
       )}
       style={{
@@ -385,18 +387,9 @@ export const Privacy = () => {
   );
 
   return (
-    <div className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden">
-      {/* soft grid background */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.10]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
-          backgroundSize: "56px 56px",
-        }}
-      />
+    <div className="w-full min-h-screen text-white/85 overflow-x-hidden">
 
-      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-12">
+      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-20 pb-24">
         {/* HERO */}
         <motion.div
           initial="hidden"
@@ -409,20 +402,20 @@ export const Privacy = () => {
               <div className="flex flex-col lg:flex-row lg:items-center gap-5">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3">
-                    <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                      <FaUserShield className="text-neon-blue" />
+                    <div className="h-11 w-11 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                      <FaUserShield className="text-cyber-300" />
                     </div>
                     <div className="min-w-0">
-                      <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-neon-green truncate">
+                      <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white truncate">
                         Privacy Policy
                       </h1>
-                      <p className="mt-1 text-xs sm:text-sm text-neon-blue/90 font-bold tracking-widest truncate">
+                      <p className="mt-1 text-xs sm:text-sm text-cyber-300/90 font-bold tracking-widest truncate">
                         CYBER NEXUS • PRIVACY-FIRST • DEFENSIVE
                       </p>
                     </div>
                   </div>
 
-                  <p className="mt-4 text-sm sm:text-base text-gray-300/90 leading-relaxed">
+                  <p className="mt-4 text-sm sm:text-base text-white/55 leading-relaxed">
                     CyberNexus sizning maxfiyligingizni hurmat qiladi. Biz
                     minimal ma’lumot yig’amiz, xavfsizlikni birinchi o‘ringa
                     qo‘yamiz va reklama/profiling uchun data sotmaymiz. Bu
@@ -467,30 +460,30 @@ export const Privacy = () => {
 
                 {/* Right side status card */}
                 <div className="w-full lg:w-[440px]">
-                  <div className="rounded-xl border-2 border-neon-green/45 bg-black/60 p-4 shadow-neon">
+                  <div className="rounded-2xl border border-signal-500/45 bg-void-850/60 p-4 shadow-glow-sm">
                     <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-lg border border-neon-green/45 bg-neon-green/10 grid place-items-center">
-                        <FaShieldAlt className="text-neon-green text-xl" />
+                      <div className="h-12 w-12 rounded-lg border border-signal-500/45 bg-signal-500/10 grid place-items-center">
+                        <FaShieldAlt className="text-signal-300 text-xl" />
                       </div>
                       <div className="min-w-0">
-                        <div className="text-[11px] font-black tracking-widest text-neon-blue/90">
+                        <div className="text-[11px] font-black tracking-widest text-cyber-300/90">
                           PRIVACY STATUS
                         </div>
                         <div className="text-sm sm:text-base font-black text-white tracking-wider truncate">
                           MINIMAL DATA • SAFE DEFAULTS
                         </div>
-                        <div className="mt-1 text-[11px] font-bold tracking-widest text-gray-300 truncate">
+                        <div className="mt-1 text-[11px] font-bold tracking-widest text-white/60 truncate">
                           COOKIES • SECURITY • RIGHTS
                         </div>
                       </div>
                     </div>
 
                     <div className="mt-3 grid grid-cols-2 gap-2">
-                      <div className="rounded-lg border border-neon-blue/35 bg-neon-blue/5 px-3 py-3 text-center">
-                        <div className="text-[10px] font-black tracking-widest text-gray-400">
+                      <div className="rounded-lg border border-cyber-500/35 bg-cyber-500/5 px-3 py-3 text-center">
+                        <div className="text-[10px] font-black tracking-widest text-white/45">
                           API STATUS
                         </div>
-                        <div className="mt-1 text-lg font-black text-neon-blue">
+                        <div className="mt-1 text-lg font-black text-cyber-300">
                           {apiStatus === "idle"
                             ? "..."
                             : apiStatus === "ok"
@@ -499,22 +492,22 @@ export const Privacy = () => {
                         </div>
                       </div>
 
-                      <div className="rounded-lg border border-neon-green/35 bg-neon-green/5 px-3 py-3 text-center">
-                        <div className="text-[10px] font-black tracking-widest text-gray-400">
+                      <div className="rounded-lg border border-signal-500/35 bg-signal-500/5 px-3 py-3 text-center">
+                        <div className="text-[10px] font-black tracking-widest text-white/45">
                           POLICY
                         </div>
-                        <div className="mt-1 text-lg font-black text-neon-green">
+                        <div className="mt-1 text-lg font-black text-signal-300">
                           ACTIVE
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-3 text-xs text-gray-400 flex items-center justify-between">
-                    <span className="text-neon-green/80 font-bold tracking-widest">
+                  <div className="mt-3 text-xs text-white/45 flex items-center justify-between">
+                    <span className="text-signal-300/80 font-bold tracking-widest">
                       CLICK CARDS → DETAILS
                     </span>
-                    <span className="text-neon-blue/80 font-bold tracking-widest">
+                    <span className="text-cyber-300/80 font-bold tracking-widest">
                       PREMIUM UI
                     </span>
                   </div>
@@ -526,7 +519,7 @@ export const Privacy = () => {
 
         {/* STICKY TABS */}
         <div className="sticky top-0 z-30 pt-4">
-          <div className="rounded-xl border border-neon-green/25 bg-black/70 backdrop-blur-xl px-3 py-3">
+          <div className="rounded-xl border border-signal-500/25 bg-void-850/70 backdrop-blur-xl px-3 py-3">
             <div className="flex items-center justify-between gap-3">
               <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
                 {sectionTabs.map((t) => (
@@ -544,7 +537,7 @@ export const Privacy = () => {
               <button
                 type="button"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                className="hidden sm:inline-flex rounded-lg border border-neon-blue/30 bg-neon-blue/10 px-3 py-2 text-xs font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                className="hidden sm:inline-flex rounded-lg border border-cyber-500/30 bg-cyber-500/10 px-3 py-2 text-xs font-black tracking-widest text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
               >
                 TOP
               </button>
@@ -565,10 +558,10 @@ export const Privacy = () => {
             custom={1}
           >
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-green">
+              <h2 className="text-sm sm:text-base font-black tracking-widest text-signal-300">
                 DATA HANDLING
               </h2>
-              <span className="text-[11px] text-gray-500">
+              <span className="text-[11px] text-white/35">
                 minimal → secure
               </span>
             </div>
@@ -577,9 +570,16 @@ export const Privacy = () => {
               {policyCards.map((p, idx) => {
                 const isFav = fav.includes(p.id);
                 return (
-                  <motion.button
+                  <motion.div
                     key={p.id}
-                    type="button"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        e.currentTarget.click();
+                      }
+                    }}
                     onClick={() => setActive({ ...p, kind: "Policy" })}
                     initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -590,21 +590,21 @@ export const Privacy = () => {
                     }}
                     whileHover={{ y: -3 }}
                     className={classNames(
-                      "rounded-xl border-2 bg-black/70 backdrop-blur p-5 text-left",
-                      "border-neon-green/45 shadow-neon",
-                      "hover:border-neon-blue hover:shadow-neon-blue transition-all",
+                      "rounded-2xl border bg-void-850/70 backdrop-blur p-5 text-left",
+                      "border-signal-500/45 shadow-glow-sm",
+                      "hover:border-cyber-500 hover:shadow-glow-cyan transition-all",
                     )}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue shrink-0">
-                          <p.icon className="text-neon-blue" />
+                        <div className="h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan shrink-0">
+                          <p.icon className="text-cyber-300" />
                         </div>
                         <div className="min-w-0">
                           <div className="text-sm sm:text-base font-black tracking-wider text-white truncate">
                             {p.title}
                           </div>
-                          <div className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
+                          <div className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
                             PRIVACY • MINIMAL • SAFE
                           </div>
                         </div>
@@ -619,8 +619,8 @@ export const Privacy = () => {
                         className={classNames(
                           "shrink-0 rounded-lg border px-2 py-2 transition-all",
                           isFav
-                            ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-                            : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green",
+                            ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+                            : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300",
                         )}
                         title="Favorite"
                         aria-label="favorite"
@@ -630,14 +630,14 @@ export const Privacy = () => {
                     </div>
 
                     <div className="mt-3">
-                      <Clamp2 className="text-gray-300/90">{p.desc}</Clamp2>
+                      <Clamp2 className="text-white/55">{p.desc}</Clamp2>
                     </div>
 
                     <div className="mt-4 flex flex-wrap gap-2">
                       {(p.tags || []).slice(0, 3).map((t) => (
                         <span
                           key={t}
-                          className="text-[10px] font-black tracking-widest rounded-full border border-neon-green/25 bg-black/60 px-2 py-1 text-neon-green/80"
+                          className="text-[10px] font-black tracking-widest rounded-full border border-signal-500/25 bg-void-850/60 px-2 py-1 text-signal-300/80"
                         >
                           {t}
                         </span>
@@ -645,14 +645,14 @@ export const Privacy = () => {
                     </div>
 
                     <div className="mt-4 flex items-center justify-between">
-                      <span className="text-[11px] font-bold tracking-widest text-gray-400">
+                      <span className="text-[11px] font-bold tracking-widest text-white/45">
                         DETAILS
                       </span>
-                      <span className="text-xs font-black tracking-widest text-neon-blue">
+                      <span className="text-xs font-black tracking-widest text-cyber-300">
                         OPEN →
                       </span>
                     </div>
-                  </motion.button>
+                  </motion.div>
                 );
               })}
             </div>
@@ -660,18 +660,18 @@ export const Privacy = () => {
             <div id="fav-anchor" className="mt-8" />
 
             {fav.length > 0 && (
-              <Glass className="mt-5 p-5 sm:p-6 border-neon-blue/40 shadow-neon-blue">
+              <Glass className="mt-5 p-5 sm:p-6 border-cyber-500/40 shadow-glow-cyan">
                 <div className="flex items-start gap-3">
-                  <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                    <FaStar className="text-neon-blue" />
+                  <div className="h-11 w-11 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                    <FaStar className="text-cyber-300" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+                    <div className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
                       FAVORITES
                     </div>
-                    <p className="mt-2 text-sm text-gray-300/90 leading-relaxed">
+                    <p className="mt-2 text-sm text-white/55 leading-relaxed">
                       Siz saqlagan policy kartalar:{" "}
-                      <span className="text-neon-green font-black">
+                      <span className="text-signal-300 font-black">
                         {fav.length}
                       </span>{" "}
                       ta.
@@ -681,7 +681,7 @@ export const Privacy = () => {
                       {fav.slice(0, 12).map((id) => (
                         <span
                           key={id}
-                          className="text-[10px] font-black tracking-widest rounded-full border border-neon-green/25 bg-black/60 px-2 py-1 text-neon-green/80"
+                          className="text-[10px] font-black tracking-widest rounded-full border border-signal-500/25 bg-void-850/60 px-2 py-1 text-signal-300/80"
                         >
                           {id}
                         </span>
@@ -707,10 +707,10 @@ export const Privacy = () => {
             custom={2}
           >
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm sm:text-base font-black tracking-widest text-neon-blue">
+              <h2 className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
                 COOKIES & PREFERENCES
               </h2>
-              <span className="text-[11px] text-gray-500">
+              <span className="text-[11px] text-white/35">
                 browser controls →
               </span>
             </div>
@@ -719,28 +719,35 @@ export const Privacy = () => {
               {cookieCards.map((c) => {
                 const isFav = fav.includes(c.id);
                 return (
-                  <button
+                  <div
                     key={c.id}
-                    type="button"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        e.currentTarget.click();
+                      }
+                    }}
                     onClick={() => setActive({ ...c, kind: "Cookies" })}
                     className={classNames(
                       "min-w-[300px] sm:min-w-[360px] lg:min-w-[420px]",
-                      "rounded-xl border-2 bg-black/70 backdrop-blur p-4 text-left",
-                      "border-neon-green/45 shadow-neon",
-                      "hover:border-neon-blue hover:shadow-neon-blue transition-all",
+                      "rounded-2xl border bg-void-850/70 backdrop-blur p-4 text-left",
+                      "border-signal-500/45 shadow-glow-sm",
+                      "hover:border-cyber-500 hover:shadow-glow-cyan transition-all",
                     )}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue shrink-0">
-                          <c.icon className="text-neon-blue" />
+                        <div className="h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan shrink-0">
+                          <c.icon className="text-cyber-300" />
                         </div>
 
                         <div className="min-w-0">
-                          <div className="text-base font-black tracking-wider text-neon-green truncate">
+                          <div className="text-base font-bold tracking-tight text-white truncate">
                             {c.title}
                           </div>
-                          <div className="mt-1 text-[11px] font-bold tracking-widest text-neon-blue/80 truncate">
+                          <div className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
                             COOKIES • STORAGE • CONTROL
                           </div>
                         </div>
@@ -755,8 +762,8 @@ export const Privacy = () => {
                         className={classNames(
                           "shrink-0 rounded-lg border px-2 py-2 transition-all",
                           isFav
-                            ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-                            : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green",
+                            ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+                            : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300",
                         )}
                         title="Favorite"
                         aria-label="favorite"
@@ -766,20 +773,20 @@ export const Privacy = () => {
                     </div>
 
                     <div className="mt-3">
-                      <Clamp2 className="mt-2 text-gray-300/90">
+                      <Clamp2 className="mt-2 text-white/55">
                         {c.desc}
                       </Clamp2>
                     </div>
 
                     <div className="mt-4 flex items-center justify-between">
-                      <span className="text-[11px] font-bold tracking-widest text-gray-400">
+                      <span className="text-[11px] font-bold tracking-widest text-white/45">
                         QUICK VIEW
                       </span>
-                      <span className="text-xs font-black tracking-widest text-neon-blue">
+                      <span className="text-xs font-black tracking-widest text-cyber-300">
                         OPEN →
                       </span>
                     </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>
@@ -798,16 +805,16 @@ export const Privacy = () => {
             animate="show"
             custom={3}
           >
-            <Glass className="p-5 sm:p-7 border-neon-blue/40 shadow-neon-blue">
+            <Glass className="p-5 sm:p-7 border-cyber-500/40 shadow-glow-cyan">
               <div className="flex items-start gap-4">
-                <div className="shrink-0 h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                  <FaLock className="text-neon-blue" />
+                <div className="shrink-0 h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                  <FaLock className="text-cyber-300" />
                 </div>
                 <div className="min-w-0 w-full">
-                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-neon-blue">
+                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-cyber-300">
                     &gt;_ SECURITY PRACTICES
                   </h2>
-                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-gray-300/90">
+                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-white/55">
                     Biz “privacy-first + security-first” tamoyili bilan
                     ishlaymiz: minimal data, himoya choralar, va defensive
                     learning.
@@ -826,27 +833,27 @@ export const Privacy = () => {
                           delay: 0.04 + idx * 0.06,
                         }}
                         className={classNames(
-                          "rounded-xl border-2 bg-black/65 backdrop-blur p-4 text-left",
-                          "border-neon-green/35 shadow-neon",
-                          "hover:border-neon-blue hover:shadow-neon-blue transition-all",
+                          "rounded-2xl border bg-black/65 backdrop-blur p-4 text-left",
+                          "border-signal-500/35 shadow-glow-sm",
+                          "hover:border-cyber-500 hover:shadow-glow-cyan transition-all",
                         )}
                       >
                         <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-lg border border-neon-green/30 bg-neon-green/10 grid place-items-center">
-                            <s.icon className="text-neon-green" />
+                          <div className="h-10 w-10 rounded-lg border border-signal-500/30 bg-signal-500/10 grid place-items-center">
+                            <s.icon className="text-signal-300" />
                           </div>
                           <div className="min-w-0">
                             <div className="text-sm font-black tracking-wider text-white truncate">
                               {s.title}
                             </div>
-                            <div className="mt-1 text-[11px] font-bold tracking-widest text-gray-400 truncate">
+                            <div className="mt-1 text-[11px] font-bold tracking-widest text-white/45 truncate">
                               SECURITY • DEFENSIVE • SAFE
                             </div>
                           </div>
                         </div>
 
                         <div className="mt-3">
-                          <Clamp2 className="text-gray-300/90">{s.desc}</Clamp2>
+                          <Clamp2 className="text-white/55">{s.desc}</Clamp2>
                         </div>
                       </motion.button>
                     ))}
@@ -871,14 +878,14 @@ export const Privacy = () => {
           >
             <Glass className="p-5 sm:p-7">
               <div className="flex items-start gap-4">
-                <div className="shrink-0 h-12 w-12 rounded-lg border border-neon-green/40 bg-neon-green/10 grid place-items-center shadow-neon">
-                  <FaUserShield className="text-neon-green" />
+                <div className="shrink-0 h-12 w-12 rounded-lg border border-signal-500/40 bg-signal-500/10 grid place-items-center shadow-glow-sm">
+                  <FaUserShield className="text-signal-300" />
                 </div>
                 <div className="min-w-0 w-full">
-                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-neon-green">
+                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-signal-300">
                     &gt;_ YOUR RIGHTS
                   </h2>
-                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-gray-300/90">
+                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-white/55">
                     Siz o‘zingizga tegishli ma’lumotlar bo‘yicha so‘rov
                     yuborishingiz mumkin. Biz imkon qadar tez javob beramiz.
                   </p>
@@ -887,17 +894,17 @@ export const Privacy = () => {
                     {rights.map((r) => (
                       <div
                         key={r.id}
-                        className="rounded-xl border border-neon-blue/35 bg-neon-blue/5 p-4"
+                        className="rounded-xl border border-cyber-500/35 bg-cyber-500/5 p-4"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-lg border border-neon-blue/35 bg-neon-blue/10 grid place-items-center">
-                            <r.icon className="text-neon-blue" />
+                          <div className="h-10 w-10 rounded-lg border border-cyber-500/35 bg-cyber-500/10 grid place-items-center">
+                            <r.icon className="text-cyber-300" />
                           </div>
                           <div>
-                            <div className="text-sm font-black tracking-widest text-neon-blue">
+                            <div className="text-sm font-black tracking-widest text-cyber-300">
                               {r.title.toUpperCase()}
                             </div>
-                            <div className="mt-1 text-sm text-gray-300/90 leading-relaxed">
+                            <div className="mt-1 text-sm text-white/55 leading-relaxed">
                               {r.text}
                             </div>
                           </div>
@@ -906,7 +913,7 @@ export const Privacy = () => {
                     ))}
                   </div>
 
-                  <div className="mt-5 text-xs text-gray-500">
+                  <div className="mt-5 text-xs text-white/35">
                     * Browser cookie controls: Settings → Privacy → Cookies /
                     Tracking.
                   </div>
@@ -928,18 +935,18 @@ export const Privacy = () => {
             animate="show"
             custom={5}
           >
-            <Glass className="p-5 sm:p-7 border-neon-blue/40 shadow-neon-blue">
+            <Glass className="p-5 sm:p-7 border-cyber-500/40 shadow-glow-cyan">
               <div className="flex items-start gap-4">
-                <div className="shrink-0 h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                  <FaEnvelope className="text-neon-blue" />
+                <div className="shrink-0 h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                  <FaEnvelope className="text-cyber-300" />
                 </div>
                 <div className="min-w-0 w-full">
-                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-neon-blue">
+                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-cyber-300">
                     &gt;_ CONTACT
                   </h2>
-                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-gray-300/90">
+                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-white/55">
                     Privacy yoki security masalalari bo‘yicha bog‘lanish:
-                    <span className="text-neon-green font-black">
+                    <span className="text-signal-300 font-black">
                       {" "}
                       {contact.adminHandle}
                     </span>
@@ -959,20 +966,20 @@ export const Privacy = () => {
                             : "noopener noreferrer"
                         }
                         className={classNames(
-                          "rounded-xl border-2 bg-black/60 backdrop-blur px-4 py-4",
-                          "border-neon-green/35 shadow-neon",
-                          "hover:border-neon-blue hover:shadow-neon-blue transition-all",
+                          "rounded-2xl border bg-void-850/60 backdrop-blur px-4 py-4",
+                          "border-signal-500/35 shadow-glow-sm",
+                          "hover:border-cyber-500 hover:shadow-glow-cyan transition-all",
                           "flex items-center gap-3",
                         )}
                       >
-                        <div className="h-10 w-10 rounded-lg border border-neon-blue/35 bg-neon-blue/10 grid place-items-center">
-                          <q.icon className="text-neon-blue" />
+                        <div className="h-10 w-10 rounded-lg border border-cyber-500/35 bg-cyber-500/10 grid place-items-center">
+                          <q.icon className="text-cyber-300" />
                         </div>
                         <div className="min-w-0">
                           <div className="text-sm font-black tracking-wider text-white truncate">
                             {q.label}
                           </div>
-                          <div className="mt-1 text-[11px] font-bold tracking-widest text-gray-400 truncate">
+                          <div className="mt-1 text-[11px] font-bold tracking-widest text-white/45 truncate">
                             OPEN →
                           </div>
                         </div>
@@ -980,11 +987,11 @@ export const Privacy = () => {
                     ))}
                   </div>
 
-                  <div className="mt-5 rounded-xl border border-neon-green/25 bg-black/60 p-4">
-                    <div className="text-[11px] font-black tracking-widest text-gray-400">
+                  <div className="mt-5 rounded-xl border border-signal-500/25 bg-void-850/60 p-4">
+                    <div className="text-[11px] font-black tracking-widest text-white/45">
                       SECURITY REPORT NOTE
                     </div>
-                    <p className="mt-2 text-sm leading-relaxed text-neon-green/80">
+                    <p className="mt-2 text-sm leading-relaxed text-signal-300/80">
                       Xavfsizlik muammosi bo‘lsa: ommaga chiqarmasdan avval
                       bizga yuboring, boshqa foydalanuvchi datalariga tegmang,
                       va minimal proof bilan report qiling.
@@ -1010,14 +1017,14 @@ export const Privacy = () => {
           >
             <Glass className="p-5 sm:p-7">
               <div className="flex items-start gap-4">
-                <div className="shrink-0 h-12 w-12 rounded-lg border border-neon-green/40 bg-neon-green/10 grid place-items-center shadow-neon">
-                  <FaClipboardCheck className="text-neon-green" />
+                <div className="shrink-0 h-12 w-12 rounded-lg border border-signal-500/40 bg-signal-500/10 grid place-items-center shadow-glow-sm">
+                  <FaClipboardCheck className="text-signal-300" />
                 </div>
                 <div className="min-w-0 w-full">
-                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-neon-green">
+                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-signal-300">
                     &gt;_ CHANGELOG
                   </h2>
-                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-gray-300/90">
+                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-white/55">
                     Policy yangilanishlari shu yerda ko‘rsatiladi. (Siz
                     xohlasangiz backenddan ham olib kelamiz.)
                   </p>
@@ -1045,12 +1052,12 @@ export const Privacy = () => {
                     ].map((x) => (
                       <div
                         key={x.k}
-                        className="rounded-xl border border-neon-blue/35 bg-neon-blue/5 p-4"
+                        className="rounded-xl border border-cyber-500/35 bg-cyber-500/5 p-4"
                       >
-                        <div className="text-xs font-black tracking-widest text-neon-blue">
+                        <div className="text-xs font-black tracking-widest text-cyber-300">
                           {x.title} • {x.date}
                         </div>
-                        <div className="mt-2 text-sm text-gray-300/90 leading-relaxed">
+                        <div className="mt-2 text-sm text-white/55 leading-relaxed">
                           {x.text}
                         </div>
                       </div>
@@ -1064,19 +1071,19 @@ export const Privacy = () => {
 
         {/* FOOTER */}
         <motion.footer
-          className="mt-12 pt-8 border-t-2 border-neon-green/30 text-center"
+          className="mt-12 pt-8 border-t-2 border-signal-500/30 text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
         >
-          <p className="text-xs sm:text-sm text-gray-500 mb-2 font-mono">
+          <p className="text-xs sm:text-sm text-white/35 mb-2 font-mono">
             © 2025–2026 CYBER NEXUS — ALL RIGHTS RESERVED
           </p>
           <a
             href="https://cybernexus.uz"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-neon-blue hover:text-neon-green transition-colors duration-300 font-black text-sm sm:text-base tracking-wider"
+            className="text-cyber-300 hover:text-signal-300 transition-colors duration-300 font-black text-sm sm:text-base tracking-wider"
           >
             &gt; cybernexus.uz_
           </a>
@@ -1088,7 +1095,7 @@ export const Privacy = () => {
         {active && (
           <>
             <motion.div
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px]"
+              className="fixed inset-0 z-40 bg-void-850/70 backdrop-blur-[2px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -1103,23 +1110,23 @@ export const Privacy = () => {
               onClick={() => setActive(null)}
             >
               <div
-                className="w-full max-w-2xl rounded-xl border-2 border-neon-blue bg-black/90 backdrop-blur p-5 shadow-neon-blue"
+                className="w-full max-w-2xl rounded-2xl border border-cyber-500 bg-void-900/90 backdrop-blur p-5 shadow-glow-cyan"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="h-14 w-14 rounded-lg border border-neon-green/35 bg-neon-green/10 grid place-items-center overflow-hidden shrink-0">
+                    <div className="h-14 w-14 rounded-lg border border-signal-500/35 bg-signal-500/10 grid place-items-center overflow-hidden shrink-0">
                       {active.icon ? (
-                        <active.icon className="text-neon-green text-2xl" />
+                        <active.icon className="text-signal-300 text-2xl" />
                       ) : (
-                        <FaShieldAlt className="text-neon-green text-2xl" />
+                        <FaShieldAlt className="text-signal-300 text-2xl" />
                       )}
                     </div>
                     <div className="min-w-0">
-                      <div className="text-lg sm:text-xl font-black tracking-wider text-neon-green line-clamp-2">
+                      <div className="text-lg sm:text-xl font-black tracking-wider text-signal-300 line-clamp-2">
                         {active.title}
                       </div>
-                      <div className="mt-2 text-xs font-bold tracking-widest text-neon-blue/90 truncate">
+                      <div className="mt-2 text-xs font-bold tracking-widest text-cyber-300/90 truncate">
                         {active.kind || "DETAILS"} • CYBER NEXUS
                       </div>
                     </div>
@@ -1128,18 +1135,18 @@ export const Privacy = () => {
                   <button
                     type="button"
                     onClick={() => setActive(null)}
-                    className="rounded-lg border border-neon-blue/40 bg-neon-blue/10 p-2 text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                    className="rounded-lg border border-cyber-500/40 bg-cyber-500/10 p-2 text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
                     aria-label="close"
                   >
                     <FaTimes />
                   </button>
                 </div>
 
-                <div className="mt-4 rounded-xl border border-neon-green/25 bg-black/60 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-gray-400">
+                <div className="mt-4 rounded-xl border border-signal-500/25 bg-void-850/60 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-white/45">
                     SUMMARY
                   </div>
-                  <p className="mt-2 text-sm text-gray-300/90 leading-relaxed">
+                  <p className="mt-2 text-sm text-white/55 leading-relaxed">
                     {active.details}
                   </p>
                 </div>
@@ -1151,3 +1158,5 @@ export const Privacy = () => {
     </div>
   );
 };
+
+export default Privacy;

@@ -17,8 +17,8 @@ import {
 const Glass = ({ className, children }) => (
   <div
     className={[
-      "rounded-xl border-2 bg-black/55 backdrop-blur-xl",
-      "border-neon-green/40 shadow-neon",
+      "rounded-2xl border bg-void-850/55 backdrop-blur-xl",
+      "border-signal-500/40 shadow-glow-sm",
       className || "",
     ].join(" ")}
   >
@@ -33,8 +33,8 @@ const Chip = ({ active, onClick, icon: Icon, children }) => (
     className={[
       "inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-black tracking-wider transition-all",
       active
-        ? "border-neon-blue bg-neon-blue/10 text-neon-blue shadow-neon-blue"
-        : "border-neon-green/30 bg-black/50 text-gray-200 hover:border-neon-green hover:text-neon-green",
+        ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
+        : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300",
     ].join(" ")}
   >
     {Icon ? <Icon className="text-[12px]" /> : null}
@@ -1619,17 +1619,8 @@ const questionBank = [
   // =========================================
   if (stage === "intro") {
     return (
-      <div className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden">
-        {/* soft grid background */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.10]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
-            backgroundSize: "56px 56px",
-          }}
-        />
-        <div className="relative w-full max-w-3xl mx-auto px-4 sm:px-6 py-10">
+      <div className="w-full min-h-screen text-white/85 overflow-x-hidden">
+        <div className="relative w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-20 pb-24">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1639,19 +1630,19 @@ const questionBank = [
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                      <Shield className="text-neon-blue" size={22} />
+                    <div className="h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
+                      <Shield className="text-cyber-300" size={22} />
                     </div>
                     <div className="min-w-0">
-                      <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-neon-green truncate">
+                      <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white truncate">
                         CyberNexus Exam
                       </h1>
-                      <p className="mt-1 text-xs sm:text-sm text-neon-blue/90 font-bold tracking-widest truncate">
+                      <p className="mt-1 text-xs sm:text-sm text-cyber-300/90 font-bold tracking-widest truncate">
                         CERTIFICATE • PRO LEVEL
                       </p>
                     </div>
                   </div>
-                  <p className="mt-4 text-sm sm:text-base text-gray-300/90 leading-relaxed">
+                  <p className="mt-4 text-sm sm:text-base text-white/55 leading-relaxed">
                     Testni yakunlang va sertifikat oling. 15 ta savol, 30 daqiqa, 80% passing.
                   </p>
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -1667,15 +1658,15 @@ const questionBank = [
                   </div>
                 </div>
                 <div className="hidden sm:block">
-                  <div className="rounded-xl border border-neon-green/25 bg-black/70 backdrop-blur-xl px-4 py-3">
-                    <div className="text-[11px] font-black tracking-widest text-gray-400">PASSING SCORE</div>
-                    <div className="mt-1 text-2xl font-black text-neon-blue">80%</div>
+                  <div className="rounded-xl border border-signal-500/25 bg-void-850/70 backdrop-blur-xl px-4 py-3">
+                    <div className="text-[11px] font-black tracking-widest text-white/45">PASSING SCORE</div>
+                    <div className="mt-1 text-2xl font-black text-cyber-300">80%</div>
                   </div>
                 </div>
               </div>
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-black tracking-widest text-neon-blue mb-2">
+                  <label className="block text-xs font-black tracking-widest text-cyber-300 mb-2">
                     FIRST NAME
                   </label>
                   <input
@@ -1684,14 +1675,14 @@ const questionBank = [
                     onChange={(e) => setFirstName(e.target.value)}
                     placeholder="Enter your first name"
                     className={[
-                      "w-full rounded-xl border-2 bg-black/60 backdrop-blur px-4 py-3 text-sm",
-                      "border-neon-green/35 text-neon-green placeholder:text-gray-500",
-                      "focus:outline-none focus:border-neon-blue focus:shadow-neon-blue",
+                      "w-full rounded-2xl border bg-void-850/60 backdrop-blur px-4 py-3 text-sm",
+                      "border-signal-500/35 text-signal-300 placeholder:text-white/35",
+                      "focus:outline-none focus:border-cyber-500 focus:shadow-glow-cyan",
                     ].join(" ")}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-black tracking-widest text-neon-blue mb-2">
+                  <label className="block text-xs font-black tracking-widest text-cyber-300 mb-2">
                     LAST NAME
                   </label>
                   <input
@@ -1700,9 +1691,9 @@ const questionBank = [
                     onChange={(e) => setLastName(e.target.value)}
                     placeholder="Enter your last name"
                     className={[
-                      "w-full rounded-xl border-2 bg-black/60 backdrop-blur px-4 py-3 text-sm",
-                      "border-neon-green/35 text-neon-green placeholder:text-gray-500",
-                      "focus:outline-none focus:border-neon-blue focus:shadow-neon-blue",
+                      "w-full rounded-2xl border bg-void-850/60 backdrop-blur px-4 py-3 text-sm",
+                      "border-signal-500/35 text-signal-300 placeholder:text-white/35",
+                      "focus:outline-none focus:border-cyber-500 focus:shadow-glow-cyan",
                     ].join(" ")}
                   />
                 </div>
@@ -1710,10 +1701,10 @@ const questionBank = [
               <motion.button
                 onClick={startExam}
                 className={[
-                  "mt-5 w-full rounded-xl border-2 border-neon-green",
-                  "bg-gradient-to-r from-neon-green to-neon-blue",
-                  "px-5 py-4 text-sm sm:text-base font-black tracking-widest text-black shadow-neon",
-                  "hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2",
+                  "mt-5 w-full rounded-2xl border border-signal-500",
+                  "bg-gradient-to-r from-signal-400 to-cyber-400",
+                  "px-5 py-4 text-sm sm:text-base font-black tracking-widest text-black shadow-glow-sm",
+                  "hover:shadow-glow-cyan transition-all inline-flex items-center justify-center gap-2",
                 ].join(" ")}
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.98 }}
@@ -1737,7 +1728,7 @@ const questionBank = [
     const currentQ = examQuestions[currentQuestion];
     const progress = ((currentQuestion + 1) / examQuestions.length) * 100;
     return (
-      <div className="min-h-screen bg-black text-[#00ff88] font-mono p-4 md:p-6">
+      <div className="min-h-screen text-[#00ff88] font-mono p-4 md:p-6">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="bg-[#0a0a12] border-2 border-[#00ff88] rounded-lg p-4 mb-6 shadow-[0_0_20px_rgba(0,255,136,0.3)]">
@@ -1746,7 +1737,7 @@ const questionBank = [
                 <Shield size={32} className="text-[#00ff88]" />
                 <div>
                   <h2 className="text-xl md:text-2xl font-bold">Cybersecurity Exam</h2>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-white/45">
                     {firstName} {lastName}
                   </p>
                 </div>
@@ -1756,7 +1747,7 @@ const questionBank = [
                   <div className="text-2xl md:text-3xl font-bold text-[#00ffcc]">
                     {formatTime(timeLeft)}
                   </div>
-                  <div className="text-xs text-gray-400">Time Left</div>
+                  <div className="text-xs text-white/45">Time Left</div>
                 </div>
               </div>
             </div>
@@ -1815,7 +1806,7 @@ const questionBank = [
                     className={`w-full p-4 rounded-lg text-left transition-all border-2 ${
                       answers[currentQuestion] === index
                         ? "border-[#00ff88] bg-[#00ff88] bg-opacity-20 text-white"
-                        : "border-gray-700 bg-gray-900 text-gray-300 hover:border-[#00ff88] hover:bg-gray-800"
+                        : "border-gray-700 bg-gray-900 text-white/60 hover:border-[#00ff88] hover:bg-gray-800"
                     }`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -1892,14 +1883,14 @@ const questionBank = [
                       ? "bg-[#00ff88] text-black"
                       : currentQuestion === index
                       ? "bg-gray-700 text-white border-2 border-[#00ff88]"
-                      : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                      : "bg-gray-800 text-white/45 hover:bg-gray-700"
                   }`}
                 >
                   {index + 1}
                 </button>
               ))}
             </div>
-            <p className="text-xs text-gray-400 mt-3">
+            <p className="text-xs text-white/45 mt-3">
               Answered: {Object.keys(answers).length} / {examQuestions.length}
             </p>
           </div>
@@ -1920,17 +1911,8 @@ const questionBank = [
     const passed = score >= 80;
     const correctAnswers = examQuestions.length ? Math.round((score / 100) * examQuestions.length) : 0;
     return (
-      <div className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden">
-        {/* soft grid background */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.10]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
-            backgroundSize: "56px 56px",
-          }}
-        />
-        <div className="relative w-full max-w-3xl mx-auto px-4 sm:px-6 py-10">
+      <div className="w-full min-h-screen text-white/85 overflow-x-hidden">
+        <div className="relative w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-20 pb-24">
           <motion.div
             className="w-full"
             initial={{ opacity: 0, y: 18 }}
@@ -1945,22 +1927,22 @@ const questionBank = [
                       className={[
                         "h-12 w-12 rounded-lg border grid place-items-center",
                         passed
-                          ? "border-neon-green/40 bg-neon-green/10 shadow-neon"
+                          ? "border-signal-500/40 bg-signal-500/10 shadow-glow-sm"
                           : "border-red-500/40 bg-red-500/10",
                       ].join(" ")}
                     >
-                      {passed ? <CheckCircle className="text-neon-green" /> : <XCircle className="text-red-400" />}
+                      {passed ? <CheckCircle className="text-signal-300" /> : <XCircle className="text-red-400" />}
                     </div>
                     <div className="min-w-0">
                       <h2
                         className={[
                           "text-2xl sm:text-3xl font-black tracking-wider truncate",
-                          passed ? "text-neon-blue" : "text-red-300",
+                          passed ? "text-cyber-300" : "text-red-300",
                         ].join(" ")}
                       >
                         {passed ? "CONGRATULATIONS" : "KEEP LEARNING"}
                       </h2>
-                      <p className="mt-1 text-xs sm:text-sm text-gray-400 font-bold tracking-widest truncate">
+                      <p className="mt-1 text-xs sm:text-sm text-white/45 font-bold tracking-widest truncate">
                         {firstName} {lastName}
                       </p>
                     </div>
@@ -1984,21 +1966,21 @@ const questionBank = [
                   </div>
                 </div>
                 <div className="hidden sm:block">
-                  <div className="rounded-xl border border-neon-green/25 bg-black/70 backdrop-blur-xl px-4 py-3">
-                    <div className="text-[11px] font-black tracking-widest text-gray-400">RESULT</div>
-                    <div className={["mt-1 text-2xl font-black", passed ? "text-neon-green" : "text-red-300"].join(" ")}>
+                  <div className="rounded-xl border border-signal-500/25 bg-void-850/70 backdrop-blur-xl px-4 py-3">
+                    <div className="text-[11px] font-black tracking-widest text-white/45">RESULT</div>
+                    <div className={["mt-1 text-2xl font-black", passed ? "text-signal-300" : "text-red-300"].join(" ")}>
                       {passed ? "PASS" : "FAIL"}
                     </div>
                   </div>
                 </div>
               </div>
               <div className="mt-6 grid grid-cols-2 gap-3">
-                <div className="rounded-xl border border-neon-green/25 bg-black/60 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-gray-400">CORRECT</div>
-                  <div className="mt-1 text-3xl font-black text-neon-blue">{correctAnswers}</div>
+                <div className="rounded-xl border border-signal-500/25 bg-void-850/60 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-white/45">CORRECT</div>
+                  <div className="mt-1 text-3xl font-black text-cyber-300">{correctAnswers}</div>
                 </div>
-                <div className="rounded-xl border border-neon-green/25 bg-black/60 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-gray-400">INCORRECT</div>
+                <div className="rounded-xl border border-signal-500/25 bg-void-850/60 p-4">
+                  <div className="text-[11px] font-black tracking-widest text-white/45">INCORRECT</div>
                   <div className="mt-1 text-3xl font-black text-red-300">
                     {Math.max(0, examQuestions.length - correctAnswers)}
                   </div>
@@ -2010,10 +1992,10 @@ const questionBank = [
                     <motion.button
                       onClick={downloadCertificate}
                       className={[
-                        "w-full rounded-xl border-2 border-neon-green",
-                        "bg-gradient-to-r from-neon-green to-neon-blue",
-                        "px-5 py-4 text-sm sm:text-base font-black tracking-widest text-black shadow-neon",
-                        "hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2",
+                        "w-full rounded-2xl border border-signal-500",
+                        "bg-gradient-to-r from-signal-400 to-cyber-400",
+                        "px-5 py-4 text-sm sm:text-base font-black tracking-widest text-black shadow-glow-sm",
+                        "hover:shadow-glow-cyan transition-all inline-flex items-center justify-center gap-2",
                       ].join(" ")}
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.98 }}
@@ -2023,7 +2005,7 @@ const questionBank = [
                     </motion.button>
                     <motion.button
                       onClick={() => setStage("certificate")}
-                      className="w-full rounded-xl border-2 border-neon-blue bg-neon-blue/10 px-5 py-3 text-xs sm:text-sm font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all inline-flex items-center justify-center gap-2"
+                      className="w-full rounded-2xl border border-cyber-500 bg-cyber-500/10 px-5 py-3 text-xs sm:text-sm font-black tracking-widest text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all inline-flex items-center justify-center gap-2"
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.98 }}
                     >
@@ -2035,10 +2017,10 @@ const questionBank = [
                   <motion.button
                     onClick={retryExam}
                     className={[
-                      "w-full rounded-xl border-2 border-neon-green",
-                      "bg-gradient-to-r from-neon-green to-neon-blue",
-                      "px-5 py-4 text-sm sm:text-base font-black tracking-widest text-black shadow-neon",
-                      "hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2",
+                      "w-full rounded-2xl border border-signal-500",
+                      "bg-gradient-to-r from-signal-400 to-cyber-400",
+                      "px-5 py-4 text-sm sm:text-base font-black tracking-widest text-black shadow-glow-sm",
+                      "hover:shadow-glow-cyan transition-all inline-flex items-center justify-center gap-2",
                     ].join(" ")}
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.98 }}
@@ -2062,17 +2044,8 @@ const questionBank = [
   // =========================================
   if (stage === "certificate") {
     return (
-      <div className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden">
-        {/* soft grid background */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.10]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
-            backgroundSize: "56px 56px",
-          }}
-        />
-        <div className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 py-10">
+      <div className="w-full min-h-screen text-white/85 overflow-x-hidden">
+        <div className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-20 pb-24">
           <motion.div
             className="w-full"
             initial={{ opacity: 0, y: 18 }}
@@ -2086,16 +2059,16 @@ const questionBank = [
                     <div
                       className={[
                         "h-12 w-12 rounded-lg border grid place-items-center",
-                        "border-neon-green/40 bg-neon-green/10 shadow-neon",
+                        "border-signal-500/40 bg-signal-500/10 shadow-glow-sm",
                       ].join(" ")}
                     >
-                      <Award className="text-neon-green" />
+                      <Award className="text-signal-300" />
                     </div>
                     <div className="min-w-0">
-                      <h2 className="text-2xl sm:text-3xl font-black tracking-wider truncate text-neon-blue">
+                      <h2 className="text-2xl sm:text-3xl font-black tracking-wider truncate text-cyber-300">
                         YOUR CERTIFICATE
                       </h2>
-                      <p className="mt-1 text-xs sm:text-sm text-gray-400 font-bold tracking-widest truncate">
+                      <p className="mt-1 text-xs sm:text-sm text-white/45 font-bold tracking-widest truncate">
                         {firstName} {lastName}
                       </p>
                     </div>
@@ -2103,14 +2076,14 @@ const questionBank = [
                 </div>
               </div>
               <div className="mt-6 flex flex-col items-center">
-                <canvas ref={canvasRef} className="w-full max-w-3xl border-4 border-neon-green rounded-lg shadow-neon" />
+                <canvas ref={canvasRef} className="w-full max-w-3xl border-4 border-signal-500 rounded-lg shadow-glow-sm" />
                 <motion.button
                   onClick={downloadCertificate}
                   className={[
-                    "mt-6 w-full max-w-xs rounded-xl border-2 border-neon-green",
-                    "bg-gradient-to-r from-neon-green to-neon-blue",
-                    "px-5 py-4 text-sm sm:text-base font-black tracking-widest text-black shadow-neon",
-                    "hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2",
+                    "mt-6 w-full max-w-xs rounded-2xl border border-signal-500",
+                    "bg-gradient-to-r from-signal-400 to-cyber-400",
+                    "px-5 py-4 text-sm sm:text-base font-black tracking-widest text-black shadow-glow-sm",
+                    "hover:shadow-glow-cyan transition-all inline-flex items-center justify-center gap-2",
                   ].join(" ")}
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
@@ -2120,7 +2093,7 @@ const questionBank = [
                 </motion.button>
                 <motion.button
                   onClick={retryExam}
-                  className="mt-4 w-full max-w-xs rounded-xl border-2 border-neon-blue bg-neon-blue/10 px-5 py-3 text-xs sm:text-sm font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all inline-flex items-center justify-center gap-2"
+                  className="mt-4 w-full max-w-xs rounded-2xl border border-cyber-500 bg-cyber-500/10 px-5 py-3 text-xs sm:text-sm font-black tracking-widest text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all inline-flex items-center justify-center gap-2"
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
                 >

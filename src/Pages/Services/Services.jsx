@@ -1,51 +1,119 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import classNames from "classnames";
-import { GlobalContext } from "../../GlobalState/globalstate";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  FaLayerGroup,
-  FaQrcode,
-  FaKey,
-  FaFingerprint,
-  FaCode,
-  FaTimes,
-  FaExternalLinkAlt,
-  FaShieldAlt,
-} from "react-icons/fa";
+  KeyRound,
+  QrCode,
+  Fingerprint,
+  Code2,
+  ShieldCheck,
+  X,
+  ExternalLink,
+} from "lucide-react";
 
-import Glass from "./sections/ui/Glass";
-import Chip from "./sections/ui/Chip";
 import Toast from "./sections/ui/Toast";
-
 import UuidTool from "./sections/UuidTool";
 import QrTool from "./sections/QrTool";
 import HashTool from "./sections/HashTool";
 import Base64Tool from "./sections/Base64Tool";
 
-export const Services = () => {
-  const { mode } = useContext(GlobalContext);
+import {
+  HoloCard,
+  Eyebrow,
+  Display,
+  Accent,
+  NeonButton,
+  Section,
+  Reveal,
+} from "../../design";
 
-  const tabs = useMemo(
-    () => [
-      { key: "uuid", label: "UUID", icon: FaKey },
-      { key: "qr", label: "QR Code", icon: FaQrcode },
-      { key: "hash", label: "Hash", icon: FaFingerprint },
-      { key: "base64", label: "Base64", icon: FaCode },
-    ],
-    [],
+const TOOLS = [
+  {
+    key: "uuid",
+    label: "UUID",
+    icon: KeyRound,
+    tone: "signal",
+    blurb: "1 dan 10 000 gacha UUID v4 generatsiya qiling.",
+  },
+  {
+    key: "qr",
+    label: "QR Code",
+    icon: QrCode,
+    tone: "cyber",
+    blurb: "Matn yoki URL dan QR kod — xavfli prefikslar bloklanadi.",
+  },
+  {
+    key: "hash",
+    label: "Hash",
+    icon: Fingerprint,
+    tone: "signal",
+    blurb: "MD5, SHA-1, SHA-256 va SHA-512 hash hisoblash.",
+  },
+  {
+    key: "base64",
+    label: "Base64",
+    icon: Code2,
+    tone: "cyber",
+    blurb: "Base64 kodlash va dekodlash, unicode qo'llab-quvvatlanadi.",
+  },
+];
+
+const TIPS = [
+  {
+    title: "QR kodlar",
+    body: "Faqat ishonchli URL'lardan foydalaning. http/https bo'lmagan javascript: yoki data: kabi prefikslar bloklanadi.",
+  },
+  {
+    title: "Hash algoritmlari",
+    body: "MD5 va SHA-1 eskirgan (legacy). Xavfsizlik muhim bo'lgan joyda SHA-256 yoki undan yuqorisini ishlating.",
+  },
+  {
+    title: "Base64 — shifrlash emas",
+    body: "Bu faqat kodlash. Sirni yashirish uchun mutlaqo mos emas — istalgan odam bir soniyada ochadi.",
+  },
+  {
+    title: "Katta hajmlar",
+    body: "Ko'p UUID generatsiya qilganda natijani ekranda emas, copy yoki download orqali oling.",
+  },
+];
+
+function ToolTab({ tool, active, onClick }) {
+  const Icon = tool.icon;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={classNames(
+        "group relative flex shrink-0 items-center gap-2 rounded-xl border px-4 py-2.5",
+        "text-xs font-bold uppercase tracking-[.14em] transition-all duration-300 ease-spring",
+        active
+          ? tool.tone === "signal"
+            ? "border-signal-400/60 bg-signal-500/12 text-signal-200 shadow-glow-sm"
+            : "border-cyber-400/60 bg-cyber-500/12 text-cyber-200 shadow-glow-cyan"
+          : "border-white/10 bg-white/[.02] text-white/45 hover:border-white/25 hover:text-white/80",
+      )}
+    >
+      <Icon className="h-4 w-4" />
+      {tool.label}
+      {active ? (
+        <span className="absolute inset-x-4 -bottom-px h-px bg-gradient-to-r from-transparent via-current to-transparent" />
+      ) : null}
+    </button>
   );
+}
 
+export const Services = () => {
   const [tab, setTab] = useState("uuid");
-  const [about, setAbout] = useState(false);
-
-  // toast queue
+  const [tipsOpen, setTipsOpen] = useState(false);
   const [toast, setToast] = useState(null);
+
   const notify = (t) => setToast({ id: Date.now(), ...t });
+
+  const active = useMemo(() => TOOLS.find((t) => t.key === tab) || TOOLS[0], [tab]);
 
   const renderTool = () => {
     switch (tab) {
-      case "uuid":
-        return <UuidTool notify={notify} />;
       case "qr":
         return <QrTool notify={notify} />;
       case "hash":
@@ -58,273 +126,181 @@ export const Services = () => {
   };
 
   return (
-    <div
-      className="w-full min-h-screen bg-black font-mono text-neon-green overflow-x-hidden"
-      data-mode={mode}
-    >
-      {/* soft grid background */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.10]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
-          backgroundSize: "56px 56px",
-        }}
-      />
+    <div className="pb-24 pt-14 sm:pt-20">
+      {/* ---------------- Hero ---------------- */}
+      <Section width="wide">
+        <div className="grid gap-10 lg:grid-cols-[1.2fr_.8fr] lg:items-end">
+          <div>
+            <Reveal>
+              <Eyebrow tone="cyber">Tools · Utilities</Eyebrow>
+            </Reveal>
 
-      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-12">
-        {/* HERO */}
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, ease: "easeOut" }}
-        >
-          <Glass className="p-5 sm:p-7">
-            <div className="flex flex-col lg:flex-row lg:items-center gap-5">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3">
-                  <div className="h-11 w-11 rounded-lg border border-neon-blue/40 bg-neon-blue/10 grid place-items-center shadow-neon-blue">
-                    <FaLayerGroup className="text-neon-blue" />
+            <Reveal delay={80}>
+              <Display size="lg" className="mt-5">
+                Kundalik <Accent>xavfsizlik vositalari.</Accent>
+              </Display>
+            </Reveal>
+
+            <Reveal delay={150}>
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-white/55">
+                Hammasi brauzeringizda ishlaydi — hech qanday ma'lumot serverga
+                yuborilmaydi. Natijani bir bosishda nusxalang yoki yuklab oling.
+              </p>
+            </Reveal>
+          </div>
+
+          <Reveal delay={200}>
+            <HoloCard glow={active.tone}>
+              <div className="flex items-center gap-3">
+                <span
+                  className={classNames(
+                    "grid h-10 w-10 place-items-center rounded-xl border",
+                    active.tone === "signal"
+                      ? "border-signal-500/35 bg-signal-500/10 text-signal-400"
+                      : "border-cyber-500/35 bg-cyber-500/10 text-cyber-400",
+                  )}
+                >
+                  <active.icon className="h-4.5 w-4.5" />
+                </span>
+                <div>
+                  <div className="text-[11px] font-bold uppercase tracking-[.22em] text-white/40">
+                    Tanlangan vosita
                   </div>
-                  <div className="min-w-0">
-                    <h1 className="text-2xl sm:text-3xl font-black tracking-wider text-neon-green truncate">
-                      Services
-                    </h1>
-                    <p className="mt-1 text-xs sm:text-sm text-neon-blue/90 font-bold tracking-widest truncate">
-                      TOOLS • UTILITIES • SECURITY-FRIENDLY
-                    </p>
-                  </div>
-                </div>
-
-                <p className="mt-4 text-sm sm:text-base text-gray-300/90 leading-relaxed">
-                  CyberNexus’ning foydali utilitalari: UUID generator, QR code
-                  generator, Hash generator va Base64 encoder/decoder. Hammasi
-                  bir xil premium dizaynda.
-                </p>
-
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <Chip
-                    active={tab === "uuid"}
-                    onClick={() => setTab("uuid")}
-                    icon={FaKey}
-                  >
-                    UUID
-                  </Chip>
-                  <Chip
-                    active={tab === "qr"}
-                    onClick={() => setTab("qr")}
-                    icon={FaQrcode}
-                  >
-                    QR Code
-                  </Chip>
-                  <Chip
-                    active={tab === "hash"}
-                    onClick={() => setTab("hash")}
-                    icon={FaFingerprint}
-                  >
-                    Hash
-                  </Chip>
-                  <Chip
-                    active={tab === "base64"}
-                    onClick={() => setTab("base64")}
-                    icon={FaCode}
-                  >
-                    Base64
-                  </Chip>
-
-                  <Chip
-                    active={about}
-                    onClick={() => setAbout(true)}
-                    icon={FaShieldAlt}
-                  >
-                    Security tips
-                  </Chip>
-                </div>
-              </div>
-
-              {/* Right info card */}
-              <div className="w-full lg:w-[440px]">
-                <div className="rounded-xl border-2 border-neon-green/40 bg-black/60 backdrop-blur p-4 shadow-neon">
-                  <div className="text-xs font-black tracking-widest text-neon-blue">
-                    CURRENT TOOL
-                  </div>
-                  <div className="mt-2 text-lg font-black tracking-wider text-neon-green">
-                    {tabs.find((t) => t.key === tab)?.label || "UUID"}
-                  </div>
-                  <div className="mt-2 text-sm text-gray-300/90 leading-relaxed">
-                    Sticky tabs orqali tez almashing. Natijalarni 1-click
-                    nusxalash, download va xavfsiz input tekshiruvlari bor.
-                  </div>
-
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <span className="text-[10px] font-black tracking-widest rounded-full border border-neon-green/25 bg-black/60 px-2 py-1 text-neon-green/80">
-                      NO ADS
-                    </span>
-                    <span className="text-[10px] font-black tracking-widest rounded-full border border-neon-blue/25 bg-neon-blue/10 px-2 py-1 text-neon-blue/90">
-                      PREMIUM UI
-                    </span>
-                    <span className="text-[10px] font-black tracking-widest rounded-full border border-neon-green/25 bg-black/60 px-2 py-1 text-neon-green/80">
-                      COPY / DOWNLOAD
-                    </span>
+                  <div className="font-display text-lg font-bold text-white">
+                    {active.label}
                   </div>
                 </div>
               </div>
+              <p className="mt-4 text-sm leading-relaxed text-white/50">
+                {active.blurb}
+              </p>
+            </HoloCard>
+          </Reveal>
+        </div>
+      </Section>
+
+      {/* ---------------- Sticky tool bar ---------------- */}
+      <Section width="wide" className="mt-10">
+        <div className="sticky top-16 z-30">
+          <div className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-void-900/80 p-2.5 backdrop-blur-xl shadow-panel">
+            <div className="flex gap-2 overflow-x-auto no-scrollbar">
+              {TOOLS.map((t) => (
+                <ToolTab
+                  key={t.key}
+                  tool={t}
+                  active={tab === t.key}
+                  onClick={() => setTab(t.key)}
+                />
+              ))}
             </div>
-          </Glass>
-        </motion.div>
 
-        {/* STICKY TABS */}
-        <div className="sticky top-0 z-30 pt-4">
-          <div className="rounded-xl border border-neon-green/25 bg-black/70 backdrop-blur-xl px-3 py-3">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
-                {tabs.map((t) => (
-                  <Chip
-                    key={t.key}
-                    active={tab === t.key}
-                    onClick={() => setTab(t.key)}
-                    icon={t.icon}
-                  >
-                    {t.label}
-                  </Chip>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setAbout(true)}
-                className="hidden sm:inline-flex rounded-lg border border-neon-blue/30 bg-neon-blue/10 px-3 py-2 text-xs font-black tracking-widest text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
-              >
-                Tips
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setTipsOpen(true)}
+              className="hidden shrink-0 items-center gap-2 rounded-xl border border-white/10 px-3.5 py-2.5 text-xs font-bold uppercase tracking-[.14em] text-white/50 transition-colors hover:border-signal-400/50 hover:text-signal-300 sm:inline-flex"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              Tips
+            </button>
           </div>
         </div>
+      </Section>
 
-        {/* TOOL AREA */}
-        <motion.div
-          className="mt-6"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.06 }}
-        >
-          {renderTool()}
-        </motion.div>
-      </div>
+      {/* ---------------- Tool surface ---------------- */}
+      <Section width="wide" className="mt-6">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={tab}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {renderTool()}
+          </motion.div>
+        </AnimatePresence>
+      </Section>
 
-      {/* SECURITY TIPS MODAL */}
+      {/* ---------------- Tips modal ---------------- */}
       <AnimatePresence>
-        {about && (
-          <>
-            <motion.div
-              className="fixed inset-0 z-40 bg-black/70 backdrop-blur-[2px]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setAbout(false)}
+        {tipsOpen ? (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Security tips"
+          >
+            <div
+              className="absolute inset-0 bg-void-950/80 backdrop-blur-sm"
+              onClick={() => setTipsOpen(false)}
             />
+
             <motion.div
-              className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 18 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              onClick={() => setAbout(false)}
+              initial={{ opacity: 0, y: 20, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 12, scale: 0.98 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full max-w-2xl"
             >
-              <div
-                className="w-full max-w-2xl rounded-xl border-2 border-neon-blue bg-black/90 backdrop-blur p-5 shadow-neon-blue"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex items-start justify-between gap-3">
+              <HoloCard glow="cyber" interactive={false}>
+                <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-lg border border-neon-green/35 bg-neon-green/10 grid place-items-center">
-                      <FaShieldAlt className="text-neon-green text-xl" />
-                    </div>
+                    <span className="grid h-11 w-11 place-items-center rounded-xl border border-signal-500/35 bg-signal-500/10">
+                      <ShieldCheck className="h-5 w-5 text-signal-400" />
+                    </span>
                     <div>
-                      <div className="text-lg sm:text-xl font-black tracking-wider text-neon-green">
-                        Security tips (Services)
-                      </div>
-                      <div className="mt-1 text-xs font-bold tracking-widest text-neon-blue/90">
-                        SAFE INPUT • RESPONSIBLE USE
+                      <Eyebrow tone="cyber">Responsible use</Eyebrow>
+                      <div className="mt-1.5 font-display text-xl font-bold text-white">
+                        Xavfsizlik bo'yicha eslatmalar
                       </div>
                     </div>
                   </div>
 
                   <button
                     type="button"
-                    onClick={() => setAbout(false)}
-                    className="rounded-lg border border-neon-blue/40 bg-neon-blue/10 p-2 text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
-                    aria-label="close"
+                    onClick={() => setTipsOpen(false)}
+                    aria-label="Yopish"
+                    className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-white/10 text-white/50 transition-colors hover:border-white/30 hover:text-white"
                   >
-                    <FaTimes />
+                    <X className="h-4 w-4" />
                   </button>
                 </div>
 
-                <div className="mt-4 rounded-xl border border-neon-green/25 bg-black/60 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-gray-400">
-                    RECOMMENDATIONS
-                  </div>
-                  <ul className="mt-3 space-y-2 text-sm text-neon-green/80 leading-relaxed list-disc pl-5">
-                    <li>
-                      QR: faqat ishonchli URL’lardan foydalaning.{" "}
-                      <span className="text-neon-blue/90 font-bold">
-                        http/https
-                      </span>
-                      bo‘lmagan “javascript:” yoki “data:” kabi xavfli prefixlar
-                      bloklanadi.
-                    </li>
-                    <li>
-                      Hash: MD5/SHA1 eski algoritmlar (legacy). Muhim xavfsizlik
-                      ishlarida odatda
-                      <span className="text-neon-blue/90 font-bold">
-                        {" "}
-                        SHA-256
-                      </span>{" "}
-                      tavsiya qilinadi.
-                    </li>
-                    <li>
-                      Base64 bu shifrlash emas — faqat kodlash. Sirni yashirish
-                      uchun mos emas.
-                    </li>
-                    <li>
-                      UUID’larni ko‘p generatsiya qilsangiz ham, UI performance
-                      uchun list “copy/download” orqali ishlatiladi.
-                    </li>
-                  </ul>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      window.open(
-                        "https://cybernexus.uz",
-                        "_blank",
-                        "noopener,noreferrer",
-                      )
-                    }
-                    className={classNames(
-                      "mt-4 w-full rounded-xl border-2 border-neon-green bg-gradient-to-r from-neon-green to-neon-blue",
-                      "px-4 py-3 text-sm font-black tracking-wider text-black shadow-neon hover:shadow-neon-blue transition-all inline-flex items-center justify-center gap-2",
-                    )}
-                  >
-                    Open CyberNexus{" "}
-                    <FaExternalLinkAlt className="text-[14px]" />
-                  </button>
+                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                  {TIPS.map((t) => (
+                    <div
+                      key={t.title}
+                      className="rounded-xl border border-white/8 bg-black/30 p-4"
+                    >
+                      <div className="text-sm font-bold text-signal-300">{t.title}</div>
+                      <p className="mt-1.5 text-xs leading-relaxed text-white/45">
+                        {t.body}
+                      </p>
+                    </div>
+                  ))}
                 </div>
 
-                <div className="mt-3 text-center text-[11px] text-gray-500">
-                  Tips oynasi — faqat tavsiya. Loyihada security doim birinchi
-                  o‘rinda.
-                </div>
-              </div>
+                <NeonButton
+                  as="a"
+                  href="https://cybernexus.uz"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-6 w-full"
+                >
+                  Open CyberNexus
+                  <ExternalLink className="h-4 w-4" />
+                </NeonButton>
+              </HoloCard>
             </motion.div>
-          </>
-        )}
+          </motion.div>
+        ) : null}
       </AnimatePresence>
 
-      {/* TOAST */}
       <Toast toast={toast} onClose={() => setToast(null)} />
 
-      {/* small utilities */}
       <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

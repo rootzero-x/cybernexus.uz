@@ -22,28 +22,28 @@ export default function Toast({ toast, onClose }) {
         >
           <div
             className={classNames(
-              "rounded-xl border-2 bg-black/85 backdrop-blur p-4 shadow-neon",
+              "rounded-2xl border bg-black/85 backdrop-blur p-4 shadow-glow-sm",
               toast.type === "error"
                 ? "border-red-500/50"
                 : toast.type === "warn"
                 ? "border-yellow-400/40"
-                : "border-neon-green/40"
+                : "border-signal-500/40"
             )}
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <div className="text-xs font-black tracking-widest text-neon-blue/90">
+                <div className="text-xs font-black tracking-widest text-cyber-300/90">
                   {toast.type === "error"
                     ? "ERROR"
                     : toast.type === "warn"
                     ? "WARNING"
                     : "DONE"}
                 </div>
-                <div className="mt-1 text-sm font-black tracking-wider text-neon-green break-words">
+                <div className="mt-1 text-sm font-black tracking-wider text-signal-300 break-words">
                   {toast.title || "OK"}
                 </div>
                 {toast.message ? (
-                  <div className="mt-1 text-xs text-gray-300/90 leading-relaxed break-words">
+                  <div className="mt-1 text-xs text-white/55 leading-relaxed break-words">
                     {toast.message}
                   </div>
                 ) : null}
@@ -52,7 +52,7 @@ export default function Toast({ toast, onClose }) {
               <button
                 type="button"
                 onClick={onClose}
-                className="shrink-0 rounded-lg border border-neon-blue/40 bg-neon-blue/10 p-2 text-neon-blue hover:border-neon-green hover:text-neon-green transition-all"
+                className="shrink-0 rounded-lg border border-cyber-500/40 bg-cyber-500/10 p-2 text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
                 aria-label="close toast"
               >
                 <FaTimes />
