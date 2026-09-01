@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" width="1200" height="560" role="img">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a1120"/>
+      <stop offset="55%" stop-color="#060b18"/>
+      <stop offset="100%" stop-color="#03060f"/>
+    </linearGradient>
+
+    <radialGradient id="halo" cx="50%" cy="42%" r="52%">
+      <stop offset="0%" stop-color="#ff2d95" stop-opacity=".30"/>
+      <stop offset="55%" stop-color="#00e5ff" stop-opacity=".10"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff2d95"/>
+      <stop offset="100%" stop-color="#00e5ff"/>
+    </linearGradient>
+
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff2d95" stop-opacity=".55"/>
+      <stop offset="100%" stop-color="#ff2d95" stop-opacity="0"/>
+    </linearGradient>
+
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="softglow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#ff2d95" stroke-opacity=".07" stroke-width="1"/>
+    </pattern>
+
+    <radialGradient id="vig" cx="50%" cy="46%" r="62%">
+      <stop offset="55%" stop-color="#060b18" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#01030a" stop-opacity=".92"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="560" fill="url(#sky)"/>
+  <rect width="1200" height="560" fill="url(#grid)"/>
+  <rect width="1200" height="560" fill="url(#halo)"/>
+  <g><circle cx="1113" cy="107" r="1.2" fill="#00e5ff" opacity="0.44"/><circle cx="826" cy="395" r="2.2" fill="#00e5ff" opacity="0.51"/><circle cx="342" cy="64" r="1.6" fill="#ff2d95" opacity="0.57"/><circle cx="1075" cy="380" r="1.2" fill="#00e5ff" opacity="0.42"/><circle cx="336" cy="242" r="1.6" fill="#ff2d95" opacity="0.54"/><circle cx="1091" cy="411" r="1.2" fill="#ff2d95" opacity="0.47"/><circle cx="329" cy="499" r="2.2" fill="#ff2d95" opacity="0.56"/><circle cx="1111" cy="287" r="2.2" fill="#ff2d95" opacity="0.53"/><circle cx="247" cy="64" r="1.2" fill="#00e5ff" opacity="0.36"/><circle cx="358" cy="463" r="3.0" fill="#ff2d95" opacity="0.46"/><circle cx="384" cy="219" r="1.2" fill="#ff2d95" opacity="0.30"/><circle cx="648" cy="248" r="3.0" fill="#ff2d95" opacity="0.22"/><circle cx="438" cy="247" r="3.0" fill="#ff2d95" opacity="0.20"/><circle cx="261" cy="155" r="1.2" fill="#ff2d95" opacity="0.22"/><circle cx="232" cy="302" r="2.2" fill="#ff2d95" opacity="0.26"/><circle cx="745" cy="253" r="1.2" fill="#ff2d95" opacity="0.40"/><circle cx="765" cy="137" r="1.2" fill="#00e5ff" opacity="0.20"/><circle cx="967" cy="482" r="3.0" fill="#00e5ff" opacity="0.20"/><circle cx="833" cy="105" r="2.2" fill="#ff2d95" opacity="0.60"/><circle cx="570" cy="389" r="2.2" fill="#00e5ff" opacity="0.58"/><circle cx="945" cy="164" r="1.2" fill="#ff2d95" opacity="0.19"/><circle cx="751" cy="203" r="1.6" fill="#ff2d95" opacity="0.44"/><circle cx="824" cy="125" r="1.2" fill="#00e5ff" opacity="0.59"/><circle cx="172" cy="144" r="2.2" fill="#00e5ff" opacity="0.38"/><circle cx="66" cy="401" r="3.0" fill="#00e5ff" opacity="0.44"/><circle cx="172" cy="476" r="1.6" fill="#00e5ff" opacity="0.20"/></g>
+  <g transform="translate(0,-110)">
+    <g filter="url(#glow)">
+      <path d="M520 250 L520 600" stroke="url(#stroke)" stroke-width="9" stroke-linecap="round"/>
+      <circle cx="520" cy="242" r="13" fill="#00ff9d"/>
+      <path d="M520 262 L806 300 L742 336 L806 372 L520 410 Z" fill="url(#stroke)" opacity=".92"/>
+      <path d="M520 262 L806 300 L742 336 L806 372 L520 410 Z" fill="none" stroke="#00ff9d" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M462 600 L578 600" stroke="url(#stroke)" stroke-width="10" stroke-linecap="round"/>
+    </g>
+    <ellipse cx="520" cy="608" rx="130" ry="22" fill="#00ff9d" opacity=".16" filter="url(#softglow)"/>
+    <g opacity=".9">
+      <rect x="620" y="470" width="360" height="120" rx="14"
+            fill="#08111f" fill-opacity=".9" stroke="#00e5ff" stroke-opacity=".45" stroke-width="2"/>
+      <text x="648" y="524" font-family="monospace" font-size="30" fill="#00ff9d">&gt;_ capture</text>
+      <text x="648" y="562" font-family="monospace" font-size="24" fill="#00e5ff" opacity=".75">flag&#123;...&#125;</text>
+    </g>
+    <g><text x="431" y="221" font-family="monospace" font-size="26" fill="#00e5ff" opacity="0.27">0x7F</text><text x="190" y="429" font-family="monospace" font-size="26" fill="#00e5ff" opacity="0.21">4C46</text><text x="176" y="414" font-family="monospace" font-size="26" fill="#00e5ff" opacity="0.15">1A2B</text><text x="536" y="178" font-family="monospace" font-size="26" fill="#00e5ff" opacity="0.16">FF0D</text><text x="528" y="587" font-family="monospace" font-size="26" fill="#00e5ff" opacity="0.16">9E31</text><text x="334" y="479" font-family="monospace" font-size="26" fill="#00e5ff" opacity="0.33">C0DE</text><text x="674" y="354" font-family="monospace" font-size="26" fill="#00e5ff" opacity="0.34">0xBE</text><text x="165" y="604" font-family="monospace" font-size="26" fill="#00e5ff" opacity="0.20">7A55</text></g>
+</g>
+  <rect width="1200" height="560" fill="url(#vig)"/>
+  <rect x="1" y="1" width="1198" height="558" fill="none"
+        stroke="#ffffff" stroke-opacity=".07" stroke-width="2" rx="4"/>
+</svg>

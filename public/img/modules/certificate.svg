@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" width="1200" height="560" role="img">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a1120"/>
+      <stop offset="55%" stop-color="#060b18"/>
+      <stop offset="100%" stop-color="#03060f"/>
+    </linearGradient>
+
+    <radialGradient id="halo" cx="50%" cy="42%" r="52%">
+      <stop offset="0%" stop-color="#00ff9d" stop-opacity=".30"/>
+      <stop offset="55%" stop-color="#ff2d95" stop-opacity=".10"/>
+      <stop offset="100%" stop-color="#ff2d95" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00ff9d"/>
+      <stop offset="100%" stop-color="#ff2d95"/>
+    </linearGradient>
+
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00ff9d" stop-opacity=".55"/>
+      <stop offset="100%" stop-color="#00ff9d" stop-opacity="0"/>
+    </linearGradient>
+
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="softglow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#00ff9d" stroke-opacity=".07" stroke-width="1"/>
+    </pattern>
+
+    <radialGradient id="vig" cx="50%" cy="46%" r="62%">
+      <stop offset="55%" stop-color="#060b18" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#01030a" stop-opacity=".92"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="560" fill="url(#sky)"/>
+  <rect width="1200" height="560" fill="url(#grid)"/>
+  <rect width="1200" height="560" fill="url(#halo)"/>
+  <g><circle cx="119" cy="249" r="1.6" fill="#ff2d95" opacity="0.51"/><circle cx="1136" cy="416" r="1.2" fill="#00ff9d" opacity="0.49"/><circle cx="594" cy="265" r="1.6" fill="#00ff9d" opacity="0.57"/><circle cx="840" cy="390" r="3.0" fill="#00ff9d" opacity="0.49"/><circle cx="606" cy="294" r="3.0" fill="#ff2d95" opacity="0.59"/><circle cx="1026" cy="381" r="3.0" fill="#ff2d95" opacity="0.59"/><circle cx="397" cy="272" r="2.2" fill="#ff2d95" opacity="0.26"/><circle cx="888" cy="194" r="2.2" fill="#ff2d95" opacity="0.51"/><circle cx="388" cy="234" r="1.2" fill="#ff2d95" opacity="0.44"/><circle cx="717" cy="67" r="3.0" fill="#ff2d95" opacity="0.42"/><circle cx="990" cy="245" r="3.0" fill="#00ff9d" opacity="0.53"/><circle cx="1030" cy="385" r="1.6" fill="#00ff9d" opacity="0.26"/><circle cx="948" cy="435" r="2.2" fill="#ff2d95" opacity="0.38"/><circle cx="873" cy="203" r="1.6" fill="#ff2d95" opacity="0.49"/><circle cx="157" cy="69" r="2.2" fill="#ff2d95" opacity="0.52"/><circle cx="66" cy="415" r="1.6" fill="#ff2d95" opacity="0.50"/><circle cx="513" cy="309" r="2.2" fill="#00ff9d" opacity="0.47"/><circle cx="963" cy="328" r="1.2" fill="#00ff9d" opacity="0.58"/><circle cx="592" cy="362" r="1.6" fill="#00ff9d" opacity="0.59"/><circle cx="282" cy="88" r="2.2" fill="#ff2d95" opacity="0.36"/><circle cx="505" cy="206" r="1.6" fill="#00ff9d" opacity="0.35"/><circle cx="845" cy="314" r="1.2" fill="#00ff9d" opacity="0.51"/><circle cx="698" cy="402" r="1.2" fill="#ff2d95" opacity="0.41"/><circle cx="1081" cy="169" r="3.0" fill="#ff2d95" opacity="0.36"/><circle cx="1046" cy="92" r="2.2" fill="#ff2d95" opacity="0.31"/><circle cx="1095" cy="378" r="3.0" fill="#00ff9d" opacity="0.48"/></g>
+  <g transform="translate(0,-110)">
+    <g>
+      <rect x="400" y="200" width="400" height="330" rx="16"
+            fill="#0a1424" fill-opacity=".92" stroke="url(#stroke)" stroke-width="2"/>
+      <rect x="440" y="248" width="230" height="16" rx="8" fill="#00ff9d" opacity=".45"/>
+      <rect x="440" y="288" width="320" height="11" rx="5" fill="#ffffff" opacity=".18"/>
+      <rect x="440" y="316" width="290" height="11" rx="5" fill="#ffffff" opacity=".14"/>
+      <rect x="440" y="344" width="180" height="11" rx="5" fill="#ffffff" opacity=".12"/>
+      <path d="M440 420 q 60 -26 120 0 t 120 0" fill="none" stroke="#00e5ff" stroke-opacity=".5" stroke-width="3"/>
+      <rect x="440" y="466" width="150" height="10" rx="5" fill="#00e5ff" opacity=".3"/>
+    </g>
+    <g transform="translate(800,470)">
+      <path d="M-34 30 L-34 130 L-6 104 L22 130 L22 30 Z" fill="#ff2d95" opacity=".55"/>
+      <g filter="url(#glow)"><path d="M0 0 L21.6 -58.0 L21.6 -58.0 Z" fill="#00ff9d" opacity=".55" transform="rotate(0)"/><path d="M0 0 L20.8 -54.0 L16.6 -54.0 Z" fill="#00ff9d" opacity=".55" transform="rotate(30)"/><path d="M0 0 L14.4 -51.1 L7.2 -51.1 Z" fill="#00ff9d" opacity=".55" transform="rotate(60)"/><path d="M0 0 L4.2 -50.0 L-4.2 -50.0 Z" fill="#00ff9d" opacity=".55" transform="rotate(90)"/><path d="M0 0 L-7.2 -51.1 L-14.4 -51.1 Z" fill="#00ff9d" opacity=".55" transform="rotate(120)"/><path d="M0 0 L-16.6 -54.0 L-20.8 -54.0 Z" fill="#00ff9d" opacity=".55" transform="rotate(150)"/><path d="M0 0 L-21.6 -58.0 L-21.6 -58.0 Z" fill="#00ff9d" opacity=".55" transform="rotate(180)"/><path d="M0 0 L-20.8 -62.0 L-16.6 -62.0 Z" fill="#00ff9d" opacity=".55" transform="rotate(210)"/><path d="M0 0 L-14.4 -64.9 L-7.2 -64.9 Z" fill="#00ff9d" opacity=".55" transform="rotate(240)"/><path d="M0 0 L-4.2 -66.0 L4.2 -66.0 Z" fill="#00ff9d" opacity=".55" transform="rotate(270)"/><path d="M0 0 L7.2 -64.9 L14.4 -64.9 Z" fill="#00ff9d" opacity=".55" transform="rotate(300)"/><path d="M0 0 L16.6 -62.0 L20.8 -62.0 Z" fill="#00ff9d" opacity=".55" transform="rotate(330)"/></g>
+      <circle cx="0" cy="0" r="46" fill="#08111f" stroke="url(#stroke)" stroke-width="3"/>
+      <path d="M-18 2 L-5 16 L20 -14" fill="none" stroke="#00ff9d" stroke-width="7"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+</g>
+  <rect width="1200" height="560" fill="url(#vig)"/>
+  <rect x="1" y="1" width="1198" height="558" fill="none"
+        stroke="#ffffff" stroke-opacity=".07" stroke-width="2" rx="4"/>
+</svg>
