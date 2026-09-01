@@ -56,6 +56,13 @@ export async function apiFetch(path, options = {}) {
     options.timeoutMs || DEFAULT_TIMEOUT_MS,
   );
 
+  // Let a caller cancel too — a filter change should drop the request already
+  // in flight rather than letting a slow earlier response overwrite a newer one.
+  if (options.signal) {
+    if (options.signal.aborted) controller.abort();
+    else options.signal.addEventListener("abort", () => controller.abort(), { once: true });
+  }
+
   let res;
   try {
     res = await fetch(url, {
@@ -67,9 +74,14 @@ export async function apiFetch(path, options = {}) {
     });
   } catch (e) {
     clearTimeout(timeout);
+
     if (e.name === "AbortError") {
+      // A cancellation the caller asked for is not a failure — let it stay an
+      // AbortError so callers can ignore it, and only report the timeout case.
+      if (options.signal?.aborted) throw e;
       throw new ApiError("So'rov vaqti tugadi. Internetni tekshiring.", 0, {});
     }
+
     throw new ApiError("Serverga ulanib bo'lmadi.", 0, {});
   }
   clearTimeout(timeout);
