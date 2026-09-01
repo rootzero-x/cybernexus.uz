@@ -15,6 +15,7 @@ import {
   Download,
 } from "lucide-react";
 import { issueCertificate } from "../../api/certificates";
+import { formatDateEn } from "../../lib/dateUz";
 
 // Move sub-components outside to prevent remounting on re-renders
 const Glass = ({ className, children }) => (
@@ -1361,8 +1362,8 @@ const questionBank = [
     }
   }, [stage, examStarted, timeLeft]);
   // Build cert meta when passed
-  const formatIssued = (date) =>
-    date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  // The certificate image itself is set in English, so its date stays English.
+  const formatIssued = (date) => formatDateEn(date);
 
   /**
    * Local fallback id.

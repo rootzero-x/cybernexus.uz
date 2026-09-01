@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { verifyCertificate } from "../../api/certificates";
+import { formatDateUz } from "../../lib/dateUz";
 import {
   HoloCard,
   Eyebrow,
@@ -28,14 +29,7 @@ const REASONS = {
   unavailable: "Tekshiruv xizmati vaqtincha ishlamayapti.",
 };
 
-function fmtDate(unix) {
-  if (!unix) return "";
-  return new Date(unix * 1000).toLocaleDateString("uz-UZ", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
+
 
 /**
  * Public certificate check.
@@ -158,7 +152,7 @@ export const Verify = () => {
                 <div className="mt-4 flex items-center gap-2 rounded-xl border border-white/8 bg-black/25 px-4 py-3">
                   <Award className="h-4 w-4 shrink-0 text-white/30" />
                   <span className="text-xs text-white/45">
-                    Berilgan sana: <span className="text-white/70">{fmtDate(result.issued_at)}</span>
+                    Berilgan sana: <span className="text-white/70">{formatDateUz(result.issued_at)}</span>
                   </span>
                 </div>
               </HoloCard>

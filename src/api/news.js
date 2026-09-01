@@ -1,5 +1,6 @@
 // src/api/news.js
 import { apiFetch } from "./client";
+import { formatDateUz, formatDateTimeUz } from "../lib/dateUz";
 
 /**
  * Headlines aggregated on the server from ten security feeds plus Kun.uz and
@@ -53,15 +54,9 @@ export function timeAgo(unixSeconds) {
     }
   }
 
-  return new Date(unixSeconds * 1000).toLocaleDateString("uz-UZ");
+  return formatDateUz(unixSeconds);
 }
 
 export function formatDate(unixSeconds) {
-  if (!unixSeconds) return "";
-  return new Date(unixSeconds * 1000).toLocaleString("uz-UZ", {
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return formatDateTimeUz(unixSeconds);
 }
