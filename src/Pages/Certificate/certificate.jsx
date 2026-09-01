@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Shield,
+  ExternalLink,
+  ShieldCheck,
   Lock,
   AlertTriangle,
   CheckCircle,
@@ -12,6 +14,7 @@ import {
   EyeOff,
   Download,
 } from "lucide-react";
+import { issueCertificate } from "../../api/certificates";
 
 // Move sub-components outside to prevent remounting on re-renders
 const Glass = ({ className, children }) => (
@@ -57,6 +60,7 @@ const CertificateGenerator = () => {
   // certificate meta
   const [certId, setCertId] = useState("");
   const [issuedAt, setIssuedAt] = useState(""); // formatted string
+  const [certVerified, setCertVerified] = useState(false);
   const canvasRef = useRef(null);
   // =========================
   // ✅ QUESTION BANK (EMPTY PLACEHOLDER)
@@ -1357,17 +1361,56 @@ const questionBank = [
     }
   }, [stage, examStarted, timeLeft]);
   // Build cert meta when passed
+  const formatIssued = (date) =>
+    date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+
+  /**
+   * Local fallback id.
+   *
+   * Only used when the server cannot be reached, so the exam result is not
+   * lost. It is marked LOCAL because it is not recorded anywhere and will not
+   * pass verification — an unverifiable id must not look like a real one.
+   */
   const buildCertMeta = () => {
-    const id = `CNX-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
-    const today = new Date();
-    const issued = today.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    const random = new Uint8Array(4);
+    crypto.getRandomValues(random);
+    const id =
+      "LOCAL-" + [...random].map((b) => b.toString(16).padStart(2, "0")).join("").toUpperCase();
+    const issued = formatIssued(new Date());
     setCertId(id);
     setIssuedAt(issued);
     return { id, issued };
+  };
+
+  /**
+   * Record the pass on the server and take the id it returns.
+   *
+   * The id has to be server-side: one minted in the browser can be invented by
+   * anyone, so /verify would have nothing to check it against.
+   */
+  const registerCertificate = async (correctCount, totalQuestions) => {
+    const name = `${firstName} ${lastName}`.trim();
+
+    try {
+      const res = await issueCertificate({
+        fullName: name,
+        score: correctCount,
+        total: totalQuestions,
+      });
+
+      if (res?.cert_id) {
+        setCertId(res.cert_id);
+        setIssuedAt(formatIssued(new Date((res.issued_at || Date.now() / 1000) * 1000)));
+        setCertVerified(true);
+        return;
+      }
+      buildCertMeta();
+    } catch {
+      // Offline, or the session expired mid-exam. The candidate still gets
+      // their certificate; it simply is not registered.
+      buildCertMeta();
+      setCertVerified(false);
+    }
   };
   const selectRandomQuestions = () => {
     const available = questionBank.filter((q) => !usedQuestions.includes(q.id));
@@ -1430,8 +1473,8 @@ const questionBank = [
     setScore(percentage);
     setStage("results");
     setExamStarted(false);
-    // if pass, pre-generate meta now
-    if (percentage >= 80) buildCertMeta();
+    // On a pass, register it server-side so the id can be verified later.
+    if (percentage >= 80) registerCertificate(correctCount, examQuestions.length);
   };
   const generateCertificate = (meta) => {
     const canvas = canvasRef.current;
@@ -2075,6 +2118,52 @@ const questionBank = [
                   </div>
                 </div>
               </div>
+              {/* Verification. A certificate id is only worth anything if a
+                  third party can check it, so the id and its public link are
+                  shown here — and an unregistered one says so plainly rather
+                  than looking official. */}
+              <div className="mt-6">
+                {certVerified ? (
+                  <div className="rounded-2xl border border-signal-500/40 bg-signal-500/[.07] p-5">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[.2em] text-signal-300">
+                      <ShieldCheck size={16} />
+                      Serverda qayd etildi
+                    </div>
+                    <div className="mt-3 flex flex-wrap items-center gap-3">
+                      <code className="rounded-lg border border-white/12 bg-black/40 px-3 py-2 font-mono text-sm tracking-wider text-white">
+                        {certId}
+                      </code>
+                      <a
+                        href={`/verify/${certId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-cyber-500/40 bg-cyber-500/10 px-3 py-2 text-xs font-bold tracking-wide text-cyber-300 transition-colors hover:border-cyber-400"
+                      >
+                        Tekshirish sahifasi
+                        <ExternalLink size={13} />
+                      </a>
+                    </div>
+                    <p className="mt-3 text-xs leading-relaxed text-white/45">
+                      Bu havolani ish beruvchiga yuborishingiz mumkin — u hisobsiz
+                      ham sertifikat haqiqiyligini tekshira oladi.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="rounded-2xl border border-yellow-400/35 bg-yellow-400/[.07] p-5">
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[.2em] text-yellow-300">
+                      <AlertTriangle size={16} />
+                      Serverda qayd etilmadi
+                    </div>
+                    <p className="mt-2.5 text-xs leading-relaxed text-white/50">
+                      Sertifikat yaratildi, lekin serverga yozilmadi — internet
+                      uzilgan yoki sessiya tugagan bo'lishi mumkin. Bu nusxa
+                      tekshiruvdan o'tmaydi; imtihonni qayta topshirsangiz,
+                      tekshiriladigan sertifikat olasiz.
+                    </p>
+                  </div>
+                )}
+              </div>
+
               <div className="mt-6 flex flex-col items-center">
                 <canvas ref={canvasRef} className="w-full max-w-3xl border-4 border-signal-500 rounded-lg shadow-glow-sm" />
                 <motion.button
