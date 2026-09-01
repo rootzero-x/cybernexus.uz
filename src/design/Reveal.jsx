@@ -57,7 +57,21 @@ export default function Reveal({
     );
 
     io.observe(el);
-    return () => io.disconnect();
+
+    // Safety net: decoration must never be able to hide content permanently.
+    // IntersectionObserver callbacks are throttled to zero in tabs the browser
+    // is not painting (background tabs, some embedded webviews, prerenderers),
+    // and there the content would otherwise stay at opacity 0 forever. If the
+    // reveal has not happened shortly after mount, show it regardless.
+    const failsafe = window.setTimeout(() => {
+      setShown(true);
+      if (once) io.disconnect();
+    }, 1500);
+
+    return () => {
+      window.clearTimeout(failsafe);
+      io.disconnect();
+    };
   }, [once]);
 
   return (
