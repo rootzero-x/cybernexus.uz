@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Shield,
@@ -1756,6 +1757,34 @@ const questionBank = [
                 <Shield size={18} />
                 START EXAM
               </motion.button>
+
+              {/* Checking a certificate is a different job from earning one,
+                  and the people who need it most — employers — arrive here
+                  without an account. The lookup gets its own way in. */}
+              <div className="mt-6 border-t border-white/8 pt-5">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0">
+                    <div className="text-xs font-black tracking-widest text-cyber-300">
+                      SERTIFIKATNI TEKSHIRISH
+                    </div>
+                    <p className="mt-1.5 text-xs leading-relaxed text-white/45">
+                      Sizda CNX- raqami bormi? Uning haqiqiyligini tekshiring —
+                      hisob talab qilinmaydi.
+                    </p>
+                  </div>
+                  <Link
+                    to="/verify"
+                    className={[
+                      "inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border px-4 py-2.5",
+                      "border-cyber-500/40 bg-cyber-500/10 text-xs font-black tracking-widest text-cyber-300",
+                      "transition-colors hover:border-cyber-400 hover:text-cyber-200",
+                    ].join(" ")}
+                  >
+                    <ShieldCheck size={15} />
+                    TEKSHIRISH
+                  </Link>
+                </div>
+              </div>
             </Glass>
           </motion.div>
         </div>

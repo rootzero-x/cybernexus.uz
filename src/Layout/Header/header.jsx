@@ -6,6 +6,8 @@ import {
   X,
   LogOut,
   ChevronDown,
+  User,
+  ShieldCheck,
   Sparkles,
   Newspaper,
   Info,
@@ -281,6 +283,25 @@ export const WelcomeHeader = () => {
                   </div>
 
                   <div className="p-1.5">
+                    <Link
+                      to="/profile"
+                      role="menuitem"
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/5 hover:text-white"
+                    >
+                      <User className="h-4 w-4" />
+                      Profilim
+                    </Link>
+                    <Link
+                      to="/verify"
+                      role="menuitem"
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-white/70 transition-colors hover:bg-white/5 hover:text-white"
+                    >
+                      <ShieldCheck className="h-4 w-4" />
+                      Sertifikat tekshirish
+                    </Link>
+
+                    <div className="my-1.5 h-px bg-white/8" />
+
                     <button
                       type="button"
                       onClick={handleLogout}
@@ -318,13 +339,16 @@ export const WelcomeHeader = () => {
 
           <div className="absolute inset-y-0 right-0 flex w-[86%] max-w-sm flex-col border-l border-white/10 bg-void-900/95 shadow-panel-lg backdrop-blur-xl">
             <div className="flex items-center justify-between border-b border-white/8 p-4">
-              <div className="flex items-center gap-3">
+              <Link to="/profile" className="flex min-w-0 items-center gap-3">
                 <Avatar url={avatarUrl} initials={initials} size="h-10 w-10" />
                 <div className="min-w-0">
                   <div className="truncate text-sm font-semibold text-white">{name}</div>
                   <div className="truncate text-xs text-white/40">{email}</div>
+                  <div className="mt-0.5 text-[10px] font-bold uppercase tracking-[.16em] text-signal-400">
+                    Profilni ochish
+                  </div>
                 </div>
-              </div>
+              </Link>
               <button
                 type="button"
                 onClick={() => setMobileOpen(false)}

@@ -6,6 +6,7 @@ import { Download } from "lucide-react";
 import { WelcomeHeader } from "./Header";
 import { AuthContext } from "../context/AuthContext";
 import Backdrop from "../design/Backdrop";
+import { trackPageView } from "../api/track";
 
 /** Pages that stay on the cheap static backdrop (long, text-heavy, or already busy). */
 const STATIC_BACKDROP_ROUTES = new Set([
@@ -67,6 +68,21 @@ export const Layout = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
   }, [location.pathname]);
+
+  /*
+   * First-party visit counter.
+   *
+   * Held back until the session check has settled: firing during `loading`
+   * would send the request before the token is available, and every visit by
+   * a signed-in user would be recorded as anonymous.
+   *
+   * The search string is deliberately left off — a path is enough to know
+   * which page was viewed, and query strings can carry the visitor's own data.
+   */
+  useEffect(() => {
+    if (loading) return;
+    trackPageView(location.pathname);
+  }, [location.pathname, loading]);
 
   const canShowChrome = !!user && !isAuthPage;
 

@@ -27,6 +27,7 @@ const Services = lazy(() => import("./src/Pages/Services/Services"));
 const Privacy = lazy(() => import("./src/Pages/Privacy/Privacy"));
 const TermsOfService = lazy(() => import("./src/Pages/Terms Of Service/termsofservice"));
 const Verify = lazy(() => import("./src/Pages/Verify/Verify"));
+const Profile = lazy(() => import("./src/Pages/Profile/Profile"));
 
 function RouteFallback() {
   return (
@@ -61,6 +62,7 @@ export const Routers = () => {
           {/* Protected */}
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Welcome />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/help" element={<Help />} />
