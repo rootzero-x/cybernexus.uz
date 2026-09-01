@@ -15,6 +15,40 @@
 const GSI_SRC = "https://accounts.google.com/gsi/client";
 
 let loaderPromise = null;
+let clientIdPromise = null;
+
+/**
+ * Resolve the Google OAuth client id.
+ *
+ * The server is asked first, because the server is what validates the token's
+ * audience — if the two ever disagree, every sign-in fails the audience check
+ * with no useful error. That is precisely how this broke: the deployed bundle
+ * was built with a client id belonging to a Google Cloud project the account
+ * did not own, and a stale build-time environment variable in the hosting
+ * dashboard kept overriding the committed one.
+ *
+ * VITE_GOOGLE_CLIENT_ID stays as the offline/dev fallback.
+ */
+export function resolveGoogleClientId() {
+  if (clientIdPromise) return clientIdPromise;
+
+  const fallback = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+
+  clientIdPromise = import("./client")
+    .then(({ apiFetch }) =>
+      apiFetch("/auth/config.php", { skipAuth: true, timeoutMs: 8000 }),
+    )
+    .then((res) => {
+      const id = res?.google_client_id;
+      if (typeof id === "string" && id.endsWith(".apps.googleusercontent.com")) {
+        return id;
+      }
+      return fallback;
+    })
+    .catch(() => fallback);
+
+  return clientIdPromise;
+}
 
 /** Load the GSI script once, resolving with window.google.accounts.id. */
 export function loadGoogleIdentity({ timeoutMs = 12000 } = {}) {

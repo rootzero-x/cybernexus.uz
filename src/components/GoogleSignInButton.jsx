@@ -1,8 +1,6 @@
 // src/components/GoogleSignInButton.jsx
 import React, { memo, useEffect, useRef, useState } from "react";
-import { loadGoogleIdentity } from "../api/google";
-
-const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+import { loadGoogleIdentity, resolveGoogleClientId } from "../api/google";
 
 /**
  * Renders the official Google Identity Services button.
@@ -27,27 +25,31 @@ function GoogleSignInButtonBase({ onCredential, onError, width = 320 }) {
   onCredentialRef.current = onCredential;
   onErrorRef.current = onError;
 
-  // A missing client id is knowable before the first paint, so it starts in
-  // the failed state rather than flashing "loading" and then failing.
-  const [status, setStatus] = useState(() => (CLIENT_ID ? "loading" : "failed"));
+  const [status, setStatus] = useState("loading"); // loading | ready | failed
 
   useEffect(() => {
     if (rendered.current) return;
 
-    if (!CLIENT_ID) {
-      onErrorRef.current?.("VITE_GOOGLE_CLIENT_ID sozlanmagan (.env).");
-      return;
-    }
-
     let cancelled = false;
 
-    loadGoogleIdentity()
-      .then((googleId) => {
+    // The client id comes from the server, so it always matches the audience
+    // the backend will check the returned token against.
+    Promise.all([loadGoogleIdentity(), resolveGoogleClientId()])
+      .then(([googleId, clientId]) => {
         if (cancelled || !holderRef.current || rendered.current) return;
+
+        if (!clientId) {
+          setStatus("failed");
+          onErrorRef.current?.(
+            "Google client ID topilmadi (server ham, .env ham bo'sh).",
+          );
+          return;
+        }
+
         rendered.current = true;
 
         googleId.initialize({
-          client_id: CLIENT_ID,
+          client_id: clientId,
           use_fedcm_for_prompt: true,
           auto_select: false,
           cancel_on_tap_outside: true,
