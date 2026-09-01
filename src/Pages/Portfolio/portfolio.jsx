@@ -1,883 +1,440 @@
-// src/pages/Portfolio/Portfolio.jsx
-import React, { useMemo, useState, useEffect } from "react";
+// src/Pages/Portfolio/portfolio.jsx
+import React, { useMemo, useState } from "react";
 import classNames from "classnames";
-import { motion, AnimatePresence } from "framer-motion";
 import {
-  FaGithub,
-  FaTelegram,
-  FaInstagram,
-  FaExternalLinkAlt,
-} from "react-icons/fa";
-import { SiHackthebox } from "react-icons/si";
+  Github,
+  Send,
+  Instagram,
+  ExternalLink,
+  MapPin,
+  Circle,
+  ArrowUpRight,
+  Sparkles,
+  Code2,
+  ShieldCheck,
+} from "lucide-react";
 
-/**
- * ✅ CyberNexus Portfolio — Help page design language
- * - Neon green/blue glass cards + soft grid background
- * - Sticky nav chips
- * - Smooth framer-motion animations
- * - Premium sections: Hero / About / Projects / Contact / Footer
- *
- * Notes:
- * - Uses your existing Tailwind tokens: neon-green, neon-blue, shadow-glow-sm, shadow-glow-cyan
- * - Image paths: /snowden.jpg, /cyber.jpg (keep in public/)
- */
+import { PROFILE, LINKS, SKILLS, PROJECTS, TIMELINE } from "./portfolioData";
+import {
+  HoloCard,
+  Eyebrow,
+  Display,
+  Accent,
+  Chip,
+  Section,
+  Reveal,
+  NeonButton,
+  Rule,
+} from "../../design";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 16 },
-  show: (i = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.55, ease: "easeOut", delay: 0.04 * i },
-  }),
+const LINK_ICON = {
+  github: Github,
+  telegram: Send,
+  instagram: Instagram,
 };
 
-const springy = {
-  hidden: { opacity: 0, scale: 0.98, y: 10 },
-  show: (i = 0) => ({
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: {
-      type: "spring",
-      stiffness: 140,
-      damping: 18,
-      delay: 0.04 * i,
-    },
-  }),
-};
+function ProfilePhoto({ src, name }) {
+  const [failed, setFailed] = useState(false);
 
-const Portfolio = () => {
-  // ====== LINKS ======
-  const LINKS = useMemo(
-    () => ({
-      github: "https://github.com/rootzero-x",
-      telegram: "https://t.me/rootzero_x",
-      instagram: "https://www.instagram.com/rootzero.x/",
-    }),
-    [],
-  );
-
-  const projects = useMemo(
-    () => [
-      {
-        title: "UzStudents",
-        description:
-          "Distance learning platform for university requirements with AI integration.",
-        tags: ["React", "Tailwind CSS", "PHP", "MySQL", "AI"],
-        image: "/uzstudents.png",
-      },
-      {
-        title: "SecurePass",
-        description:
-          "End-to-end encrypted password manager with zero-knowledge architecture.",
-        tags: ["React", "Node.js", "Cryptography"],
-        image: "/cyber.jpg",
-      },
-      {
-        title: "VulnScan",
-        description: "Automated vulnerability scanner for web applications.",
-        tags: ["Python", "Security", "Automation"],
-        image: "/vulnscan.webp",
-      },
-    ],
-    [],
-  );
-
-  // ====== UI STATE ======
-  const [active, setActive] = useState(null); // project modal
-  const [navOpen, setNavOpen] = useState(false);
-
-  // close modal on ESC
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "Escape") setActive(null);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
-  const open = (url) => window.open(url, "_blank", "noopener,noreferrer");
-
-  // ====== UI ATOMS (Help-like) ======
-  const Glass = ({ className, children }) => (
-    <div
-      className={classNames(
-        "rounded-2xl border bg-void-850/55 backdrop-blur-xl",
-        "border-signal-500/40 shadow-glow-sm",
-        className,
-      )}
-    >
-      {children}
-    </div>
-  );
-
-  const Chip = ({ active, onClick, icon: Icon, children, className }) => (
-    <button
-      type="button"
-      onClick={onClick}
-      className={classNames(
-        "inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-black tracking-wider transition-all",
-        active
-          ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
-          : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300",
-        className,
-      )}
-    >
-      {Icon ? <Icon className="text-[12px]" /> : null}
-      {children}
-    </button>
-  );
-
-  const Tag = ({ children }) => (
-    <span className="text-[10px] font-black tracking-widest rounded-full border border-signal-500/25 bg-void-850/60 px-2 py-1 text-signal-300/80">
-      {children}
-    </span>
-  );
-
-  const SocialBtn = ({ icon: Icon, label, href }) => (
-    <button
-      type="button"
-      onClick={() => open(href)}
-      className={classNames(
-        "rounded-2xl border bg-void-850/70 backdrop-blur p-3",
-        "border-signal-500/35 shadow-glow-sm",
-        "hover:border-cyber-500 hover:shadow-glow-cyan transition-all",
-        "inline-flex items-center justify-center",
-      )}
-      aria-label={label}
-      title={label}
-    >
-      <Icon className="text-cyber-300 text-xl" />
-    </button>
-  );
-
-  const scrollToId = (id) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
-    setNavOpen(false);
-  };
+  if (!src || failed) {
+    const initials = name
+      .split(" ")
+      .slice(0, 2)
+      .map((w) => w[0]?.toUpperCase() || "")
+      .join("");
+    return (
+      <div className="grid h-full w-full place-items-center bg-void-850">
+        <span className="font-display text-5xl font-bold text-signal-400/40">{initials}</span>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full min-h-screen text-white/85 overflow-x-hidden">
-      {/* The grid comes from the global Backdrop; a second one here just made
-          the moire pattern muddy. */}
+    <img
+      src={src}
+      alt={name}
+      onError={() => setFailed(true)}
+      className="h-full w-full object-cover"
+    />
+  );
+}
 
-      {/* glow blobs (subtle) */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-cyber-500/20 rounded-full blur-3xl opacity-30" />
-        <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-signal-500/20 rounded-full blur-3xl opacity-25" />
-        <div className="absolute top-2/3 right-1/4 w-64 h-64 bg-cyber-500/10 rounded-full blur-3xl opacity-25" />
+function ProjectCover({ src }) {
+  const [failed, setFailed] = useState(false);
+
+  if (failed) {
+    return (
+      <div className="grid h-full w-full place-items-center bg-void-850">
+        <Code2 className="h-8 w-8 text-white/12" />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt=""
+      loading="lazy"
+      decoding="async"
+      onError={() => setFailed(true)}
+      className="h-full w-full object-cover transition-transform duration-700 ease-spring group-hover:scale-105"
+    />
+  );
+}
+
+function ProjectCard({ project, large = false }) {
+  const body = (
+    <HoloCard
+      glow={project.tone}
+      padded={false}
+      className="flex h-full flex-col overflow-hidden"
+    >
+      <div className={classNames("relative shrink-0 overflow-hidden", large ? "h-56" : "h-40")}>
+        <ProjectCover src={project.cover} />
+        <div className="absolute inset-0 bg-gradient-to-t from-void-900 via-void-900/40 to-transparent" />
+        <div className="absolute left-4 top-4 flex gap-2">
+          <Chip tone={project.tone}>{project.kind}</Chip>
+        </div>
+        <div className="absolute right-4 top-4">
+          <span className="rounded-full border border-white/12 bg-black/45 px-2.5 py-0.5 text-[11px] font-bold tabular-nums text-white/60 backdrop-blur">
+            {project.year}
+          </span>
+        </div>
       </div>
 
-      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-16">
-        {/* ====== TOP BAR ====== */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="sticky top-0 z-30 pt-2"
-        >
-          <div className="rounded-xl border border-signal-500/25 bg-void-850/70 backdrop-blur-xl px-3 py-3">
-            <div className="flex items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={() => scrollToId("top")}
-                className="flex items-center gap-2"
-                aria-label="Go to top"
-              >
-                <div className="h-10 w-10 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
-                  <SiHackthebox className="text-cyber-300 text-xl" />
-                </div>
-                <div className="min-w-0">
-                  <div className="text-sm sm:text-base font-black tracking-wider text-signal-300 leading-tight">
-                    CYBERNEXUS
-                  </div>
-                  <div className="text-[10px] sm:text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
-                    PORTFOLIO • SECURITY • DEV
-                  </div>
-                </div>
-              </button>
+      <div className="flex flex-1 flex-col p-5 sm:p-6">
+        <div className="flex items-start justify-between gap-3">
+          <h3
+            className={classNames(
+              "font-display font-bold text-white",
+              large ? "text-xl sm:text-2xl" : "text-lg",
+            )}
+          >
+            {project.title}
+          </h3>
+          {project.link ? (
+            <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-white/25 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-signal-400" />
+          ) : null}
+        </div>
 
-              {/* Desktop chips */}
-              <div className="hidden md:flex items-center gap-2">
-                <Chip active={false} onClick={() => scrollToId("about")}>
-                  ABOUT
-                </Chip>
-                <Chip active={false} onClick={() => scrollToId("projects")}>
-                  PROJECTS
-                </Chip>
-                <Chip active={false} onClick={() => scrollToId("contact")}>
-                  CONTACT
-                </Chip>
+        <p className="mt-3 flex-1 text-sm leading-relaxed text-white/50">
+          {project.description}
+        </p>
+
+        {project.metrics?.length ? (
+          <div className="mt-5 flex flex-wrap gap-4">
+            {project.metrics.map((m) => (
+              <div key={m.label}>
+                <div className="font-display text-xl font-bold tabular-nums text-signal-300">
+                  {m.value}
+                </div>
+                <div className="text-[10px] font-bold uppercase tracking-[.16em] text-white/35">
+                  {m.label}
+                </div>
               </div>
-
-              {/* Mobile */}
-              <div className="md:hidden flex items-center gap-2">
-                <Chip
-                  active={navOpen}
-                  onClick={() => setNavOpen((v) => !v)}
-                  className="px-3"
-                >
-                  MENU
-                </Chip>
-              </div>
-            </div>
-
-            <AnimatePresence>
-              {navOpen && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="md:hidden overflow-hidden"
-                >
-                  <div className="pt-3 flex flex-wrap gap-2">
-                    <Chip active={false} onClick={() => scrollToId("about")}>
-                      ABOUT
-                    </Chip>
-                    <Chip active={false} onClick={() => scrollToId("projects")}>
-                      PROJECTS
-                    </Chip>
-                    <Chip active={false} onClick={() => scrollToId("contact")}>
-                      CONTACT
-                    </Chip>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            ))}
           </div>
-        </motion.div>
+        ) : null}
 
-        {/* ====== HERO ====== */}
-        <section id="top" className="pt-6 sm:pt-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-center">
-            <motion.div
-              variants={fadeUp}
-              initial="hidden"
-              animate="show"
-              custom={0}
-              className="min-w-0"
+        <div className="mt-5 flex flex-wrap gap-1.5">
+          {project.tags.map((t) => (
+            <span
+              key={t}
+              className="rounded-lg border border-white/8 bg-white/[.03] px-2 py-1 text-[11px] text-white/45"
             >
-              <Glass className="p-5 sm:p-7">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <div className="text-[11px] font-bold tracking-widest text-cyber-300/90">
-                      ETHICAL HACKER • SECURITY RESEARCHER • FULL STACK
-                    </div>
-                    <h1 className="mt-2 text-3xl sm:text-4xl lg:text-5xl font-black tracking-wider text-signal-300 leading-tight">
-                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-signal-400 to-cyber-400">
-                        Oyatullokh
-                      </span>
-                    </h1>
-                    <p className="mt-3 text-sm sm:text-base text-white/55 leading-relaxed max-w-xl">
-                      I build secure systems, research vulnerabilities
-                      responsibly, and ship premium web products with strong
-                      security foundations.
-                    </p>
-
-                    <div className="mt-5 flex items-center gap-3">
-                      <SocialBtn
-                        icon={FaGithub}
-                        label="GitHub"
-                        href={LINKS.github}
-                      />
-                      <SocialBtn
-                        icon={FaTelegram}
-                        label="Telegram"
-                        href={LINKS.telegram}
-                      />
-                      <SocialBtn
-                        icon={FaInstagram}
-                        label="Instagram"
-                        href={LINKS.instagram}
-                      />
-                    </div>
-
-                    <div className="mt-5 flex flex-wrap gap-2">
-                      {[
-                        "Pentest",
-                        "Web Security",
-                        "React",
-                        "Tailwind CSS",
-                        "PHP",
-                        "MySQL",
-                        "Docker",
-                        "React Native",
-                        "AWS",
-                        "Node.js",
-                        "Python",
-                        "Crypto",
-                      ].map((t) => (
-                        <Tag key={t}>{t}</Tag>
-                      ))}
-                    </div>
-
-                    <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                      <button
-                        type="button"
-                        onClick={() => scrollToId("projects")}
-                        className={classNames(
-                          "flex-1 rounded-2xl border border-signal-500",
-                          "bg-gradient-to-r from-signal-400 to-cyber-400",
-                          "px-5 py-3 text-sm font-black tracking-widest text-black shadow-glow-sm",
-                          "hover:shadow-glow-cyan transition-all",
-                        )}
-                      >
-                        VIEW PROJECTS
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => scrollToId("contact")}
-                        className={classNames(
-                          "flex-1 rounded-2xl border px-5 py-3 text-sm font-black tracking-widest transition-all",
-                          "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan",
-                          "hover:border-signal-500 hover:text-signal-300",
-                        )}
-                      >
-                        CONTACT
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="hidden sm:block shrink-0">
-                    <div className="h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
-                      <SiHackthebox className="text-cyber-300 text-2xl" />
-                    </div>
-                  </div>
-                </div>
-              </Glass>
-            </motion.div>
-
-            {/* Profile card */}
-            <motion.div
-              variants={springy}
-              initial="hidden"
-              animate="show"
-              custom={1}
-              className="relative"
-            >
-              <Glass className="p-5 sm:p-7">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-[11px] font-bold tracking-widest text-cyber-300/90">
-                      PROFILE PREVIEW
-                    </div>
-                    <div className="mt-1 text-xl sm:text-2xl font-black tracking-wider text-signal-300">
-                      Premium Card
-                    </div>
-                  </div>
-                  <div className="text-[11px] text-white/35 font-bold tracking-widest">
-                    GLASS • NEON
-                  </div>
-                </div>
-
-                <div className="mt-5 relative w-full max-w-md mx-auto">
-                  <div className="absolute inset-0 border-2 border-signal-500/60 rounded-xl rotate-2" />
-                  <div className="relative rounded-xl overflow-hidden border border-cyber-500/25 bg-void-850/60">
-                    <div className="aspect-square w-full">
-                      <img
-                        src="/snowden.jpg"
-                        alt="Profile"
-                        className="h-full w-full object-cover"
-                        onError={(e) => {
-                          // fallback if image missing
-                          e.currentTarget.style.display = "none";
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-5 grid grid-cols-3 gap-3">
-                  {[
-                    { k: "Focus", v: "Security" },
-                    { k: "Stack", v: "Full-Stack" },
-                    { k: "Style", v: "Premium" },
-                  ].map((x) => (
-                    <div
-                      key={x.k}
-                      className="rounded-xl border border-signal-500/25 bg-void-850/60 p-3"
-                    >
-                      <div className="text-[10px] text-white/35 font-black tracking-widest">
-                        {x.k}
-                      </div>
-                      <div className="mt-1 text-sm font-bold tracking-tight text-white truncate">
-                        {x.v}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Glass>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* ====== ABOUT ====== */}
-        <section id="about" className="mt-10 sm:mt-14">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            custom={0}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
-                ABOUT
-              </h2>
-              <span className="text-[11px] text-white/35">who am i →</span>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              <Glass className="p-5 sm:p-7">
-                <div className="text-xl sm:text-2xl font-black tracking-wider text-signal-300">
-                  About me
-                </div>
-                <p className="mt-3 text-sm sm:text-base text-white/55 leading-relaxed">
-                  I’m a security enthusiast focused on ethical hacking and
-                  secure software development. I research vulnerabilities
-                  responsibly, build hardened apps, and love clean, premium UI.
-                </p>
-                <p className="mt-3 text-sm sm:text-base text-white/55 leading-relaxed">
-                  When I’m not breaking things (ethically), I’m building secure
-                  products and contributing to security tooling.
-                </p>
-
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {[
-                    "Penetration Testing",
-                    "Web Security",
-                    "App Security",
-                    "DevSecOps",
-                    "AWS",
-                    "PHP",
-                    "MySQL",
-                    "Tailwind CSS",
-                    "Docker",
-                    "React",
-                    "Node.js",
-                    "Python",
-                    "Cryptography",
-                  ].map((t) => (
-                    <Tag key={t}>{t}</Tag>
-                  ))}
-                </div>
-              </Glass>
-
-              <Glass className="p-5 sm:p-7">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-[11px] font-bold tracking-widest text-cyber-300/90">
-                      CURRENTLY
-                    </div>
-                    <div className="mt-1 text-xl sm:text-2xl font-black tracking-wider text-signal-300">
-                      Doing now
-                    </div>
-                  </div>
-                  <div className="h-10 w-10 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
-                    <SiHackthebox className="text-cyber-300 text-xl" />
-                  </div>
-                </div>
-
-                <div className="mt-5 space-y-3">
-                  {[
-                    "Security Researcher at CyberNexus",
-                    "Developing secure applications",
-                    "Contributing to open-source security tools",
-                  ].map((line, i) => (
-                    <motion.div
-                      key={line}
-                      variants={fadeUp}
-                      initial="hidden"
-                      whileInView="show"
-                      viewport={{ once: true }}
-                      custom={i}
-                      className="rounded-xl border border-signal-500/20 bg-void-850/60 p-4"
-                    >
-                      <div className="text-sm font-black tracking-wider text-signal-300">
-                        <span className="text-cyber-300/90">➜</span> {line}
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </Glass>
-            </div>
-          </motion.div>
-        </section>
-
-        {/* ====== PROJECTS ====== */}
-        <section id="projects" className="mt-10 sm:mt-14">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            custom={0}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
-                FEATURED PROJECTS
-              </h2>
-              <span className="text-[11px] text-white/35">click card →</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {projects.map((p, idx) => (
-                <motion.button
-                  key={p.title}
-                  type="button"
-                  onClick={() => setActive(p)}
-                  className={classNames(
-                    "rounded-2xl border bg-void-850/70 backdrop-blur text-left overflow-hidden",
-                    "border-signal-500/45 shadow-glow-sm",
-                    "hover:border-cyber-500 hover:shadow-glow-cyan transition-all",
-                  )}
-                  variants={springy}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true, amount: 0.2 }}
-                  custom={idx}
-                  whileHover={{ y: -3 }}
-                >
-                  <div className="h-44 w-full bg-void-850/50 border-b border-signal-500/15 overflow-hidden">
-                    <img
-                      src={p.image}
-                      alt={p.title}
-                      className="h-full w-full object-cover opacity-90"
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none";
-                      }}
-                    />
-                    <div className="h-full w-full grid place-items-center bg-gradient-to-br from-black/30 to-black">
-                      <span className="text-white/35 text-xs font-bold tracking-widest">
-                        /public/cyber.jpg
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-5">
-                    <div className="text-base font-black tracking-wider text-signal-300">
-                      {p.title}
-                    </div>
-                    <p className="mt-2 text-sm text-white/55 leading-relaxed line-clamp-3">
-                      {p.description}
-                    </p>
-
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {p.tags.map((t) => (
-                        <span
-                          key={t}
-                          className="text-[10px] font-black tracking-widest rounded-full border border-cyber-500/25 bg-cyber-500/10 px-2 py-1 text-cyber-300/90"
-                        >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="mt-5 flex items-center justify-between">
-                      <span className="text-[11px] font-bold tracking-widest text-white/45">
-                        DETAILS
-                      </span>
-                      <span className="text-xs font-black tracking-widest text-cyber-300">
-                        OPEN →
-                      </span>
-                    </div>
-                  </div>
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-        </section>
-
-        {/* ====== CONTACT ====== */}
-        <section id="contact" className="mt-10 sm:mt-14">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            custom={0}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
-                CONTACT
-              </h2>
-              <span className="text-[11px] text-white/35">reach out →</span>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              <Glass className="p-5 sm:p-7">
-                <div className="text-xl sm:text-2xl font-black tracking-wider text-signal-300">
-                  Get in touch
-                </div>
-                <p className="mt-3 text-sm sm:text-base text-white/55 leading-relaxed">
-                  Working together or security question? Reach me via social
-                  channels.
-                </p>
-
-                <div className="mt-5 grid gap-3">
-                  {[
-                    {
-                      icon: FaGithub,
-                      label: "github.com/rootzero-x",
-                      href: LINKS.github,
-                    },
-                    {
-                      icon: FaTelegram,
-                      label: "t.me/rootzero_x",
-                      href: LINKS.telegram,
-                    },
-                    {
-                      icon: FaInstagram,
-                      label: "instagram.com/rootzero.x",
-                      href: LINKS.instagram,
-                    },
-                  ].map((x) => (
-                    <button
-                      key={x.label}
-                      type="button"
-                      onClick={() => open(x.href)}
-                      className={classNames(
-                        "rounded-2xl border bg-void-850/70 backdrop-blur p-4 text-left",
-                        "border-signal-500/35 shadow-glow-sm",
-                        "hover:border-cyber-500 hover:shadow-glow-cyan transition-all",
-                      )}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
-                          <x.icon className="text-cyber-300" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="text-sm font-bold tracking-tight text-white truncate">
-                            {x.label}
-                          </div>
-                          <div className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
-                            OPEN →
-                          </div>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </Glass>
-
-              {/* Message box (simple, safe; opens mail client) */}
-              <Glass className="p-5 sm:p-7">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <div className="text-[11px] font-bold tracking-widest text-cyber-300/90">
-                      SEND A MESSAGE
-                    </div>
-                    <div className="mt-1 text-xl sm:text-2xl font-black tracking-wider text-signal-300">
-                      Email quick send
-                    </div>
-                  </div>
-                  <div className="hidden sm:flex gap-2">
-                    <Chip
-                      active={false}
-                      onClick={() => open(LINKS.telegram)}
-                      icon={FaTelegram}
-                    >
-                      Telegram
-                    </Chip>
-                    <Chip
-                      active={false}
-                      onClick={() => open(LINKS.github)}
-                      icon={FaGithub}
-                    >
-                      GitHub
-                    </Chip>
-                  </div>
-                </div>
-
-                <p className="mt-3 text-sm text-white/55 leading-relaxed">
-                  Form submit qilmaydi — “Open Email” bosilganda mail client
-                  ochiladi.
-                </p>
-
-                <div className="mt-5 grid gap-3">
-                  <input
-                    className={classNames(
-                      "w-full rounded-2xl border bg-void-850/60 backdrop-blur px-4 py-3 text-sm",
-                      "border-signal-500/35 text-signal-300 placeholder:text-white/35",
-                      "focus:outline-none focus:border-cyber-500 focus:shadow-glow-cyan",
-                    )}
-                    placeholder="Subject (masalan: Collaboration / Security question)"
-                    defaultValue="CyberNexus — Portfolio contact"
-                    id="cnx-subject"
-                  />
-
-                  <textarea
-                    className={classNames(
-                      "w-full min-h-[140px] rounded-2xl border bg-void-850/60 backdrop-blur px-4 py-3 text-sm",
-                      "border-signal-500/35 text-signal-300 placeholder:text-white/35",
-                      "focus:outline-none focus:border-cyber-500 focus:shadow-glow-cyan",
-                    )}
-                    placeholder="Message..."
-                    id="cnx-body"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const subject = encodeURIComponent(
-                        document.getElementById("cnx-subject")?.value ||
-                          "CyberNexus — Portfolio contact",
-                      );
-                      const body = encodeURIComponent(
-                        document.getElementById("cnx-body")?.value || "",
-                      );
-                      // You can replace email if you want:
-                      const email = "izzatullayev008@gmail.com";
-                      window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-                    }}
-                    className={classNames(
-                      "rounded-2xl border border-signal-500 bg-gradient-to-r from-signal-400 to-cyber-400",
-                      "px-5 py-3 text-sm font-black tracking-widest text-black shadow-glow-sm",
-                      "hover:shadow-glow-cyan transition-all inline-flex items-center justify-center gap-2",
-                    )}
-                  >
-                    Open Email <FaExternalLinkAlt className="text-[14px]" />
-                  </button>
-
-                  <div className="text-[11px] text-white/35 text-center">
-                    External email app opens (no data stored).
-                  </div>
-                </div>
-              </Glass>
-            </div>
-          </motion.div>
-        </section>
-
-        {/* ====== FOOTER ====== */}
-        <motion.footer
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          custom={0}
-          className="mt-12 pt-8 border-t border-signal-500/15"
-        >
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <SiHackthebox className="text-cyber-300 text-xl" />
-              <span className="text-sm font-black tracking-wider text-signal-300">
-                CYBERNEXUS
-              </span>
-            </div>
-            <div className="text-white/35 text-xs font-bold tracking-widest">
-              © {new Date().getFullYear()} Oyatullokh. All rights reserved.
-            </div>
-          </div>
-        </motion.footer>
+              {t}
+            </span>
+          ))}
+        </div>
       </div>
+    </HoloCard>
+  );
 
-      {/* ====== PROJECT MODAL ====== */}
-      <AnimatePresence>
-        {active && (
-          <>
-            <motion.div
-              className="fixed inset-0 z-40 bg-void-850/70 backdrop-blur-[2px]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setActive(null)}
-            />
-            <motion.div
-              className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 18 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              onClick={() => setActive(null)}
-            >
-              <div
-                className="w-full max-w-2xl rounded-2xl border border-cyber-500 bg-void-900/90 backdrop-blur p-5 shadow-glow-cyan"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="text-[11px] font-bold tracking-widest text-cyber-300/90">
-                      PROJECT
+  if (!project.link) return <div className="group h-full">{body}</div>;
+
+  return (
+    <a
+      href={project.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group block h-full focus:outline-none"
+    >
+      {body}
+    </a>
+  );
+}
+
+export const Portfolio = () => {
+  const [featured, rest] = useMemo(
+    () => [PROJECTS.filter((p) => p.featured), PROJECTS.filter((p) => !p.featured)],
+    [],
+  );
+
+  const totalSkills = useMemo(
+    () => SKILLS.reduce((n, g) => n + g.items.length, 0),
+    [],
+  );
+
+  return (
+    <div className="pb-24 pt-14 sm:pt-20">
+      {/* ---------------- Hero ---------------- */}
+      <Section width="wide">
+        <div className="grid gap-10 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:gap-16">
+          <div>
+            <Reveal>
+              <Eyebrow tone="cyber">{PROFILE.role}</Eyebrow>
+            </Reveal>
+
+            <Reveal delay={80}>
+              <Display size="xl" className="mt-5">
+                {PROFILE.name}
+                <span className="text-signal-400">.</span>
+              </Display>
+            </Reveal>
+
+            <Reveal delay={140}>
+              <p className="mt-5 max-w-xl font-display text-lg leading-snug text-signal-200/80">
+                {PROFILE.tagline}
+              </p>
+            </Reveal>
+
+            <Reveal delay={190}>
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-white/50">
+                {PROFILE.bio}
+              </p>
+            </Reveal>
+
+            <Reveal delay={240}>
+              <div className="mt-7 flex flex-wrap items-center gap-4 text-xs text-white/40">
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5" />
+                  {PROFILE.location}
+                </span>
+                {PROFILE.available ? (
+                  <span className="inline-flex items-center gap-1.5 text-signal-300">
+                    <Circle className="h-2 w-2 fill-current" />
+                    Loyihalar uchun ochiq
+                  </span>
+                ) : null}
+              </div>
+            </Reveal>
+
+            <Reveal delay={290}>
+              <div className="mt-8 flex flex-wrap gap-3">
+                {LINKS.map((l) => {
+                  const Icon = LINK_ICON[l.key] || ExternalLink;
+                  return (
+                    <NeonButton
+                      key={l.key}
+                      as="a"
+                      href={l.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      variant="ghost"
+                      size="sm"
+                    >
+                      <Icon className="h-4 w-4" />
+                      {l.label}
+                    </NeonButton>
+                  );
+                })}
+              </div>
+            </Reveal>
+          </div>
+
+          {/* Profile card */}
+          <Reveal delay={200} y={26}>
+            <HoloCard glow="signal" padded={false} className="overflow-hidden">
+              <div className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[3/3.2]">
+                <ProfilePhoto src={PROFILE.photo} name={PROFILE.name} />
+                <div className="absolute inset-0 bg-gradient-to-t from-void-900 via-void-900/20 to-transparent" />
+
+                <div className="absolute inset-x-0 bottom-0 p-5">
+                  <div className="flex items-end justify-between gap-3">
+                    <div>
+                      <div className="font-display text-xl font-bold text-white">
+                        @{PROFILE.handle}
+                      </div>
+                      <div className="mt-0.5 text-xs text-white/50">{PROFILE.role}</div>
                     </div>
-                    <div className="mt-1 text-lg sm:text-xl font-black tracking-wider text-signal-300 line-clamp-2">
-                      {active.title}
-                    </div>
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-signal-500/35 bg-signal-500/12 backdrop-blur">
+                      <ShieldCheck className="h-4.5 w-4.5 text-signal-400" />
+                    </span>
                   </div>
+                </div>
+              </div>
+            </HoloCard>
+          </Reveal>
+        </div>
+      </Section>
 
-                  <button
-                    type="button"
-                    onClick={() => setActive(null)}
-                    className="rounded-lg border border-cyber-500/40 bg-cyber-500/10 px-3 py-2 text-xs font-black tracking-widest text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
+      {/* ---------------- Featured work ---------------- */}
+      <Section width="wide" className="mt-20">
+        <Reveal>
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <Eyebrow tone="signal">Asosiy loyihalar</Eyebrow>
+              <Display size="md" className="mt-4">
+                Ishlab turgan <Accent>mahsulotlar.</Accent>
+              </Display>
+            </div>
+            <span className="hidden text-sm tabular-nums text-white/30 sm:block">
+              {PROJECTS.length} ta loyiha
+            </span>
+          </div>
+        </Reveal>
+
+        <div className="mt-8 grid gap-5 md:grid-cols-2">
+          {featured.map((p, i) => (
+            <Reveal key={p.slug} delay={i * 100}>
+              <ProjectCard project={p} large />
+            </Reveal>
+          ))}
+        </div>
+
+        <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {rest.map((p, i) => (
+            <Reveal key={p.slug} delay={i * 70}>
+              <ProjectCard project={p} />
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
+      {/* ---------------- Capabilities ---------------- */}
+      <Section width="wide" className="mt-20">
+        <Reveal>
+          <Eyebrow tone="cyber">Ko'nikmalar · {totalSkills} ta</Eyebrow>
+          <Display size="md" className="mt-4">
+            Nima bilan <Accent from="cyber">ishlayman.</Accent>
+          </Display>
+        </Reveal>
+
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {SKILLS.map((group, i) => (
+            <Reveal key={group.group} delay={i * 80}>
+              <HoloCard glow={group.tone} className="h-full">
+                <div className="flex items-center gap-2.5">
+                  <span
+                    className={classNames(
+                      "grid h-9 w-9 place-items-center rounded-xl border",
+                      group.tone === "cyber"
+                        ? "border-cyber-500/30 bg-cyber-500/10 text-cyber-400"
+                        : "border-signal-500/30 bg-signal-500/10 text-signal-400",
+                    )}
                   >
-                    CLOSE
-                  </button>
+                    <Sparkles className="h-4 w-4" />
+                  </span>
+                  <h3 className="font-display text-base font-bold text-white">
+                    {group.group}
+                  </h3>
                 </div>
 
-                <div className="mt-4 rounded-xl border border-signal-500/20 bg-void-850/60 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-white/45">
-                    DESCRIPTION
+                <Rule className="my-4" />
+
+                <ul className="space-y-2">
+                  {group.items.map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-sm text-white/55">
+                      <span
+                        className={classNames(
+                          "mt-1.5 h-1 w-1 shrink-0 rounded-full",
+                          group.tone === "cyber" ? "bg-cyber-400" : "bg-signal-400",
+                        )}
+                      />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </HoloCard>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
+      {/* ---------------- Timeline ---------------- */}
+      <Section width="default" className="mt-20">
+        <Reveal>
+          <Eyebrow tone="signal">Yo'l</Eyebrow>
+          <Display size="md" className="mt-4">
+            Bosib o'tilgan <Accent>bosqichlar.</Accent>
+          </Display>
+        </Reveal>
+
+        <div className="relative mt-10 pl-8">
+          {/* Spine */}
+          <span className="absolute left-[7px] top-2 h-[calc(100%-1rem)] w-px bg-gradient-to-b from-signal-500/50 via-cyber-500/25 to-transparent" />
+
+          <div className="space-y-8">
+            {TIMELINE.map((entry, i) => (
+              <Reveal key={`${entry.year}-${entry.title}`} delay={i * 90}>
+                <div className="relative">
+                  <span className="absolute -left-8 top-1.5 grid h-4 w-4 place-items-center rounded-full border-2 border-signal-400/70 bg-void-900">
+                    <span className="h-1.5 w-1.5 rounded-full bg-signal-400" />
+                  </span>
+
+                  <div className="text-[11px] font-bold uppercase tracking-[.2em] text-cyber-400">
+                    {entry.year}
                   </div>
-                  <p className="mt-2 text-sm leading-relaxed text-signal-300/85">
-                    {active.description}
+                  <h3 className="mt-1.5 font-display text-lg font-bold text-white">
+                    {entry.title}
+                  </h3>
+                  <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-white/50">
+                    {entry.text}
                   </p>
                 </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </Section>
 
-                <div className="mt-3 rounded-xl border border-signal-500/15 bg-void-850/50 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-white/45">
-                    TECH
-                  </div>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {(active.tags || []).map((t) => (
-                      <span
-                        key={t}
-                        className="text-[10px] font-black tracking-widest rounded-full border border-cyber-500/25 bg-cyber-500/10 px-2 py-1 text-cyber-300/90"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+      {/* ---------------- Contact ---------------- */}
+      <Section width="default" className="mt-20">
+        <Reveal>
+          <HoloCard glow="cyber" className="relative overflow-hidden text-center">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-32 -z-10 animate-spin-slow opacity-30"
+              style={{
+                background:
+                  "conic-gradient(from 0deg, transparent, rgba(0,255,157,.22), transparent 32%, rgba(0,229,255,.20), transparent 64%)",
+              }}
+            />
+            <Eyebrow tone="cyber" className="justify-center">
+              Bog'lanish
+            </Eyebrow>
+            <Display size="md" className="mt-4">
+              Loyihangiz bormi? <Accent>Yozing.</Accent>
+            </Display>
+            <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-white/50">
+              Xavfsizlik auditi, platforma ishlab chiqish yoki maslahat — eng
+              tez javob Telegram orqali keladi.
+            </p>
 
-                <div className="mt-4 flex flex-col sm:flex-row gap-3">
-                  <button
-                    type="button"
-                    onClick={() => open("https://uzstudents.uz")}
-                    className="flex-1 rounded-2xl border border-signal-500 bg-gradient-to-r from-signal-400 to-cyber-400 px-4 py-3 text-sm font-black tracking-wider text-black shadow-glow-sm hover:shadow-glow-cyan transition-all inline-flex items-center justify-center gap-2"
-                  >
-                    Open Platform <FaExternalLinkAlt className="text-[14px]" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setActive(null)}
-                    className={classNames(
-                      "flex-1 rounded-2xl border px-4 py-3 text-sm font-black tracking-wider transition-all",
-                      "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan",
-                      "hover:border-signal-500 hover:text-signal-300",
-                    )}
-                  >
-                    Back
-                  </button>
-                </div>
-
-                <div className="mt-3 text-center text-[11px] text-white/35">
-                  ESC to close • Click outside to close
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-
-      {/* utilities */}
-      <style>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <NeonButton
+                as="a"
+                href={LINKS.find((l) => l.key === "telegram")?.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Send className="h-4 w-4" />
+                Telegram
+              </NeonButton>
+              <NeonButton
+                as="a"
+                href={LINKS.find((l) => l.key === "github")?.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="ghost"
+              >
+                <Github className="h-4 w-4" />
+                GitHub
+              </NeonButton>
+            </div>
+          </HoloCard>
+        </Reveal>
+      </Section>
     </div>
   );
 };

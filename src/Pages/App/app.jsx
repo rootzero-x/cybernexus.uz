@@ -1,823 +1,487 @@
-// src/pages/PremiumApp/App.jsx  (yoki sening path'ing)
-// Variant #2 — Glass Hero + Tabs + Featured Carousel + Responsive Grid (PRO)
-
-import React, { useContext, useEffect, useMemo, useState } from "react";
+// src/Pages/App/app.jsx
+import React, { useMemo, useState } from "react";
 import classNames from "classnames";
-import { GlobalContext } from "../../GlobalState/globalstate";
-import { motion, AnimatePresence } from "framer-motion";
 import {
-  FaSearch,
-  FaStar,
-  FaRegStar,
-  FaExternalLinkAlt,
-  FaTimes,
-  FaLayerGroup,
-  FaShieldAlt,
-  FaMobileAlt,
-  FaDesktop,
-} from "react-icons/fa";
+  Search,
+  ExternalLink,
+  Star,
+  ShieldCheck,
+  Package,
+  Info,
+  X,
+  Filter,
+} from "lucide-react";
 
-export const App = () => {
-  const { mode } = useContext(GlobalContext);
+import { APPS, CATEGORIES, CATEGORY_TONE } from "./appsData";
+import {
+  HoloCard,
+  Eyebrow,
+  Display,
+  Accent,
+  Chip,
+  Section,
+  Reveal,
+  NeonButton,
+} from "../../design";
 
-  // ✅ Verified: 2026-01-22
- const appsData = [
-  {
-    name: "Tor Browser",
-    category: "Privacy Browser",
-    description:
-      "Internetda maxfiylik va anonimlikni oshiradigan bepul brauzer. Trafik Tor tarmog‘i orqali yo‘naltiriladi.",
-    downloadLink: "https://www.torproject.org/download/",
-    platforms: "Windows, macOS, Linux, Android",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/Tor%20Browser%20icon.svg",
-    license: "Free / Open Source",
-    pricing: "Free",
-    officialSource: "Tor Project",
-    lastVerified: "2026-01-22",
-  },
-  {
-    name: "NordVPN",
-    category: "VPN",
-    description:
-      "Tezkor va xavfsiz VPN xizmati. Ulanishni shifrlab, onlayn maxfiylikni oshiradi.",
-    downloadLink: "https://nordvpn.com/pricing/",
-    platforms: "Windows, macOS, Linux, Android, iOS",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/NordVPN%20logo.svg",
-    license: "Proprietary",
-    pricing: "Paid (subscription)",
-    officialSource: "NordVPN",
-    lastVerified: "2026-01-22",
-  },
-  {
-    name: "Tails OS",
-    category: "Privacy OS (Live)",
-    description:
-      "Maxfiylik va anonimlik uchun mo‘ljallangan Live OS. Internetga chiqish Tor orqali; iz qoldirmaslikka yo‘naltirilgan.",
-    downloadLink: "https://tails.net/install/",
-    platforms: "USB/DVD (Live OS)",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/Tails-logo-flat.svg",
-    license: "Open Source (GPLv3)",
-    pricing: "Free",
-    officialSource: "Tails Project (tails.net)",
-    lastVerified: "2026-01-22",
-  },
-  {
-    name: "Kali Linux",
-    category: "Security/Pentesting OS",
-    description:
-      "Xavfsizlik testlari va pentesting uchun maxsus Linux distributivi (faqat ruxsat bilan ishlating).",
-    downloadLink: "https://www.kali.org/get-kali/",
-    platforms: "Linux, Windows (VM), USB",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/Kali-dragon-icon.svg",
-    license: "Open Source",
-    pricing: "Free",
-    officialSource: "Offensive Security (kali.org)",
-    lastVerified: "2026-01-22",
-  },
-  {
-    name: "Wireshark",
-    category: "Network Analyzer",
-    description:
-      "Tarmoq trafikini tahlil qilish uchun ochiq kodli vosita. Paketlarni ushlab, batafsil ko‘rish imkonini beradi.",
-    downloadLink: "https://www.wireshark.org/download.html",
-    platforms: "Windows, macOS, Linux",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/Wireshark%20icon%20new.png",
-    license: "Open Source (GPL)",
-    pricing: "Free",
-    officialSource: "Wireshark Foundation (wireshark.org)",
-    lastVerified: "2026-01-22",
-  },
-  {
-    name: "Proton VPN",
-    category: "VPN",
-    description:
-      "Maxfiylikka yo‘naltirilgan VPN xizmati. Bepul va pulli tariflar bilan xavfsiz ulanish beradi.",
-    downloadLink: "https://protonvpn.com/download",
-    platforms: "Windows, macOS, Linux, Android, iOS",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/ProtonVPN%20Logo.svg",
-    license: "Mixed (apps open source; service proprietary)",
-    pricing: "Free + Paid plans",
-    officialSource: "Proton (protonvpn.com)",
-    lastVerified: "2026-01-22",
-  },
-  {
-    name: "Qubes OS",
-    category: "Security OS (Isolation)",
-    description:
-      "Xavfsizlikka yo‘naltirilgan OS. Ilovalarni VM/izolyatsiya orqali ajratib, zarar ta’sirini kamaytiradi.",
-    downloadLink: "https://www.qubes-os.org/downloads/",
-    platforms: "PC (Dedicated Hardware)",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/Qubes%20OS%20Logo.svg",
-    license: "Open Source",
-    pricing: "Free",
-    officialSource: "Qubes OS Project (qubes-os.org)",
-    lastVerified: "2026-01-22",
-  },
-  {
-    name: "Burp Suite (Community/Pro)",
-    category: "Web Security Testing",
-    description:
-      "Veb-ilovalar xavfsizligini test qilish uchun mashhur toolkit (faqat ruxsat bilan).",
-    downloadLink: "https://portswigger.net/burp/releases",
-    platforms: "Windows, macOS, Linux",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/BurpSuite%20logo.svg",
-    license: "Community (free) / Pro (commercial)",
-    pricing: "Free + Paid (Pro)",
-    officialSource: "PortSwigger",
-    lastVerified: "2026-01-22",
-  },
-  {
-    name: "Metasploit Framework",
-    category: "Pentesting Framework",
-    description:
-      "Penetration testing uchun mashhur framework (faqat ruxsat bilan).",
-    downloadLink: "https://www.metasploit.com/download",
-    platforms: "Windows, macOS, Linux",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/Metasploit%20logo%20and%20wordmark.svg",
-    license: "Open Source + Commercial offerings",
-    pricing: "Free (Framework) + Paid (Pro)",
-    officialSource: "Rapid7 / Metasploit",
-    lastVerified: "2026-01-22",
-  },
-  {
-    name: "Parrot OS",
-    category: "Security/Privacy Linux",
-    description:
-      "Xavfsizlik va maxfiylikka yo‘naltirilgan Linux distributivi. Pentesting va dev ishlari uchun qulay.",
-    downloadLink: "https://www.parrotsec.org/download/",
-    platforms: "Linux, Windows (VM/WSL), USB",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/Parrot-logo.svg",
-    license: "Open Source",
-    pricing: "Free",
-    officialSource: "Parrot Project (parrotsec.org)",
-    lastVerified: "2026-01-22",
-  },
-  {
-    name: "Orbot (Tor for Android)",
-    category: "Privacy / Tor Proxy",
-    description:
-      "Android’da Tor tarmog‘iga ulanish (VPN/proxy). Trafikni Tor orqali yo‘naltirib maxfiylikni oshiradi.",
-    downloadLink:
-      "https://play.google.com/store/apps/details?id=org.torproject.android",
-    platforms: "Android",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/Orbot-logo.svg",
-    license: "Open Source",
-    pricing: "Free",
-    officialSource: "Tor Project (Google Play)",
-    lastVerified: "2026-01-22",
-  },
-  {
-    name: "Bitdefender Mobile Security",
-    category: "Mobile Security",
-    description:
-      "Telefonni zararli dasturlar va phishing/scam tahdidlardan himoya qilishga yo‘naltirilgan mobil xavfsizlik yechimi.",
-    downloadLink: "https://www.bitdefender.com/en-us/consumer/mobile-security",
-    platforms: "Android, iOS",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/Bitdefender%20logo.svg",
-    license: "Proprietary",
-    pricing: "Paid (trial available)",
-    officialSource: "Bitdefender",
-    lastVerified: "2026-01-22",
-  },
-  {
-    name: "1Password",
-    category: "Password Manager",
-    description:
-      "Parollar va maxfiy ma’lumotlarni xavfsiz saqlash/boshqarish. Kuchli shifrlash va autofill mavjud.",
-    downloadLink: "https://1password.com/downloads/",
-    platforms: "Windows, macOS, Linux, Android, iOS",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/1Password%20icon.png",
-    license: "Proprietary",
-    pricing: "Paid (subscription)",
-    officialSource: "1Password",
-    lastVerified: "2026-01-22",
-  },
-  {
-    name: "Malwarebytes Mobile Security",
-    category: "Mobile Security",
-    description:
-      "Mobil qurilmada zararli dastur/scam/phishing tahdidlariga qarshi himoya (platformaga qarab funksiyalar farq qiladi).",
-    downloadLink: "https://www.malwarebytes.com/mobile",
-    platforms: "Android, iOS",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/Malwarebytes%20logo.png",
-    license: "Proprietary",
-    pricing: "Free + Paid plans",
-    officialSource: "Malwarebytes",
-    lastVerified: "2026-01-22",
-  },
-  {
-    name: "DuckDuckGo Private Browser",
-    category: "Privacy Browser",
-    description:
-      "Kuzatuvchi trackerlarni bloklash va maxfiy qidiruv/brauzingga yo‘naltirilgan brauzer.",
-    downloadLink: "https://duckduckgo.com/app",
-    platforms: "Android, iOS, Windows, macOS",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/The%20DuckDuckGo%20Duck.png",
-    license: "Mixed (app components vary)",
-    pricing: "Free",
-    officialSource: "DuckDuckGo",
-    lastVerified: "2026-01-22",
-  },
-  {
-    name: "LastPass",
-    category: "Password Manager",
-    description:
-      "Parollarni saqlash va autofill qilish uchun password manager. Reja/tariflarga qarab imkoniyatlar farq qiladi.",
-    downloadLink: "https://lastpass.com/misc_download2.php",
-    platforms: "Windows, macOS, Linux (via extensions), Android, iOS",
-    imageUrl:
-      "https://commons.wikimedia.org/wiki/Special:FilePath/LastPass%20logo%202016.svg",
-    license: "Proprietary",
-    pricing: "Free + Paid plans",
-    officialSource: "LastPass",
-    lastVerified: "2026-01-22",
-  },
-];
+const FAV_KEY = "cn_app_favourites";
 
+function loadFavourites() {
+  try {
+    const raw = window.localStorage.getItem(FAV_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
 
-  // ====== UI State ======
-  const [query, setQuery] = useState("");
-  const [tab, setTab] = useState("All"); // All | Privacy | Pentest | Mobile | Desktop | OS
-  const [active, setActive] = useState(null); // modal
-  const [favOnly, setFavOnly] = useState(false);
+function saveFavourites(list) {
+  try {
+    window.localStorage.setItem(FAV_KEY, JSON.stringify(list));
+  } catch {
+    /* private mode — favourites just do not persist */
+  }
+}
 
-  const [fav, setFav] = useState(() => {
-    try {
-      const raw = localStorage.getItem("cybernexus_apps_fav_v2");
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  });
+/** Monogram cover. Logos are not hotlinked: vendor URLs rot and the licensing
+ *  on third-party marks is not ours to assume. */
+function AppMark({ name, tone, large = false }) {
+  const initials = name
+    .replace(/[^\p{L}\p{N} ]/gu, "")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join("");
 
-  useEffect(() => {
-    try {
-      localStorage.setItem("cybernexus_apps_fav_v2", JSON.stringify(fav));
-    } catch {
-        /* storage unavailable — non-fatal */
-      }
-  }, [fav]);
+  const wash =
+    tone === "plasma"
+      ? "rgba(255,45,149,.20)"
+      : tone === "cyber"
+        ? "rgba(0,229,255,.18)"
+        : "rgba(0,255,157,.18)";
 
-  const toggleFav = (name) => {
-    setFav((p) => (p.includes(name) ? p.filter((x) => x !== name) : [...p, name]));
-  };
-
-  const handleDownload = (link) =>
-    window.open(link, "_blank", "noopener,noreferrer");
-
-  // ====== Helpers: categorize ======
-  const getCategory = (app) => {
-    const n = (app.name || "").toLowerCase();
-    const p = (app.platforms || "").toLowerCase();
-    const text = `${n} ${p}`.toLowerCase();
-
-    const isMobile = text.includes("android") || text.includes("ios");
-    const isDesktop =
-      text.includes("windows") || text.includes("macos") || text.includes("linux");
-    const isOS =
-      n.includes("linux") ||
-      n.includes("os") ||
-      p.includes("usb") ||
-      p.includes("live");
-    const isPentest =
-      n.includes("kali") ||
-      n.includes("burp") ||
-      n.includes("metasploit") ||
-      n.includes("wireshark");
-    const isPrivacy =
-      n.includes("tor") ||
-      n.includes("proton") ||
-      n.includes("duckduckgo") ||
-      n.includes("tails") ||
-      n.includes("vpn");
-
-    return { isMobile, isDesktop, isOS, isPentest, isPrivacy };
-  };
-
-  const tabs = useMemo(
-    () => [
-      { key: "All", label: "All", icon: FaLayerGroup },
-      { key: "Privacy", label: "Privacy", icon: FaShieldAlt },
-      { key: "Pentest", label: "Pentest", icon: FaShieldAlt },
-      { key: "Mobile", label: "Mobile", icon: FaMobileAlt },
-      { key: "Desktop", label: "Desktop", icon: FaDesktop },
-      { key: "OS", label: "OS", icon: FaShieldAlt },
-    ],
-    []
-  );
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-
-    let list = appsData.filter((a) => {
-      const text = `${a.name} ${a.description} ${a.platforms}`.toLowerCase();
-      if (q && !text.includes(q)) return false;
-
-      const c = getCategory(a);
-      if (tab === "Privacy" && !c.isPrivacy) return false;
-      if (tab === "Pentest" && !c.isPentest) return false;
-      if (tab === "Mobile" && !c.isMobile) return false;
-      if (tab === "Desktop" && !c.isDesktop) return false;
-      if (tab === "OS" && !c.isOS) return false;
-
-      if (favOnly && !fav.includes(a.name)) return false;
-
-      return true;
-    });
-
-    // stable nice sorting
-    list.sort((a, b) => a.name.localeCompare(b.name));
-
-    return list;
-  }, [appsData, query, tab, favOnly, fav]);
-
-  const featured = useMemo(() => {
-    // curated top set (feel free to change)
-    const pick = ["Tor Browser", "Kali Linux", "Burp Suite", "ProtonVPN", "Wireshark"];
-    const map = new Map(appsData.map((a) => [a.name, a]));
-    return pick.map((n) => map.get(n)).filter(Boolean);
-  }, [appsData]);
-
-  // ====== UI Atoms ======
-  const Glass = ({ className, children }) => (
-    <div
+  return (
+    <span
       className={classNames(
-        "rounded-2xl border bg-void-850/55 backdrop-blur-xl",
-        "border-signal-500/40 shadow-glow-sm",
-        className
+        "relative grid shrink-0 place-items-center overflow-hidden rounded-xl border",
+        large ? "h-14 w-14" : "h-11 w-11",
+        tone === "plasma"
+          ? "border-plasma/30"
+          : tone === "cyber"
+            ? "border-cyber-500/30"
+            : "border-signal-500/30",
       )}
+      style={{ background: `radial-gradient(circle at 30% 25%, ${wash}, transparent 70%), #08111f` }}
     >
-      {children}
+      <span
+        className={classNames(
+          "font-display font-bold tracking-tight",
+          large ? "text-lg" : "text-sm",
+          tone === "plasma"
+            ? "text-plasma"
+            : tone === "cyber"
+              ? "text-cyber-300"
+              : "text-signal-300",
+        )}
+      >
+        {initials}
+      </span>
+    </span>
+  );
+}
+
+function AppCard({ app, isFav, onToggleFav, onOpen }) {
+  const tone = CATEGORY_TONE[app.category] || "signal";
+
+  return (
+    <HoloCard glow={tone} className="flex h-full flex-col">
+      <div className="flex items-start gap-3">
+        <AppMark name={app.name} tone={tone} />
+
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="font-display text-base font-bold leading-tight text-white">
+              {app.name}
+            </h3>
+
+            <button
+              type="button"
+              onClick={() => onToggleFav(app.name)}
+              aria-pressed={isFav}
+              aria-label={
+                isFav ? `${app.name} — sevimlilardan olib tashlash` : `${app.name} — sevimlilarga qo'shish`
+              }
+              className={classNames(
+                "shrink-0 rounded-lg border p-1.5 transition-all duration-300",
+                isFav
+                  ? "border-signal-400/50 bg-signal-500/12 text-signal-300"
+                  : "border-white/10 text-white/25 hover:border-white/30 hover:text-white/60",
+              )}
+            >
+              <Star className={classNames("h-3.5 w-3.5", isFav && "fill-current")} />
+            </button>
+          </div>
+
+          <div className="mt-1 text-[11px] font-bold uppercase tracking-[.14em] text-white/35">
+            {app.kind}
+          </div>
+        </div>
+      </div>
+
+      <p className="mt-4 flex-1 text-sm leading-relaxed text-white/50">{app.description}</p>
+
+      <div className="mt-4 flex flex-wrap gap-1.5">
+        <Chip tone={app.license === "Ochiq kod" ? "signal" : "muted"}>{app.license}</Chip>
+        <Chip tone="muted">{app.pricing}</Chip>
+      </div>
+
+      <div className="mt-5 flex items-center gap-2 border-t border-white/8 pt-4">
+        <NeonButton
+          as="a"
+          href={app.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="ghost"
+          size="sm"
+          className="flex-1"
+        >
+          Yuklab olish
+          <ExternalLink className="h-3.5 w-3.5" />
+        </NeonButton>
+
+        <button
+          type="button"
+          onClick={() => onOpen(app)}
+          aria-label={`${app.name} haqida batafsil`}
+          className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-white/10 text-white/40 transition-colors hover:border-white/30 hover:text-white"
+        >
+          <Info className="h-4 w-4" />
+        </button>
+      </div>
+    </HoloCard>
+  );
+}
+
+function DetailModal({ app, onClose }) {
+  if (!app) return null;
+  const tone = CATEGORY_TONE[app.category] || "signal";
+  const categoryLabel =
+    CATEGORIES.find((c) => c.key === app.category)?.label || app.category;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label={app.name}
+    >
+      <div className="absolute inset-0 bg-void-950/80 backdrop-blur-sm" onClick={onClose} />
+
+      <div className="relative w-full max-w-lg">
+        <HoloCard glow={tone} interactive={false}>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <AppMark name={app.name} tone={tone} large />
+              <div>
+                <Eyebrow tone={tone === "plasma" ? "signal" : tone}>{categoryLabel}</Eyebrow>
+                <h2 className="mt-1.5 font-display text-2xl font-bold text-white">{app.name}</h2>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Yopish"
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-white/10 text-white/50 hover:border-white/30 hover:text-white"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          <p className="mt-5 text-sm leading-relaxed text-white/60">{app.description}</p>
+
+          <dl className="mt-6 grid gap-3 sm:grid-cols-2">
+            <Detail label="Ishlab chiquvchi" value={app.vendor} />
+            <Detail label="Litsenziya" value={app.license} />
+            <Detail label="Narx" value={app.pricing} />
+            <Detail label="Tekshirilgan" value={app.verified} />
+          </dl>
+
+          <div className="mt-5">
+            <div className="text-[11px] font-bold uppercase tracking-[.18em] text-white/35">
+              Platformalar
+            </div>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {app.platforms.map((p) => (
+                <Chip key={p} tone="muted">
+                  {p}
+                </Chip>
+              ))}
+            </div>
+          </div>
+
+          <NeonButton
+            as="a"
+            href={app.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 w-full"
+          >
+            Rasmiy saytga o'tish
+            <ExternalLink className="h-4 w-4" />
+          </NeonButton>
+
+          <p className="mt-3 text-center text-[11px] leading-relaxed text-white/30">
+            Havola ishlab chiquvchining o'z saytiga olib boradi — oynadan yoki
+            yig'uvchi saytlardan yuklab olmang.
+          </p>
+        </HoloCard>
+      </div>
     </div>
   );
+}
 
-  const Chip = ({ active, onClick, icon: Icon, children }) => (
-    <button
-      type="button"
-      onClick={onClick}
-      className={classNames(
-        "inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-black tracking-wider transition-all",
-        active
-          ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
-          : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300"
-      )}
-    >
-      {Icon ? <Icon className="text-[12px]" /> : null}
-      {children}
-    </button>
+function Detail({ label, value }) {
+  return (
+    <div className="rounded-xl border border-white/8 bg-black/25 p-3">
+      <dt className="text-[10px] font-bold uppercase tracking-[.18em] text-white/35">{label}</dt>
+      <dd className="mt-1 text-sm text-white/70">{value}</dd>
+    </div>
   );
+}
 
-  const Clamp2 = ({ children, className }) => (
-    <p
-      className={classNames("text-sm text-signal-300/80 leading-relaxed", className)}
-      style={{
-        display: "-webkit-box",
-        WebkitLineClamp: 2,
-        WebkitBoxOrient: "vertical",
-        overflow: "hidden",
-      }}
-    >
-      {children}
-    </p>
+export const App = () => {
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("all");
+  const [favOnly, setFavOnly] = useState(false);
+  const [favourites, setFavourites] = useState(loadFavourites);
+  const [detail, setDetail] = useState(null);
+
+  const toggleFav = (name) => {
+    setFavourites((prev) => {
+      const next = prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name];
+      saveFavourites(next);
+      return next;
+    });
+  };
+
+  const counts = useMemo(() => {
+    const map = { all: APPS.length };
+    for (const app of APPS) map[app.category] = (map[app.category] || 0) + 1;
+    return map;
+  }, []);
+
+  const visible = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+
+    return APPS.filter((app) => {
+      if (category !== "all" && app.category !== category) return false;
+      if (favOnly && !favourites.includes(app.name)) return false;
+      if (!needle) return true;
+
+      return (
+        app.name.toLowerCase().includes(needle) ||
+        app.kind.toLowerCase().includes(needle) ||
+        app.vendor.toLowerCase().includes(needle) ||
+        app.description.toLowerCase().includes(needle)
+      );
+    });
+  }, [query, category, favOnly, favourites]);
+
+  const featured = useMemo(() => APPS.filter((a) => a.featured), []);
+  const openSourceCount = useMemo(
+    () => APPS.filter((a) => a.license.startsWith("Ochiq")).length,
+    [],
   );
 
   return (
-    <div className="w-full min-h-screen text-white/85 overflow-x-hidden">
-      {/* soft grid */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.10]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(0,255,170,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,170,.08) 1px, transparent 1px)",
-          backgroundSize: "56px 56px",
-        }}
-      />
-
-      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-20 pb-24">
-        {/* HERO */}
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, ease: "easeOut" }}
-        >
-          <Glass className="p-5 sm:p-7">
-            <div className="flex flex-col lg:flex-row lg:items-center gap-5">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3">
-                  <div className="h-11 w-11 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
-                    <FaShieldAlt className="text-cyber-300" />
-                  </div>
-                  <div className="min-w-0">
-                    <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white truncate">
-                      Cyber Toolkit
-                    </h1>
-                    <p className="mt-1 text-xs sm:text-sm text-cyber-300/90 font-bold tracking-widest truncate">
-                      PRIVACY • DEFENSE • PENTEST • MOBILE
-                    </p>
-                  </div>
-                </div>
-
-                <p className="mt-4 text-sm sm:text-base text-white/55 leading-relaxed">
-                  Eng kerakli kiberxavfsizlik ilovalari va tool’lar katalogi.
-                  Qidir, filterla, “favorite”ga saqla va tez yuklab ol.
-                </p>
-
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <Chip active={favOnly} onClick={() => setFavOnly((v) => !v)} icon={favOnly ? FaStar : FaRegStar}>
-                    Favorites
-                  </Chip>
-                  <Chip active={tab === "Privacy"} onClick={() => setTab("Privacy")} icon={FaShieldAlt}>
-                    Privacy
-                  </Chip>
-                  <Chip active={tab === "Pentest"} onClick={() => setTab("Pentest")} icon={FaShieldAlt}>
-                    Pentest
-                  </Chip>
-                </div>
-              </div>
-
-              {/* Search */}
-              <div className="w-full lg:w-[420px]">
-                <div className="relative">
-                  <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-cyber-300/80" />
-                  <input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Qidirish: tor, vpn, kali, burp..."
-                    className={classNames(
-                      "w-full rounded-2xl border bg-void-850/60 backdrop-blur px-10 py-3 text-sm",
-                      "border-signal-500/50 text-signal-300 placeholder:text-white/35",
-                      "focus:outline-none focus:border-cyber-500 focus:shadow-glow-cyan"
-                    )}
-                  />
-                </div>
-
-                <div className="mt-3 text-xs text-white/45 flex items-center justify-between">
-                  <span>
-                    Natija:{" "}
-                    <span className="text-signal-300 font-black">{filtered.length}</span>
-                  </span>
-                  <span className="text-cyber-300/80 font-bold tracking-widest">
-                    CLICK CARD → DETAILS
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Glass>
-        </motion.div>
-
-        {/* STICKY TABS */}
-        <div className="sticky top-0 z-30 pt-4">
-          <div className="rounded-xl border border-signal-500/25 bg-void-850/70 backdrop-blur-xl px-3 py-3">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
-                {tabs.map((t) => (
-                  <Chip
-                    key={t.key}
-                    active={tab === t.key}
-                    onClick={() => setTab(t.key)}
-                    icon={t.icon}
-                  >
-                    {t.label}
-                  </Chip>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setQuery("");
-                  setTab("All");
-                  setFavOnly(false);
-                }}
-                className="hidden sm:inline-flex rounded-lg border border-cyber-500/30 bg-cyber-500/10 px-3 py-2 text-xs font-black tracking-widest text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
-              >
-                Reset
-              </button>
-            </div>
+    <div className="pb-24 pt-14 sm:pt-20">
+      {/* ---------------- Hero ---------------- */}
+      <Section width="wide">
+        <div className="flex flex-wrap items-end justify-between gap-8">
+          <div>
+            <Reveal>
+              <Eyebrow tone="cyber">Premium katalog · {APPS.length} ta vosita</Eyebrow>
+            </Reveal>
+            <Reveal delay={80}>
+              <Display size="lg" className="mt-5">
+                Tekshirilgan <Accent>xavfsizlik vositalari.</Accent>
+              </Display>
+            </Reveal>
+            <Reveal delay={150}>
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-white/55">
+                Har bir havola ishlab chiquvchining o'z saytiga olib boradi —
+                oyna yoki yig'uvchi saytlarga emas. Xavfsizlik dasturida yuklab
+                olish manbasi dasturning o'zi qadar muhim.
+              </p>
+            </Reveal>
           </div>
+
+          <Reveal delay={200}>
+            <div className="flex gap-3">
+              <HoloCard glow="signal" className="min-w-[130px]">
+                <Package className="h-4 w-4 text-signal-400" />
+                <div className="mt-2 font-display text-2xl font-bold text-white">
+                  {APPS.length}
+                </div>
+                <div className="text-[10px] font-bold uppercase tracking-[.16em] text-white/40">
+                  Vosita
+                </div>
+              </HoloCard>
+              <HoloCard glow="cyber" className="min-w-[130px]">
+                <ShieldCheck className="h-4 w-4 text-cyber-400" />
+                <div className="mt-2 font-display text-2xl font-bold text-white">
+                  {openSourceCount}
+                </div>
+                <div className="text-[10px] font-bold uppercase tracking-[.16em] text-white/40">
+                  Ochiq kod
+                </div>
+              </HoloCard>
+            </div>
+          </Reveal>
         </div>
+      </Section>
 
-        {/* FEATURED CAROUSEL */}
-        <motion.div
-          className="mt-5"
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: "easeOut", delay: 0.05 }}
-        >
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
-              FEATURED
-            </h2>
-            <span className="text-[11px] text-white/35">
-              swipe → (mobile/tablet)
-            </span>
-          </div>
-
-          <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-            {featured.map((app) => {
-              const isFav = fav.includes(app.name);
+      {/* ---------------- Featured ---------------- */}
+      {category === "all" && !query && !favOnly ? (
+        <Section width="wide" className="mt-14">
+          <Reveal>
+            <Eyebrow tone="signal">Tavsiya etamiz</Eyebrow>
+          </Reveal>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {featured.slice(0, 8).map((app, i) => {
+              const tone = CATEGORY_TONE[app.category] || "signal";
               return (
-                <div
-                  key={app.name}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      e.currentTarget.click();
-                    }
-                  }}
-                  onClick={() => setActive(app)}
-                  className={classNames(
-                    "min-w-[280px] sm:min-w-[340px] lg:min-w-[380px]",
-                    "rounded-2xl border bg-void-850/70 backdrop-blur p-4 text-left",
-                    "border-signal-500/45 shadow-glow-sm",
-                    "hover:border-cyber-500 hover:shadow-glow-cyan transition-all"
-                  )}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center overflow-hidden shrink-0">
-                        <img
-                          src={app.imageUrl}
-                          alt={app.name}
-                          className="h-10 w-10 object-contain"
-                          loading="lazy"
-                        />
-                      </div>
-                      {/* ✅ FIX: min-w-0 + truncate */}
+                <Reveal key={app.name} delay={i * 60}>
+                  <a
+                    href={app.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block h-full"
+                  >
+                    <HoloCard glow={tone} className="flex h-full items-center gap-3">
+                      <AppMark name={app.name} tone={tone} />
                       <div className="min-w-0">
-                        <div className="text-base font-bold tracking-tight text-white truncate">
+                        <div className="truncate font-display text-sm font-bold text-white">
                           {app.name}
                         </div>
-                        <div className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
-                          {app.platforms}
-                        </div>
+                        <div className="truncate text-[11px] text-white/40">{app.kind}</div>
                       </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFav(app.name);
-                      }}
-                      className={classNames(
-                        "shrink-0 rounded-lg border px-2 py-2 transition-all",
-                        isFav
-                          ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
-                          : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300"
-                      )}
-                      title="Favorite"
-                      aria-label="favorite"
-                    >
-                      {isFav ? <FaStar /> : <FaRegStar />}
-                    </button>
-                  </div>
-
-                  <div className="mt-3">
-                    <Clamp2>{app.description}</Clamp2>
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between">
-                    <span className="text-[11px] font-bold tracking-widest text-white/45">
-                      QUICK VIEW
-                    </span>
-                    <span className="text-xs font-black tracking-widest text-cyber-300">
-                      OPEN →
-                    </span>
-                  </div>
-                </div>
+                      <ExternalLink className="ml-auto h-3.5 w-3.5 shrink-0 text-white/20 transition-colors group-hover:text-signal-400" />
+                    </HoloCard>
+                  </a>
+                </Reveal>
               );
             })}
           </div>
-        </motion.div>
+        </Section>
+      ) : null}
 
-        {/* MAIN GRID */}
-        <motion.div
-          className="mt-6"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.08 }}
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered.map((app, idx) => {
-              const isFav = fav.includes(app.name);
-              return (
-                <motion.div
-                  key={app.name}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      e.currentTarget.click();
-                    }
-                  }}
-                  onClick={() => setActive(app)}
-                  className={classNames(
-                    "rounded-2xl border bg-void-850/70 backdrop-blur p-4 text-left",
-                    "border-signal-500/45 shadow-glow-sm",
-                    "hover:border-cyber-500 hover:shadow-glow-cyan transition-all"
-                  )}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.45, delay: 0.02 + idx * 0.02, ease: "easeOut" }}
-                  whileHover={{ y: -3 }}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center overflow-hidden shrink-0">
-                        <img
-                          src={app.imageUrl}
-                          alt={app.name}
-                          className="h-10 w-10 object-contain"
-                          loading="lazy"
-                        />
-                      </div>
-
-                      {/* ✅ FIX: title never leaves the card */}
-                      <div className="min-w-0">
-                        <h3 className="text-base font-bold tracking-tight text-white truncate">
-                          {app.name}
-                        </h3>
-                        <p className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
-                          {app.platforms}
-                        </p>
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleFav(app.name);
-                      }}
-                      className={classNames(
-                        "shrink-0 rounded-lg border px-2 py-2 transition-all",
-                        isFav
-                          ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
-                          : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300"
-                      )}
-                      title="Favorite"
-                      aria-label="favorite"
-                    >
-                      {isFav ? <FaStar /> : <FaRegStar />}
-                    </button>
-                  </div>
-
-                  <div className="mt-3">
-                    <Clamp2>{app.description}</Clamp2>
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between">
-                    <span className="text-[11px] font-bold tracking-widest text-white/45">
-                      DETAILS
-                    </span>
-                    <span className="text-xs font-black tracking-widest text-cyber-300">
-                      OPEN →
-                    </span>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          {filtered.length === 0 && (
-            <div className="mt-8 text-center">
-              <div className="rounded-2xl border border-signal-500/35 bg-void-850/60 p-8 shadow-glow-sm">
-                <div className="text-cyber-300 font-black tracking-widest">
-                  NO RESULTS
-                </div>
-                <p className="mt-2 text-sm text-white/45">
-                  Qidiruv yoki tab’ni o‘zgartirib ko‘ring.
-                </p>
+      {/* ---------------- Controls ---------------- */}
+      <Section width="wide" className="mt-14">
+        <div className="sticky top-16 z-30 rounded-2xl border border-white/10 bg-void-900/85 p-3 shadow-panel backdrop-blur-xl">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+            <div className="relative lg:w-72 lg:shrink-0">
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Nom yoki vazifa bo'yicha..."
+                aria-label="Vositalarni qidirish"
+                className="w-full rounded-xl border border-white/10 bg-black/40 py-2.5 pl-10 pr-9 text-sm text-white placeholder:text-white/25 outline-none transition-all focus:border-signal-400/60 focus:bg-signal-500/5"
+              />
+              {query ? (
                 <button
                   type="button"
-                  onClick={() => {
-                    setQuery("");
-                    setTab("All");
-                    setFavOnly(false);
-                  }}
-                  className="mt-5 rounded-lg border-2 border-cyber-500 bg-cyber-500/10 px-4 py-2 text-xs font-black tracking-widest text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
+                  onClick={() => setQuery("")}
+                  aria-label="Qidiruvni tozalash"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-white/30 hover:text-white/70"
                 >
-                  Reset
+                  <X className="h-3.5 w-3.5" />
                 </button>
-              </div>
+              ) : null}
             </div>
-          )}
-        </motion.div>
-      </div>
 
-      {/* MODAL */}
-      <AnimatePresence>
-        {active && (
-          <>
-            <motion.div
-              className="fixed inset-0 z-40 bg-void-850/70 backdrop-blur-[2px]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setActive(null)}
-            />
-            <motion.div
-              className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 18 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              onClick={() => setActive(null)}
-            >
-              <div
-                className="w-full max-w-2xl rounded-2xl border border-cyber-500 bg-void-900/90 backdrop-blur p-5 shadow-glow-cyan"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="h-14 w-14 rounded-lg border border-signal-500/35 bg-signal-500/10 grid place-items-center overflow-hidden shrink-0">
-                      <img
-                        src={active.imageUrl}
-                        alt={active.name}
-                        className="h-11 w-11 object-contain"
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xl font-bold tracking-tight text-white truncate">
-                        {active.name}
-                      </div>
-                      <div className="mt-1 text-xs font-bold tracking-widest text-cyber-300/90 truncate">
-                        {active.platforms}
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setActive(null)}
-                    className="rounded-lg border border-cyber-500/40 bg-cyber-500/10 p-2 text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
-                    aria-label="close"
-                  >
-                    <FaTimes />
-                  </button>
-                </div>
-
-                <div className="mt-4 rounded-xl border border-signal-500/25 bg-void-850/60 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-white/45">
-                    ABOUT
-                  </div>
-                  <p className="mt-2 text-sm leading-relaxed text-signal-300/85">
-                    {active.description}
-                  </p>
-                </div>
-
-                <div className="mt-4 flex flex-col sm:flex-row gap-3">
-                  <button
-                    type="button"
-                    onClick={() => toggleFav(active.name)}
+            <div className="flex flex-1 gap-2 overflow-x-auto no-scrollbar">
+              {CATEGORIES.map((c) => (
+                <button
+                  key={c.key}
+                  type="button"
+                  onClick={() => setCategory(c.key)}
+                  aria-pressed={category === c.key}
+                  className={classNames(
+                    "flex shrink-0 items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-bold tracking-wide transition-all duration-300",
+                    category === c.key
+                      ? "border-signal-400/60 bg-signal-500/12 text-signal-200 shadow-glow-sm"
+                      : "border-white/10 bg-white/[.02] text-white/45 hover:border-white/25 hover:text-white/80",
+                  )}
+                >
+                  {c.label}
+                  <span
                     className={classNames(
-                      "flex-1 rounded-2xl border px-4 py-3 text-sm font-black tracking-wider transition-all",
-                      fav.includes(active.name)
-                        ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
-                        : "border-signal-500 bg-void-850/60 text-signal-300 shadow-glow-sm hover:border-cyber-500 hover:text-cyber-300"
+                      "rounded-full px-1.5 py-0.5 text-[10px] tabular-nums",
+                      category === c.key
+                        ? "bg-signal-500/20 text-signal-200"
+                        : "bg-white/[.06] text-white/40",
                     )}
                   >
-                    {fav.includes(active.name) ? "★ Favorited" : "☆ Add to favorites"}
-                  </button>
+                    {counts[c.key] || 0}
+                  </span>
+                </button>
+              ))}
+            </div>
 
-                  <button
-                    type="button"
-                    onClick={() => handleDownload(active.downloadLink)}
-                    className="flex-1 rounded-2xl border border-signal-500 bg-gradient-to-r from-signal-400 to-cyber-400 px-4 py-3 text-sm font-black tracking-wider text-black shadow-glow-sm hover:shadow-glow-cyan transition-all inline-flex items-center justify-center gap-2"
-                  >
-                    Yuklab olish <FaExternalLinkAlt className="text-[14px]" />
-                  </button>
-                </div>
+            <button
+              type="button"
+              onClick={() => setFavOnly((v) => !v)}
+              aria-pressed={favOnly}
+              className={classNames(
+                "flex shrink-0 items-center gap-2 rounded-xl border px-3.5 py-2.5 text-xs font-bold uppercase tracking-[.12em] transition-all",
+                favOnly
+                  ? "border-signal-400/60 bg-signal-500/12 text-signal-200"
+                  : "border-white/10 text-white/40 hover:border-white/25 hover:text-white/75",
+              )}
+            >
+              <Star className={classNames("h-3.5 w-3.5", favOnly && "fill-current")} />
+              {favourites.length || ""}
+            </button>
+          </div>
+        </div>
+      </Section>
 
-                <div className="mt-3 text-center text-[11px] text-white/35">
-                  External link opens in new tab.
-                </div>
-              </div>
-            </motion.div>
-          </>
+      {/* ---------------- Grid ---------------- */}
+      <Section width="wide" className="mt-8">
+        {visible.length === 0 ? (
+          <div className="rounded-2xl border border-white/10 bg-white/[.02] py-20 text-center">
+            <Filter className="mx-auto h-10 w-10 text-white/15" />
+            <div className="mt-4 font-display text-lg font-bold text-white/70">
+              Hech narsa topilmadi
+            </div>
+            <p className="mx-auto mt-2 max-w-sm text-sm text-white/40">
+              {favOnly
+                ? "Sevimlilar ro'yxati bo'sh — kartadagi yulduzchani bosing."
+                : "Qidiruv yoki filtrni o'zgartirib ko'ring."}
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {visible.map((app, i) => (
+              <Reveal key={app.name} delay={Math.min(i, 9) * 45}>
+                <AppCard
+                  app={app}
+                  isFav={favourites.includes(app.name)}
+                  onToggleFav={toggleFav}
+                  onOpen={setDetail}
+                />
+              </Reveal>
+            ))}
+          </div>
         )}
-      </AnimatePresence>
+      </Section>
 
-      {/* small utilities */}
+      {detail ? <DetailModal app={detail} onClose={() => setDetail(null)} /> : null}
+
       <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

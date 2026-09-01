@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" width="1200" height="560" role="img">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a1120"/><stop offset="55%" stop-color="#060b18"/>
+      <stop offset="100%" stop-color="#03060f"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="44%" r="55%">
+      <stop offset="0%" stop-color="#00ff9d" stop-opacity=".28"/>
+      <stop offset="60%" stop-color="#00e5ff" stop-opacity=".09"/>
+      <stop offset="100%" stop-color="#00e5ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00ff9d"/><stop offset="100%" stop-color="#00e5ff"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="9" result="g"/>
+      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <pattern id="grid" width="46" height="46" patternUnits="userSpaceOnUse">
+      <path d="M46 0H0V46" fill="none" stroke="#00ff9d" stroke-opacity=".07" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="vig" cx="50%" cy="48%" r="64%">
+      <stop offset="55%" stop-color="#060b18" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#01030a" stop-opacity=".9"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="560" fill="url(#sky)"/>
+  <rect width="1200" height="560" fill="url(#grid)"/>
+  <rect width="1200" height="560" fill="url(#halo)"/>
+  <g><circle cx="307" cy="301" r="1.8" fill="#00ff9d" opacity="0.36"/><circle cx="691" cy="331" r="1.8" fill="#00e5ff" opacity="0.27"/><circle cx="1155" cy="266" r="2.4" fill="#00e5ff" opacity="0.42"/><circle cx="209" cy="345" r="2.4" fill="#00e5ff" opacity="0.19"/><circle cx="911" cy="117" r="2.4" fill="#00e5ff" opacity="0.47"/><circle cx="962" cy="169" r="2.4" fill="#00ff9d" opacity="0.51"/><circle cx="840" cy="482" r="1.8" fill="#00ff9d" opacity="0.39"/><circle cx="1120" cy="104" r="1.8" fill="#00e5ff" opacity="0.23"/><circle cx="283" cy="503" r="1.8" fill="#00ff9d" opacity="0.50"/><circle cx="512" cy="440" r="2.4" fill="#00e5ff" opacity="0.40"/><circle cx="694" cy="474" r="2.4" fill="#00ff9d" opacity="0.19"/><circle cx="353" cy="331" r="2.4" fill="#00e5ff" opacity="0.50"/><circle cx="1120" cy="474" r="2.4" fill="#00e5ff" opacity="0.42"/><circle cx="749" cy="514" r="1.8" fill="#00e5ff" opacity="0.20"/><circle cx="996" cy="515" r="1.2" fill="#00e5ff" opacity="0.20"/><circle cx="1045" cy="50" r="1.8" fill="#00ff9d" opacity="0.50"/><circle cx="89" cy="335" r="1.2" fill="#00e5ff" opacity="0.40"/><circle cx="657" cy="483" r="1.8" fill="#00ff9d" opacity="0.55"/><circle cx="387" cy="77" r="2.4" fill="#00ff9d" opacity="0.53"/><circle cx="1128" cy="180" r="1.8" fill="#00e5ff" opacity="0.20"/><circle cx="1012" cy="191" r="1.2" fill="#00ff9d" opacity="0.32"/><circle cx="556" cy="290" r="2.4" fill="#00ff9d" opacity="0.43"/></g>
+<g><line x1="600" y1="250" x2="430" y2="165" stroke="url(#stroke)" stroke-opacity=".38" stroke-width="2.5"/><line x1="600" y1="250" x2="770" y2="168" stroke="url(#stroke)" stroke-opacity=".38" stroke-width="2.5"/><line x1="600" y1="250" x2="392" y2="330" stroke="url(#stroke)" stroke-opacity=".38" stroke-width="2.5"/><line x1="600" y1="250" x2="808" y2="328" stroke="url(#stroke)" stroke-opacity=".38" stroke-width="2.5"/></g><g filter="url(#glow)"><circle cx="600" cy="250" r="40" fill="#08111f" stroke="#00e5ff" stroke-width="3"/><circle cx="600" cy="250" r="16" fill="#00e5ff" opacity=".85"/><circle cx="430" cy="165" r="20" fill="#08111f" stroke="#00ff9d" stroke-width="3"/><circle cx="430" cy="165" r="8" fill="#00ff9d" opacity=".85"/><circle cx="770" cy="168" r="22" fill="#08111f" stroke="#00e5ff" stroke-width="3"/><circle cx="770" cy="168" r="9" fill="#00e5ff" opacity=".85"/><circle cx="392" cy="330" r="18" fill="#08111f" stroke="#00ff9d" stroke-width="3"/><circle cx="392" cy="330" r="7" fill="#00ff9d" opacity=".85"/><circle cx="808" cy="328" r="20" fill="#08111f" stroke="#00e5ff" stroke-width="3"/><circle cx="808" cy="328" r="8" fill="#00e5ff" opacity=".85"/></g><path d="M600 92 L700 128 L700 216 Q700 286 600 322 Q500 286 500 216 L500 128 Z" fill="none" stroke="#00ff9d" stroke-opacity=".30" stroke-width="3"/>  <text x="600" y="470" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="34" font-weight="700" fill="#ffffff" fill-opacity=".14" letter-spacing="6">CYBERNEXUS</text>
+  <rect width="1200" height="560" fill="url(#vig)"/>
+  <rect x="1" y="1" width="1198" height="558" fill="none" stroke="#ffffff" stroke-opacity=".07" stroke-width="2" rx="4"/>
+</svg>

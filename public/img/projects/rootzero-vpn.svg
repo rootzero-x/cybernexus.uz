@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" width="1200" height="560" role="img">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a1120"/><stop offset="55%" stop-color="#060b18"/>
+      <stop offset="100%" stop-color="#03060f"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="44%" r="55%">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity=".28"/>
+      <stop offset="60%" stop-color="#00ff9d" stop-opacity=".09"/>
+      <stop offset="100%" stop-color="#00ff9d" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00e5ff"/><stop offset="100%" stop-color="#00ff9d"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="9" result="g"/>
+      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <pattern id="grid" width="46" height="46" patternUnits="userSpaceOnUse">
+      <path d="M46 0H0V46" fill="none" stroke="#00e5ff" stroke-opacity=".07" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="vig" cx="50%" cy="48%" r="64%">
+      <stop offset="55%" stop-color="#060b18" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#01030a" stop-opacity=".9"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="560" fill="url(#sky)"/>
+  <rect width="1200" height="560" fill="url(#grid)"/>
+  <rect width="1200" height="560" fill="url(#halo)"/>
+  <g><circle cx="547" cy="309" r="1.8" fill="#00ff9d" opacity="0.50"/><circle cx="253" cy="426" r="1.8" fill="#00e5ff" opacity="0.47"/><circle cx="145" cy="186" r="1.2" fill="#00e5ff" opacity="0.51"/><circle cx="751" cy="326" r="1.8" fill="#00e5ff" opacity="0.42"/><circle cx="729" cy="116" r="1.2" fill="#00e5ff" opacity="0.20"/><circle cx="80" cy="462" r="2.4" fill="#00ff9d" opacity="0.35"/><circle cx="533" cy="444" r="2.4" fill="#00ff9d" opacity="0.29"/><circle cx="45" cy="81" r="2.4" fill="#00ff9d" opacity="0.55"/><circle cx="1155" cy="443" r="2.4" fill="#00ff9d" opacity="0.46"/><circle cx="614" cy="54" r="2.4" fill="#00e5ff" opacity="0.33"/><circle cx="988" cy="226" r="1.2" fill="#00e5ff" opacity="0.18"/><circle cx="275" cy="477" r="1.8" fill="#00ff9d" opacity="0.44"/><circle cx="510" cy="312" r="1.2" fill="#00e5ff" opacity="0.28"/><circle cx="138" cy="200" r="1.8" fill="#00e5ff" opacity="0.22"/><circle cx="316" cy="89" r="1.2" fill="#00ff9d" opacity="0.36"/><circle cx="804" cy="130" r="2.4" fill="#00ff9d" opacity="0.45"/><circle cx="187" cy="349" r="1.2" fill="#00ff9d" opacity="0.55"/><circle cx="41" cy="455" r="2.4" fill="#00ff9d" opacity="0.51"/><circle cx="276" cy="229" r="2.4" fill="#00e5ff" opacity="0.22"/><circle cx="1148" cy="142" r="1.8" fill="#00ff9d" opacity="0.41"/><circle cx="970" cy="225" r="1.2" fill="#00ff9d" opacity="0.40"/><circle cx="312" cy="329" r="1.8" fill="#00e5ff" opacity="0.23"/></g>
+<g filter="url(#glow)"><ellipse cx="380" cy="235" rx="26" ry="65" fill="none" stroke="url(#stroke)" stroke-opacity="0.40" stroke-width="3"/><ellipse cx="442" cy="235" rx="26" ry="72" fill="none" stroke="url(#stroke)" stroke-opacity="0.45" stroke-width="3"/><ellipse cx="504" cy="235" rx="26" ry="79" fill="none" stroke="url(#stroke)" stroke-opacity="0.50" stroke-width="3"/><ellipse cx="566" cy="235" rx="26" ry="86" fill="none" stroke="url(#stroke)" stroke-opacity="0.55" stroke-width="3"/><ellipse cx="628" cy="235" rx="26" ry="79" fill="none" stroke="url(#stroke)" stroke-opacity="0.50" stroke-width="3"/><ellipse cx="690" cy="235" rx="26" ry="72" fill="none" stroke="url(#stroke)" stroke-opacity="0.45" stroke-width="3"/><ellipse cx="752" cy="235" rx="26" ry="65" fill="none" stroke="url(#stroke)" stroke-opacity="0.40" stroke-width="3"/><ellipse cx="814" cy="235" rx="26" ry="58" fill="none" stroke="url(#stroke)" stroke-opacity="0.35" stroke-width="3"/></g><g><rect x="250" y="196" width="86" height="78" rx="12" fill="#0a1424" stroke="#00ff9d" stroke-width="3"/><circle cx="293" cy="235" r="14" fill="none" stroke="#00ff9d" stroke-width="3"/><rect x="864" y="196" width="86" height="78" rx="12" fill="#0a1424" stroke="#00e5ff" stroke-width="3"/><path d="M893 235 h42 M921 221 l14 14 -14 14" fill="none" stroke="#00e5ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>  <text x="600" y="470" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="34" font-weight="700" fill="#ffffff" fill-opacity=".14" letter-spacing="6">ROOTZERO VPN</text>
+  <rect width="1200" height="560" fill="url(#vig)"/>
+  <rect x="1" y="1" width="1198" height="558" fill="none" stroke="#ffffff" stroke-opacity=".07" stroke-width="2" rx="4"/>
+</svg>
