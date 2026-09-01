@@ -7,11 +7,13 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { ShieldCheck, Lock, UserPlus, Fingerprint, AlertTriangle } from "lucide-react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  ShieldCheck, Lock, UserPlus, Fingerprint, AlertTriangle, Smartphone,
+} from "lucide-react";
 
 import { AuthContext } from "../../context/AuthContext";
-import { authGoogleLogin } from "../../api/auth";
+import { authGoogleLogin, authAppHandoff } from "../../api/auth";
 import { isMedianEnv, hasMedianGoogleBridge, medianGoogleLogin } from "../../api/google";
 import GoogleSignInButton from "../../components/GoogleSignInButton";
 import {
@@ -33,6 +35,15 @@ function safeRedirect(from) {
   if (from === "/auth") return "/";
   return from;
 }
+
+/**
+ * Where a completed app sign-in is sent back to.
+ *
+ * The scheme is fixed here rather than read from the query string. A redirect
+ * target the caller can choose is an open redirect, and this one carries a
+ * credential — so the app gets to say "I am waiting" and nothing more.
+ */
+const APP_SCHEME = "cybernexus://auth";
 
 const FEATURES = [
   {
@@ -57,10 +68,17 @@ export const Auth = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const from = useMemo(() => safeRedirect(location.state?.from), [location.state]);
+
+  // The mobile app opens this page rather than shipping its own Google client,
+  // so that both ends stay one login system against one user table.
+  const appMode = searchParams.get("app") === "1";
+  const appState = searchParams.get("state") || "";
 
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [handingOff, setHandingOff] = useState(false);
 
   const mounted = useRef(true);
   useEffect(() => {
@@ -70,9 +88,36 @@ export const Auth = () => {
     };
   }, []);
 
+  // Only ever hand off once. Without this the effect would re-run on the
+  // re-render that `setHandingOff` itself causes and mint a second code.
+  const handedOff = useRef(false);
+
   useEffect(() => {
-    if (!loading && user) navigate(from, { replace: true });
-  }, [loading, user, navigate, from]);
+    if (loading || !user) return;
+
+    if (!appMode) {
+      navigate(from, { replace: true });
+      return;
+    }
+
+    if (handedOff.current) return;
+    handedOff.current = true;
+    setHandingOff(true);
+
+    authAppHandoff()
+      .then((res) => {
+        const url = new URL(APP_SCHEME);
+        url.searchParams.set("code", res.code);
+        if (appState) url.searchParams.set("state", appState);
+        window.location.replace(url.toString());
+      })
+      .catch((e) => {
+        if (!mounted.current) return;
+        handedOff.current = false;
+        setHandingOff(false);
+        setErr(e?.message || "Ilovaga ulanib bo'lmadi.");
+      });
+  }, [loading, user, navigate, from, appMode, appState]);
 
   const finishLogin = useCallback(
     async (idToken) => {
@@ -140,11 +185,24 @@ export const Auth = () => {
 
             <Reveal delay={160}>
               <p className="mt-6 max-w-xl text-base leading-relaxed text-white/55 sm:text-lg">
-                CyberNexus platformasiga Google hisobingiz orqali kiring. Avval
-                kirgan bo'lsangiz — session tiklanadi, birinchi marta bo'lsa —
-                hisob avtomatik ochiladi.
+                {appMode
+                  ? "Cyber Nexus ilovasi shu yerdan kirishni so'ramoqda. Google hisobingiz bilan davom eting — kirish tugagach ilovaga o'zi qaytadi."
+                  : "CyberNexus platformasiga Google hisobingiz orqali kiring. Avval kirgan bo'lsangiz — session tiklanadi, birinchi marta bo'lsa — hisob avtomatik ochiladi."}
               </p>
             </Reveal>
+
+            {appMode ? (
+              <Reveal delay={200}>
+                <div className="mt-6 flex items-center gap-3 rounded-2xl border border-cyber-500/30 bg-cyber-500/[.07] p-4">
+                  <Smartphone className="h-5 w-5 shrink-0 text-cyber-400" />
+                  <p className="text-sm text-white/60">
+                    {handingOff
+                      ? "Ilovaga qaytarilmoqda..."
+                      : "Ilova va sayt bitta hisobdan foydalanadi — sertifikatlaringiz ikkalasida ham ko'rinadi."}
+                  </p>
+                </div>
+              </Reveal>
+            ) : null}
 
             {err ? (
               <div

@@ -30,6 +30,18 @@ export async function authLogout() {
   }
 }
 
+/**
+ * Mint a single-use code that hands this signed-in session across to the
+ * Cyber Nexus mobile app.
+ *
+ * The app has no Google credential of its own — it opens this site in a
+ * browser, the user signs in here exactly as they would on a laptop, and only
+ * this code crosses back. One login system, one user table, both devices.
+ */
+export function authAppHandoff() {
+  return apiFetch("/auth/app_handoff.php", { method: "POST" });
+}
+
 export function authHealth() {
   return apiFetch("/health.php", { skipAuth: true });
 }
