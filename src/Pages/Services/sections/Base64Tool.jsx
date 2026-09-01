@@ -26,7 +26,7 @@ export default function Base64Tool({ notify }) {
       const out = base64DecodeUtf8(input.trim());
       setResult(out);
       notify?.({ type: "success", title: "Decoded", message: "Matn tiklandi." });
-    } catch (e) {
+    } catch {
       setResult("Xatolik: Yaroqli Base64 kiriting.");
       notify?.({ type: "error", title: "Decode xatolik", message: "Base64 format noto‘g‘ri." });
     }

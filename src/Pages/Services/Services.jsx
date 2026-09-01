@@ -9,6 +9,12 @@ import {
   ShieldCheck,
   X,
   ExternalLink,
+  Lock,
+  FileKey,
+  Network,
+  Shuffle,
+  ScanSearch,
+  Link2,
 } from "lucide-react";
 
 import Toast from "./sections/ui/Toast";
@@ -16,6 +22,12 @@ import UuidTool from "./sections/UuidTool";
 import QrTool from "./sections/QrTool";
 import HashTool from "./sections/HashTool";
 import Base64Tool from "./sections/Base64Tool";
+import PasswordTool from "./sections/PasswordTool";
+import JwtTool from "./sections/JwtTool";
+import SubnetTool from "./sections/SubnetTool";
+import CipherTool from "./sections/CipherTool";
+import HashIdTool from "./sections/HashIdTool";
+import UrlTool from "./sections/UrlTool";
 
 import {
   HoloCard,
@@ -28,6 +40,13 @@ import {
 } from "../../design";
 
 const TOOLS = [
+  {
+    key: "password",
+    label: "Parol",
+    icon: Lock,
+    tone: "signal",
+    blurb: "Kriptografik xavfsiz parol va entropiya hisobi.",
+  },
   {
     key: "uuid",
     label: "UUID",
@@ -50,11 +69,46 @@ const TOOLS = [
     blurb: "MD5, SHA-1, SHA-256 va SHA-512 hash hisoblash.",
   },
   {
+    key: "hashid",
+    label: "Hash ID",
+    icon: ScanSearch,
+    tone: "signal",
+    blurb: "Hash turini uzunlik va format bo'yicha aniqlash.",
+  },
+  {
     key: "base64",
     label: "Base64",
     icon: Code2,
     tone: "cyber",
     blurb: "Base64 kodlash va dekodlash, unicode qo'llab-quvvatlanadi.",
+  },
+  {
+    key: "url",
+    label: "URL",
+    icon: Link2,
+    tone: "cyber",
+    blurb: "URL kodlash, ochish va shubhali havolalarni tahlil qilish.",
+  },
+  {
+    key: "jwt",
+    label: "JWT",
+    icon: FileKey,
+    tone: "cyber",
+    blurb: "JSON Web Token'ni ochib, muddatini tekshirish.",
+  },
+  {
+    key: "subnet",
+    label: "Subnet",
+    icon: Network,
+    tone: "cyber",
+    blurb: "CIDR bo'yicha tarmoq, maska va xostlar hisobi.",
+  },
+  {
+    key: "cipher",
+    label: "Shifrlar",
+    icon: Shuffle,
+    tone: "plasma",
+    blurb: "Caesar, Atbash, XOR, Morze — CTF va o'quv uchun.",
   },
 ];
 
@@ -104,7 +158,7 @@ function ToolTab({ tool, active, onClick }) {
 }
 
 export const Services = () => {
-  const [tab, setTab] = useState("uuid");
+  const [tab, setTab] = useState("password");
   const [tipsOpen, setTipsOpen] = useState(false);
   const [toast, setToast] = useState(null);
 
@@ -114,12 +168,24 @@ export const Services = () => {
 
   const renderTool = () => {
     switch (tab) {
+      case "password":
+        return <PasswordTool notify={notify} />;
       case "qr":
         return <QrTool notify={notify} />;
       case "hash":
         return <HashTool notify={notify} />;
+      case "hashid":
+        return <HashIdTool notify={notify} />;
       case "base64":
         return <Base64Tool notify={notify} />;
+      case "url":
+        return <UrlTool notify={notify} />;
+      case "jwt":
+        return <JwtTool notify={notify} />;
+      case "subnet":
+        return <SubnetTool notify={notify} />;
+      case "cipher":
+        return <CipherTool notify={notify} />;
       default:
         return <UuidTool notify={notify} />;
     }
@@ -132,7 +198,7 @@ export const Services = () => {
         <div className="grid gap-10 lg:grid-cols-[1.2fr_.8fr] lg:items-end">
           <div>
             <Reveal>
-              <Eyebrow tone="cyber">Tools · Utilities</Eyebrow>
+              <Eyebrow tone="cyber">Tools · 10 ta vosita</Eyebrow>
             </Reveal>
 
             <Reveal delay={80}>
@@ -143,8 +209,8 @@ export const Services = () => {
 
             <Reveal delay={150}>
               <p className="mt-5 max-w-xl text-base leading-relaxed text-white/55">
-                Hammasi brauzeringizda ishlaydi — hech qanday ma'lumot serverga
-                yuborilmaydi. Natijani bir bosishda nusxalang yoki yuklab oling.
+                Parol generatoridan CIDR kalkulyatorigacha — hammasi brauzeringizda
+                ishlaydi. Hech qanday ma'lumot serverga yuborilmaydi.
               </p>
             </Reveal>
           </div>
@@ -208,17 +274,18 @@ export const Services = () => {
 
       {/* ---------------- Tool surface ---------------- */}
       <Section width="wide" className="mt-6">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={tab}
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-          >
-            {renderTool()}
-          </motion.div>
-        </AnimatePresence>
+        {/* No mode="wait": that holds the incoming tool until the outgoing
+            one finishes exiting, and in a tab the browser is not painting
+            that exit never completes — the panel would stay on the previous
+            tool forever. A plain keyed fade cannot get stuck. */}
+        <motion.div
+          key={tab}
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {renderTool()}
+        </motion.div>
       </Section>
 
       {/* ---------------- Tips modal ---------------- */}

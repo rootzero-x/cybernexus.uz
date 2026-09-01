@@ -1,1226 +1,347 @@
-// src/pages/About/About.jsx
-import React, { useEffect, useMemo, useRef, useState } from "react";
+// src/Pages/About/about.jsx
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import classNames from "classnames";
 import {
-  motion,
-  AnimatePresence,
-  useMotionValue,
-  animate,
-} from "framer-motion";
+  Users,
+  Newspaper,
+  Wrench,
+  Package,
+  ShieldCheck,
+  Target,
+  BookOpen,
+  Lock,
+  GitBranch,
+  ArrowUpRight,
+  CheckCircle2,
+  Circle,
+  Loader2,
+} from "lucide-react";
+
+import { apiFetch } from "../../api/client";
+import { APPS } from "../App/appsData";
 import {
-  FaTelegram,
-  FaInstagram,
-  FaGithub,
-  FaShieldAlt,
-  FaUsers,
-  FaCheckCircle,
-  FaTrophy,
-  FaLock,
-  FaCode,
-  FaNetworkWired,
-  FaRocket,
-  FaBolt,
-  FaGraduationCap,
-  FaLayerGroup,
-  FaStar,
-  FaRegStar,
-  FaTimes,
-  FaExternalLinkAlt,
-  FaBook,
-  FaBug,
-  FaClipboardCheck,
-} from "react-icons/fa";
+  HoloCard,
+  Eyebrow,
+  Display,
+  Accent,
+  Section,
+  Reveal,
+  Rule,
+} from "../../design";
 
-/**
- * ✅ CyberNexus About — Premium (News page design language)
- * - Glass hero + sticky tabs (section navigation)
- * - Featured horizontal carousel
- * - Responsive premium cards
- * - Modal details for feature/roadmap cards
- * - Favorites (localStorage)
- * - Minimal clean animations (fade/slide only)
- * - Live users count from backend API
- */
+const PILLARS = [
+  {
+    icon: BookOpen,
+    tone: "signal",
+    title: "Amaliyot, nazariya emas",
+    text: "Har bir modul qo'l bilan ishlanadigan narsa beradi — terminal mashqi, ishlaydigan vosita yoki tekshirilgan dastur. Faqat o'qib chiqiladigan matn emas.",
+  },
+  {
+    icon: ShieldCheck,
+    tone: "cyber",
+    title: "Tekshirilgan manba",
+    text: "Katalogdagi har bir havola ishlab chiquvchining o'z saytiga olib boradi. Xavfsizlik dasturida yuklab olish manbasi dasturning o'zi qadar muhim.",
+  },
+  {
+    icon: Lock,
+    tone: "signal",
+    title: "Ma'lumot sizda qoladi",
+    text: "Vositalar brauzeringizda ishlaydi. Parol, hash, JWT — kiritganingiz sahifadan chiqmaydi va serverga yuborilmaydi.",
+  },
+  {
+    icon: Target,
+    tone: "cyber",
+    title: "Mas'uliyatli yondashuv",
+    text: "Hujum vositalari faqat o'zingizga tegishli yoki yozma ruxsat berilgan tizimlar uchun. Bu har bir sahifada aniq yozilgan.",
+  },
+];
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 18 },
-  show: (i = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.65, ease: "easeOut", delay: i * 0.08 },
-  }),
+const ROADMAP = [
+  {
+    status: "done",
+    title: "Google orqali kirish va sessiya xavfsizligi",
+    text: "OAuth, bearer token, sessiya cheklovlari va so'rov limitlari.",
+  },
+  {
+    status: "done",
+    title: "Avtomatik yangiliklar tasmasi",
+    text: "O'nta manbadan har soatda yig'iladigan kiberxavfsizlik yangiliklari.",
+  },
+  {
+    status: "done",
+    title: "Vositalar to'plami",
+    text: "Parol generatori, hash, JWT, subnet, shifrlar va boshqalar — hammasi brauzerda.",
+  },
+  {
+    status: "done",
+    title: "Admin panel — TOTP 2FA",
+    text: "Bcrypt parol va RFC 6238 ikkinchi omil.",
+  },
+  {
+    status: "progress",
+    title: "CTF bosqichlari kengaytirilmoqda",
+    text: "Yangi darajalar va topshiriqlar qo'shilmoqda.",
+  },
+  {
+    status: "planned",
+    title: "Foydalanuvchi profili va yutuqlar",
+    text: "Bajarilgan mashqlar tarixi, ball va reyting.",
+  },
+  {
+    status: "planned",
+    title: "O'quv yo'nalishlari",
+    text: "Boshlang'ichdan ilg'orgacha bosqichma-bosqich dastur.",
+  },
+];
+
+const STATUS_META = {
+  done: { icon: CheckCircle2, label: "Bajarildi", cls: "text-signal-400" },
+  progress: { icon: Loader2, label: "Jarayonda", cls: "text-cyber-400 animate-spin-slow" },
+  planned: { icon: Circle, label: "Rejada", cls: "text-white/25" },
 };
 
-export const About = () => {
-  // ====== Favorites (localStorage) ======
-  const [fav, setFav] = useState(() => {
-    try {
-      const raw = localStorage.getItem("cybernexus_about_fav_v1");
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  });
+/** Live platform numbers; a failed call leaves a dash rather than a wrong figure. */
+function usePlatformStats() {
+  const [stats, setStats] = useState({ users: null, news: null });
 
-  useEffect(() => {
-    try {
-      localStorage.setItem("cybernexus_about_fav_v1", JSON.stringify(fav));
-    } catch {
-        /* storage unavailable — non-fatal */
-      }
-  }, [fav]);
-
-  const toggleFav = (id) => {
-    setFav((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
-  };
-
-  // ====== Live stats from backend ======
-  const [usersCount, setUsersCount] = useState(null);
-  const usersMv = useMotionValue(0);
-  const [usersDisplay, setUsersDisplay] = useState("0");
-
-  const API_BASE =
-    import.meta.env.VITE_API_BASE ||
-    "https://694fc8f1e1918.myxvest1.ru/cybernexus/api";
-
-  // ====== Modal ======
-  const [active, setActive] = useState(null);
-
-  // ====== Social popover ======
-  const [isMobile, setIsMobile] = useState(false);
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-  const popoverRef = useRef(null);
-  const joinBtnRef = useRef(null);
-
-  useEffect(() => {
-    const check = () =>
-      setIsMobile(window.matchMedia("(max-width: 767px)").matches);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  useEffect(() => {
-    const onDocClick = (e) => {
-      if (!isPopoverOpen) return;
-      const t = e.target;
-      if (
-        popoverRef.current &&
-        !popoverRef.current.contains(t) &&
-        joinBtnRef.current &&
-        !joinBtnRef.current.contains(t)
-      ) {
-        setIsPopoverOpen(false);
-      }
-    };
-    document.addEventListener("click", onDocClick);
-    return () => document.removeEventListener("click", onDocClick);
-  }, [isPopoverOpen]);
-
-  // ====== Fetch users count from API ======
   useEffect(() => {
     let alive = true;
 
-    (async () => {
-      try {
-        const res = await fetch(`${API_BASE}/stats/users_count.php`, {
-          method: "GET",
-          credentials: "include",
-        });
-        const data = await res.json();
-        if (!alive) return;
+    apiFetch("/stats/users_count.php", { skipAuth: true })
+      .then((r) => {
+        if (alive && typeof r?.users_count === "number") {
+          setStats((s) => ({ ...s, users: r.users_count }));
+        }
+      })
+      .catch(() => {});
 
-        const cnt = Number(data?.users_count ?? 0);
-        setUsersCount(cnt);
-
-        // 0 -> cnt animation
-        animateCount(usersMv, cnt, setUsersDisplay);
-      } catch {
-        // fallback: agar API ishlamasa 0 qoladi (UI buzilmaydi)
-        setUsersCount(0);
-        setUsersDisplay("0");
-      }
-    })();
+    apiFetch("/news/list.php?limit=1", { skipAuth: true })
+      .then((r) => {
+        if (alive && typeof r?.total === "number") {
+          setStats((s) => ({ ...s, news: r.total }));
+        }
+      })
+      .catch(() => {});
 
     return () => {
       alive = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ====== Helper functions ======
-  const formatCompact = (n) => {
-    const num = Number(n || 0);
-    if (!Number.isFinite(num)) return "0";
-    if (num < 1000) return String(num);
-    if (num < 1_000_000) {
-      const v = num / 1000;
-      return `${v >= 10 ? v.toFixed(0) : v.toFixed(1)}k`;
-    }
-    if (num < 1_000_000_000) {
-      const v = num / 1_000_000;
-      return `${v >= 10 ? v.toFixed(0) : v.toFixed(1)}M`;
-    }
-    const v = num / 1_000_000_000;
-    return `${v >= 10 ? v.toFixed(0) : v.toFixed(1)}B`;
-  };
+  return stats;
+}
 
-  const animateCount = (mv, to, onUpdate) => {
-    mv.set(0);
-    return animate(mv, to, {
-      duration: 1.2,
-      ease: "easeOut",
-      onUpdate: (latest) => {
-        const rounded = Math.round(latest);
-        onUpdate(formatCompact(rounded));
-      },
-    });
-  };
+export const About = () => {
+  const stats = usePlatformStats();
 
-  // ====== Data ======
-  const stats = useMemo(
-    () => [
-      {
-        id: "stat-award",
-        icon: FaTrophy,
-        value: "01",
-        label: "TUMAN BOSQICHI",
-        accent: "text-yellow-400",
-        border: "border-yellow-400/50",
-        bg: "bg-yellow-400/10",
-      },
-      {
-        id: "stat-active",
-        icon: FaUsers,
-        value: "2",
-        label: "SUBDOMAINLAR",
-        accent: "text-signal-300",
-        border: "border-signal-500/40",
-        bg: "bg-signal-500/10",
-      },
-      {
-        id: "stat-registered",
-        icon: FaCheckCircle,
-        value: usersDisplay,
-        label: "RO'YXATDAN O'TGAN",
-        accent: "text-cyber-300",
-        border: "border-cyber-500/40",
-        bg: "bg-cyber-500/10",
-      },
-    ],
-    [usersDisplay],
-  );
-
-  const features = useMemo(
-    () => [
-      {
-        id: "feat-cyber-knowledge",
-        icon: FaLock,
-        title: "KIBERXAVFSIZLIK BILIMI",
-        desc: "Zamonaviy tahdidlardan himoyalanish, xavflarni aniqlash va real amaliyotga yo'naltirilgan bilimlar.",
-        details:
-          "Threat modeling, incident mindset, va real hayotdagi hujum zanjirlarini tushunish: password hygiene, 2FA, session security, endpoint basics, data protection.",
-        tags: ["Defense", "Privacy", "Basics"],
-        link: "https://cybernexus.uz",
-      },
-      {
-        id: "feat-awareness",
-        icon: FaShieldAlt,
-        title: "CYBER AWARENESS",
-        desc: "Phishing, social engineering, account security va digital hygiene bo'yicha mustahkam ko'nikmalar.",
-        details:
-          "AiTM/credential theft, fake domains, email spoofing, malicious attachments: qanday tanish, qanday tekshirish, qanday bloklash — oddiy va amaliy yondashuv.",
-        tags: ["Phishing", "OSINT", "Hygiene"],
-        link: "https://cybernexus.uz",
-      },
-      {
-        id: "feat-tools",
-        icon: FaNetworkWired,
-        title: "AMALIY DASTURLAR",
-        desc: "Tarmoq tahlili, vulnerability assessment va pentesting ekotizimi bo'yicha foydali tool'lar to'plami.",
-        details:
-          "Network fundamentals, scanning basics, vuln triage, hardening checklists. Maqsad: xavfsizlikni oshirish — zarar yetkazish emas.",
-        tags: ["Tools", "Network", "Vuln"],
-        link: "https://cybernexus.uz",
-      },
-      {
-        id: "feat-qa",
-        icon: FaGraduationCap,
-        title: "SAVOL–JAVOB",
-        desc: "Mutaxassislar va community yordamida real case'lar bo'yicha tezkor maslahatlar va yo'nalish.",
-        details:
-          "Yo'l xaritasi, resurs tavsiyalari, learning path: boshlovchi → intermediate → portfolio. Savollarni to'g'ri berish va debug fikrlash.",
-        tags: ["Community", "Roadmap", "Mentor"],
-        link: "https://t.me/cyber_nexuss",
-      },
-    ],
-    [],
-  );
-
-  const roadmap = useMemo(
-    () => [
-      {
-        id: "road-news",
-        icon: FaBook,
-        title: "NEWS FEED (VERIFIED)",
-        desc: "CISA / Microsoft / Reuters kabi manbalardan yangiliklar — qisqa va aniq formatda.",
-        details:
-          "News bo'limi: kategoriya, qidiruv, favorites, modal details. Maqsad: o'qib chiqish oson, share qilish qulay.",
-        tags: ["News", "Verified", "Daily"],
-        link: "https://cybernexus.uz",
-      },
-      {
-        id: "road-checklists",
-        icon: FaClipboardCheck,
-        title: "SECURITY CHECKLISTS",
-        desc: "Account security, device hardening va privacy bo'yicha tayyor checklist'lar.",
-        details:
-          "Har bir checklist: 10–20 band, real-world tavsiyalar, 2FA, password manager, backup, browser safety.",
-        tags: ["Hardening", "Privacy", "Practice"],
-        link: "https://cybernexus.uz",
-      },
-      {
-        id: "road-labs",
-        icon: FaBug,
-        title: "LABS (SAFE PRACTICE)",
-        desc: "Simulyatsiya va xavfsiz mashqlar: log analysis, basic forensics, phishing recognition.",
-        details:
-          "Xavfsiz va qonuniy format: faqat o'rganish va himoya uchun. Yomon niyatli yo'riqnomalar yo'q.",
-        tags: ["Labs", "Learning", "Defensive"],
-        link: "https://cybernexus.uz",
-      },
-    ],
-    [],
-  );
-
-  const socials = useMemo(
-    () => [
-      {
-        icon: FaTelegram,
-        label: "TELEGRAM",
-        href: "https://t.me/cyber_nexuss",
-      },
-      {
-        icon: FaInstagram,
-        label: "INSTAGRAM",
-        href: "https://instagram.com/cybernexus.uz",
-      },
-      {
-        icon: FaGithub,
-        label: "GITHUB",
-        href: "https://github.com/rootzero-x",
-      },
-    ],
-    [],
-  );
-
-  // ====== Section tabs (sticky) ======
-  const [section, setSection] = useState("Overview");
-
-  const sectionTabs = useMemo(
-    () => [
-      { key: "Overview", label: "Overview", icon: FaLayerGroup },
-      { key: "Mission", label: "Mission", icon: FaShieldAlt },
-      { key: "Stats", label: "Stats", icon: FaUsers },
-      { key: "Features", label: "Features", icon: FaCode },
-      { key: "Roadmap", label: "Roadmap", icon: FaRocket },
-      { key: "Community", label: "Community", icon: FaBolt },
-    ],
-    [],
-  );
-
-  const refs = {
-    Overview: useRef(null),
-    Mission: useRef(null),
-    Stats: useRef(null),
-    Features: useRef(null),
-    Roadmap: useRef(null),
-    Community: useRef(null),
-  };
-
-  const scrollTo = (key) => {
-    const el = refs[key]?.current;
-    if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY - 92;
-    window.scrollTo({ top, behavior: "smooth" });
-  };
-
-  // Active section highlight (IntersectionObserver)
-  useEffect(() => {
-    const keys = Object.keys(refs);
-    const els = keys.map((k) => refs[k].current).filter(Boolean);
-    if (els.length === 0) return;
-
-    const ob = new IntersectionObserver(
-      (entries) => {
-        // pick the most visible
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort(
-            (a, b) => (b.intersectionRatio || 0) - (a.intersectionRatio || 0),
-          )[0];
-        if (visible?.target?.dataset?.section) {
-          setSection(visible.target.dataset.section);
-        }
-      },
-      { root: null, threshold: [0.12, 0.2, 0.35, 0.5, 0.65] },
-    );
-
-    els.forEach((el) => ob.observe(el));
-    return () => ob.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // ====== UI atoms (match News style) ======
-  const Glass = ({ className, children }) => (
-    <div
-      className={classNames(
-        "rounded-2xl border bg-void-850/55 backdrop-blur-xl",
-        "border-signal-500/40 shadow-glow-sm",
-        className,
-      )}
-    >
-      {children}
-    </div>
-  );
-
-  const Chip = ({ active, onClick, icon: Icon, children }) => (
-    <button
-      type="button"
-      onClick={onClick}
-      className={classNames(
-        "inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-black tracking-wider transition-all",
-        active
-          ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
-          : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300",
-      )}
-    >
-      {Icon ? <Icon className="text-[12px]" /> : null}
-      {children}
-    </button>
-  );
-
-  const Clamp2 = ({ children, className }) => (
-    <p
-      className={classNames(
-        "text-sm text-signal-300/80 leading-relaxed",
-        className,
-      )}
-      style={{
-        display: "-webkit-box",
-        WebkitLineClamp: 2,
-        WebkitBoxOrient: "vertical",
-        overflow: "hidden",
-      }}
-    >
-      {children}
-    </p>
-  );
+  const numbers = [
+    {
+      icon: Users,
+      tone: "signal",
+      value: stats.users === null ? "—" : stats.users.toLocaleString("uz-UZ"),
+      label: "Ro'yxatdan o'tganlar",
+    },
+    {
+      icon: Newspaper,
+      tone: "cyber",
+      value: stats.news === null ? "—" : stats.news.toLocaleString("uz-UZ"),
+      label: "Yangiliklar bazasi",
+    },
+    { icon: Package, tone: "signal", value: APPS.length, label: "Tekshirilgan vosita" },
+    { icon: Wrench, tone: "cyber", value: 10, label: "Onlayn utilita" },
+  ];
 
   return (
-    <div className="w-full min-h-screen text-white/85 overflow-x-hidden">
+    <div className="pb-24 pt-14 sm:pt-20">
+      {/* ---------------- Hero ---------------- */}
+      <Section width="wide">
+        <Reveal>
+          <Eyebrow tone="cyber">Platforma haqida</Eyebrow>
+        </Reveal>
+        <Reveal delay={80}>
+          <Display size="xl" className="mt-5">
+            Kiberxavfsizlikni <Accent>amalda o'rganish.</Accent>
+          </Display>
+        </Reveal>
+        <Reveal delay={150}>
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/55 sm:text-lg">
+            CyberNexus — o'zbek tilida kiberxavfsizlikni amaliy o'rganish uchun
+            platforma. Maqsad oddiy: nazariyani o'qib chiqish emas, balki
+            vositalarni ishlatib ko'rish, mashq qilish va sohada nima
+            bo'layotganini kuzatib borish.
+          </p>
+        </Reveal>
 
-      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-20 pb-24">
-        {/* HERO (Glass) */}
-        <motion.div
-          initial="hidden"
-          animate="show"
-          variants={fadeUp}
-          custom={0}
-        >
-          <Glass className="p-5 sm:p-7" ref={refs.Overview}>
-            <div data-section="Overview" className="scroll-mt-[92px]">
-              <div className="flex flex-col lg:flex-row lg:items-center gap-5">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3">
-                    <div className="h-11 w-11 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
-                      <FaShieldAlt className="text-cyber-300" />
-                    </div>
-                    <div className="min-w-0">
-                      <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white truncate">
-                        Cyber Nexus
-                      </h1>
-                      <p className="mt-1 text-xs sm:text-sm text-cyber-300/90 font-bold tracking-widest truncate">
-                        ABOUT • ROADMAP • COMMUNITY
-                      </p>
-                    </div>
-                  </div>
-
-                  <p className="mt-4 text-sm sm:text-base text-white/55 leading-relaxed">
-                    Cyber Nexus — kiberxavfsizlik bo'yicha amaliy bilimlar,
-                    verified yangiliklar va community'ni birlashtiradigan
-                    platforma. Maqsad: raqamli dunyoda xavfsiz qolish uchun aniq
-                    yo'l-yo'riq, resurslar va real practice.
-                  </p>
-
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <Chip
-                      active={fav.length > 0}
-                      onClick={() => {
-                        if (!fav.length) return;
-                        const el = document.getElementById("fav-anchor");
-                        if (el)
-                          el.scrollIntoView({
-                            behavior: "smooth",
-                            block: "start",
-                          });
-                      }}
-                      icon={fav.length ? FaStar : FaRegStar}
-                    >
-                      Favorites ({fav.length})
-                    </Chip>
-                    <Chip
-                      active={section === "Features"}
-                      onClick={() => scrollTo("Features")}
-                      icon={FaCode}
-                    >
-                      Platform
-                    </Chip>
-                    <Chip
-                      active={section === "Roadmap"}
-                      onClick={() => scrollTo("Roadmap")}
-                      icon={FaRocket}
-                    >
-                      Roadmap
-                    </Chip>
-                  </div>
-                </div>
-
-                {/* Right side badge */}
-                <div className="w-full lg:w-[440px]">
-                  <div className="rounded-2xl border border-yellow-400/60 bg-yellow-400/10 p-4 shadow-[0_0_24px_rgba(250,204,21,0.18)]">
-                    <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-lg border border-yellow-400/60 bg-yellow-400/10 grid place-items-center">
-                        <FaTrophy className="text-yellow-400 text-xl" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-[11px] font-black tracking-widest text-yellow-300">
-                          YOSH IXTIROCHI
-                        </div>
-                        <div className="text-sm sm:text-base font-black text-white tracking-wider truncate">
-                          VILOYAT BOSQICHI
-                        </div>
-                        <div className="mt-1 text-[11px] font-bold tracking-widest text-white/60 truncate">
-                          PROGRESS • REAL RESULTS • COMMUNITY
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-3 grid grid-cols-3 gap-2">
-                      {stats.map((s) => (
-                        <div
-                          key={s.id}
-                          className={classNames(
-                            "rounded-lg border bg-void-850/60 px-3 py-3 text-center",
-                            s.border,
-                          )}
-                        >
-                          <div className="text-[10px] font-black tracking-widest text-white/45">
-                            {s.label}
-                          </div>
-                          <div
-                            className={classNames(
-                              "mt-1 text-lg font-black",
-                              s.accent,
-                            )}
-                          >
-                            {s.id === "stat-registered" && usersCount === null
-                              ? "..."
-                              : s.value}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-3 text-xs text-white/45 flex items-center justify-between">
-                    <span className="text-signal-300/80 font-bold tracking-widest">
-                      CLICK CARDS → DETAILS
-                    </span>
-                    <span className="text-cyber-300/80 font-bold tracking-widest">
-                      PREMIUM UI
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Glass>
-        </motion.div>
-
-        {/* STICKY SECTION TABS */}
-        <div className="sticky top-0 z-30 pt-4">
-          <div className="rounded-xl border border-signal-500/25 bg-void-850/70 backdrop-blur-xl px-3 py-3">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
-                {sectionTabs.map((t) => (
-                  <Chip
-                    key={t.key}
-                    active={section === t.key}
-                    onClick={() => scrollTo(t.key)}
-                    icon={t.icon}
-                  >
-                    {t.label}
-                  </Chip>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                className="hidden sm:inline-flex rounded-lg border border-cyber-500/30 bg-cyber-500/10 px-3 py-2 text-xs font-black tracking-widest text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
-              >
-                TOP
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* MISSION */}
-        <section
-          ref={refs.Mission}
-          data-section="Mission"
-          className="mt-6 scroll-mt-[92px]"
-        >
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="show"
-            custom={1}
-          >
-            <Glass className="p-5 sm:p-7">
-              <div className="flex items-start gap-4">
-                <div className="shrink-0 h-12 w-12 rounded-lg border border-signal-500/40 bg-signal-500/10 grid place-items-center shadow-glow-sm">
-                  <FaShieldAlt className="text-signal-300" />
-                </div>
-                <div className="min-w-0">
-                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-signal-300">
-                    &gt;_ MISSIYAMIZ
-                  </h2>
-                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-white/55">
-                    Cyber Nexus — kiberxavfsizlikni o'rganish va amaliyotga
-                    tatbiq qilish uchun premium platforma. Biz "verified sources
-                    + real practice + community" konseptini birlashtiramiz:
-                    yangiliklar, roadmap, checklist va o'quv yo'nalishlar.
-                  </p>
-
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <Chip
-                      active={false}
-                      onClick={() => scrollTo("Roadmap")}
-                      icon={FaRocket}
-                    >
-                      Roadmap-based growth
-                    </Chip>
-                    <Chip
-                      active={false}
-                      onClick={() => scrollTo("Features")}
-                      icon={FaLock}
-                    >
-                      Privacy-first mindset
-                    </Chip>
-                    <Chip
-                      active={false}
-                      onClick={() => scrollTo("Community")}
-                      icon={FaUsers}
-                    >
-                      Community support
-                    </Chip>
-                  </div>
-                </div>
-              </div>
-            </Glass>
-          </motion.div>
-        </section>
-
-        {/* STATS GRID */}
-        <section
-          ref={refs.Stats}
-          data-section="Stats"
-          className="mt-6 scroll-mt-[92px]"
-        >
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="show"
-            custom={2}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
-                REAL NATIJALAR
-              </h2>
-              <span className="text-[11px] text-white/35">
-                trusted growth →
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-              {stats.map((s, i) => (
-                <motion.div
-                  key={s.id}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.45,
-                    delay: 0.04 + i * 0.06,
-                    ease: "easeOut",
-                  }}
+        <Reveal delay={220}>
+          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {numbers.map((n) => (
+              <HoloCard key={n.label} glow={n.tone} className="flex items-center gap-3.5">
+                <n.icon
                   className={classNames(
-                    "rounded-2xl border bg-void-850/70 backdrop-blur p-5 text-center",
-                    "shadow-glow-sm transition-all hover:border-cyber-500 hover:shadow-glow-cyan",
-                    s.border,
+                    "h-5 w-5 shrink-0",
+                    n.tone === "cyber" ? "text-cyber-400" : "text-signal-400",
+                  )}
+                />
+                <div className="min-w-0">
+                  <div className="font-display text-2xl font-bold tabular-nums text-white">
+                    {n.value}
+                  </div>
+                  <div className="truncate text-[10px] font-bold uppercase tracking-[.16em] text-white/40">
+                    {n.label}
+                  </div>
+                </div>
+              </HoloCard>
+            ))}
+          </div>
+        </Reveal>
+      </Section>
+
+      {/* ---------------- Principles ---------------- */}
+      <Section width="wide" className="mt-20">
+        <Reveal>
+          <Eyebrow tone="signal">Tamoyillar</Eyebrow>
+          <Display size="md" className="mt-4">
+            Nimaga <Accent>e'tibor beramiz.</Accent>
+          </Display>
+        </Reveal>
+
+        <div className="mt-8 grid gap-5 sm:grid-cols-2">
+          {PILLARS.map((p, i) => (
+            <Reveal key={p.title} delay={i * 80}>
+              <HoloCard glow={p.tone} className="h-full">
+                <span
+                  className={classNames(
+                    "grid h-11 w-11 place-items-center rounded-xl border",
+                    p.tone === "cyber"
+                      ? "border-cyber-500/35 bg-cyber-500/10 text-cyber-400"
+                      : "border-signal-500/35 bg-signal-500/10 text-signal-400",
                   )}
                 >
-                  <div
-                    className={classNames(
-                      "mx-auto mb-4 grid h-12 w-12 place-items-center rounded-lg border",
-                      s.border,
-                      s.bg,
-                    )}
-                  >
-                    <s.icon className={classNames("text-2xl", s.accent)} />
-                  </div>
+                  <p.icon className="h-5 w-5" />
+                </span>
+                <h3 className="mt-4 font-display text-lg font-bold text-white">{p.title}</h3>
+                <p className="mt-2.5 text-sm leading-relaxed text-white/50">{p.text}</p>
+              </HoloCard>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
 
-                  <div
-                    className={classNames(
-                      "text-4xl sm:text-5xl font-black",
-                      s.accent,
-                    )}
-                  >
-                    {s.id === "stat-registered" && usersCount === null
-                      ? "..."
-                      : s.value}
+      {/* ---------------- Roadmap ---------------- */}
+      <Section width="default" className="mt-20">
+        <Reveal>
+          <Eyebrow tone="cyber">Roadmap</Eyebrow>
+          <Display size="md" className="mt-4">
+            Nima <Accent from="cyber">qilingan va nima keyin.</Accent>
+          </Display>
+        </Reveal>
+
+        <div className="mt-10 space-y-3">
+          {ROADMAP.map((r, i) => {
+            const meta = STATUS_META[r.status];
+            return (
+              <Reveal key={r.title} delay={i * 60}>
+                <HoloCard
+                  glow={r.status === "done" ? "signal" : r.status === "progress" ? "cyber" : "none"}
+                  className="flex items-start gap-4"
+                >
+                  <meta.icon className={classNames("mt-0.5 h-5 w-5 shrink-0", meta.cls)} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="font-display text-base font-bold text-white">{r.title}</h3>
+                      <span
+                        className={classNames(
+                          "rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider",
+                          r.status === "done"
+                            ? "border-signal-500/35 bg-signal-500/10 text-signal-300"
+                            : r.status === "progress"
+                              ? "border-cyber-500/35 bg-cyber-500/10 text-cyber-300"
+                              : "border-white/12 bg-white/[.03] text-white/40",
+                        )}
+                      >
+                        {meta.label}
+                      </span>
+                    </div>
+                    <p className="mt-1.5 text-sm leading-relaxed text-white/45">{r.text}</p>
                   </div>
-                  <div className="mt-2 text-xs font-black tracking-widest text-white/45">
-                    {s.label}
+                </HoloCard>
+              </Reveal>
+            );
+          })}
+        </div>
+      </Section>
+
+      {/* ---------------- Stack ---------------- */}
+      <Section width="wide" className="mt-20">
+        <Reveal>
+          <HoloCard glow="signal">
+            <div className="flex items-center gap-2.5">
+              <GitBranch className="h-5 w-5 text-signal-400" />
+              <h2 className="font-display text-xl font-bold text-white">
+                Platforma nima ustida qurilgan
+              </h2>
+            </div>
+
+            <Rule className="my-5" />
+
+            <div className="grid gap-6 sm:grid-cols-3">
+              {[
+                ["Frontend", ["React 19", "Vite", "Tailwind CSS", "three.js / WebGL"]],
+                ["Backend", ["PHP 7.4", "MariaDB", "Nginx", "RSS agregatori"]],
+                ["Xavfsizlik", ["Google OAuth", "Bearer token", "TOTP 2FA", "Rate limiting"]],
+              ].map(([group, items]) => (
+                <div key={group}>
+                  <div className="text-[10px] font-bold uppercase tracking-[.2em] text-cyber-400">
+                    {group}
                   </div>
-                </motion.div>
+                  <ul className="mt-3 space-y-1.5">
+                    {items.map((t) => (
+                      <li key={t} className="flex gap-2 text-sm text-white/50">
+                        <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-signal-400" />
+                        {t}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
             </div>
-          </motion.div>
-        </section>
+          </HoloCard>
+        </Reveal>
+      </Section>
 
-        {/* FEATURES (cards + modal) */}
-        <section
-          ref={refs.Features}
-          data-section="Features"
-          className="mt-8 scroll-mt-[92px]"
-        >
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="show"
-            custom={3}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm sm:text-base font-black tracking-widest text-signal-300">
-                PLATFORM IMKONIYATLARI
-              </h2>
-              <span className="text-[11px] text-white/35">click → details</span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {features.map((f, idx) => {
-                const isFav = fav.includes(f.id);
-                return (
-                  <motion.div
-                    key={f.id}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        e.currentTarget.click();
-                      }
-                    }}
-                    onClick={() => setActive({ ...f, kind: "Feature" })}
-                    initial={{ opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.45,
-                      delay: 0.05 + idx * 0.05,
-                      ease: "easeOut",
-                    }}
-                    whileHover={{ y: -3 }}
-                    className={classNames(
-                      "rounded-2xl border bg-void-850/70 backdrop-blur p-5 text-left",
-                      "border-signal-500/45 shadow-glow-sm",
-                      "hover:border-cyber-500 hover:shadow-glow-cyan transition-all",
-                    )}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan shrink-0">
-                          <f.icon className="text-cyber-300" />
-                        </div>
-                        <div className="min-w-0">
-                          <div className="text-sm sm:text-base font-black tracking-wider text-white truncate">
-                            {f.title}
-                          </div>
-                          <div className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
-                            FEATURE • DEFENSIVE • PRACTICAL
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleFav(f.id);
-                        }}
-                        className={classNames(
-                          "shrink-0 rounded-lg border px-2 py-2 transition-all",
-                          isFav
-                            ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
-                            : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300",
-                        )}
-                        title="Favorite"
-                        aria-label="favorite"
-                      >
-                        {isFav ? <FaStar /> : <FaRegStar />}
-                      </button>
-                    </div>
-
-                    <div className="mt-3">
-                      <Clamp2 className="text-white/55">{f.desc}</Clamp2>
-                    </div>
-
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {(f.tags || []).slice(0, 3).map((t) => (
-                        <span
-                          key={t}
-                          className="text-[10px] font-black tracking-widest rounded-full border border-signal-500/25 bg-void-850/60 px-2 py-1 text-signal-300/80"
-                        >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-between">
-                      <span className="text-[11px] font-bold tracking-widest text-white/45">
-                        DETAILS
-                      </span>
-                      <span className="text-xs font-black tracking-widest text-cyber-300">
-                        OPEN →
-                      </span>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </motion.div>
-        </section>
-
-        {/* FEATURED ROADMAP CAROUSEL */}
-        <section
-          ref={refs.Roadmap}
-          data-section="Roadmap"
-          className="mt-10 scroll-mt-[92px]"
-        >
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="show"
-            custom={4}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
-                ROADMAP (HIGHLIGHTS)
-              </h2>
-              <span className="text-[11px] text-white/35">swipe →</span>
-            </div>
-
-            <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-              {roadmap.map((r) => {
-                const isFav = fav.includes(r.id);
-                return (
-                  <div
-                    key={r.id}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        e.currentTarget.click();
-                      }
-                    }}
-                    onClick={() => setActive({ ...r, kind: "Roadmap" })}
-                    className={classNames(
-                      "min-w-[300px] sm:min-w-[360px] lg:min-w-[420px]",
-                      "rounded-2xl border bg-void-850/70 backdrop-blur p-4 text-left",
-                      "border-signal-500/45 shadow-glow-sm",
-                      "hover:border-cyber-500 hover:shadow-glow-cyan transition-all",
-                    )}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan shrink-0">
-                          <r.icon className="text-cyber-300" />
-                        </div>
-
-                        <div className="min-w-0">
-                          <div className="text-base font-bold tracking-tight text-white truncate">
-                            {r.title}
-                          </div>
-                          <div className="mt-1 text-[11px] font-bold tracking-widest text-cyber-300/80 truncate">
-                            ROADMAP • PREMIUM UX
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleFav(r.id);
-                        }}
-                        className={classNames(
-                          "shrink-0 rounded-lg border px-2 py-2 transition-all",
-                          isFav
-                            ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
-                            : "border-signal-500/30 bg-void-850/50 text-gray-200 hover:border-signal-500 hover:text-signal-300",
-                        )}
-                        title="Favorite"
-                        aria-label="favorite"
-                      >
-                        {isFav ? <FaStar /> : <FaRegStar />}
-                      </button>
-                    </div>
-
-                    <div className="mt-3">
-                      <Clamp2 className="mt-2 text-white/55">
-                        {r.desc}
-                      </Clamp2>
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-between">
-                      <span className="text-[11px] font-bold tracking-widest text-white/45">
-                        QUICK VIEW
-                      </span>
-                      <span className="text-xs font-black tracking-widest text-cyber-300">
-                        OPEN →
-                      </span>
-                    </div>
+      {/* ---------------- CTA ---------------- */}
+      <Section width="default" className="mt-16">
+        <Reveal>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Link to="/services" className="group block">
+              <HoloCard glow="signal" className="flex h-full items-center gap-3">
+                <Wrench className="h-5 w-5 shrink-0 text-signal-400" />
+                <div>
+                  <div className="font-display text-base font-bold text-white">
+                    Vositalarni sinab ko'ring
                   </div>
-                );
-              })}
-            </div>
-
-            {/* Favorites anchor */}
-            <div id="fav-anchor" className="mt-8" />
-
-            {/* Favorites summary (if any) */}
-            {fav.length > 0 && (
-              <Glass className="mt-5 p-5 sm:p-6 border-cyber-500/40 shadow-glow-cyan">
-                <div className="flex items-start gap-3">
-                  <div className="h-11 w-11 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
-                    <FaStar className="text-cyber-300" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-sm sm:text-base font-black tracking-widest text-cyber-300">
-                      FAVORITES
-                    </div>
-                    <p className="mt-2 text-sm text-white/55 leading-relaxed">
-                      Siz saqlagan kartalar:{" "}
-                      <span className="text-signal-300 font-black">
-                        {fav.length}
-                      </span>{" "}
-                      ta. (Keyinroq tez qaytib ko'rish uchun.)
-                    </p>
-
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {fav.slice(0, 10).map((id) => (
-                        <span
-                          key={id}
-                          className="text-[10px] font-black tracking-widest rounded-full border border-signal-500/25 bg-void-850/60 px-2 py-1 text-signal-300/80"
-                        >
-                          {id}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+                  <div className="mt-0.5 text-xs text-white/40">10 ta onlayn utilita</div>
                 </div>
-              </Glass>
-            )}
-          </motion.div>
-        </section>
+                <ArrowUpRight className="ml-auto h-4 w-4 shrink-0 text-white/25 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-signal-400" />
+              </HoloCard>
+            </Link>
 
-        {/* COMMUNITY (audience + join) */}
-        <section
-          ref={refs.Community}
-          data-section="Community"
-          className="mt-10 scroll-mt-[92px]"
-        >
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="show"
-            custom={5}
-          >
-            <Glass className="p-5 sm:p-7 border-cyber-500/40 shadow-glow-cyan">
-              <div className="flex items-start gap-4">
-                <div className="shrink-0 h-12 w-12 rounded-lg border border-cyber-500/40 bg-cyber-500/10 grid place-items-center shadow-glow-cyan">
-                  <FaRocket className="text-cyber-300" />
-                </div>
-                <div className="min-w-0 w-full">
-                  <h2 className="text-lg sm:text-xl font-black tracking-wider text-cyber-300">
-                    &gt;_ KIMLAR UCHUN?
-                  </h2>
-
-                  <p className="mt-3 text-sm sm:text-base leading-relaxed text-white/55">
-                    Cyber Nexus — boshlovchilar, talabalar va IT enthusiastlar
-                    uchun. Maqsad: tez, xavfsiz va to'g'ri yo'nalishda o'sish.
-                    "Learning → Practice → Portfolio".
-                  </p>
-
-                  <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {[
-                      "O'QUVCHILAR",
-                      "TALABALAR",
-                      "IT ENTHUSIASTS",
-                      "BO'LAJAK MUTAXASSISLAR",
-                    ].map((t, i) => (
-                      <div
-                        key={i}
-                        className="rounded-lg border border-cyber-500/35 bg-cyber-500/5 px-3 py-3 text-center"
-                      >
-                        <FaBolt className="mx-auto text-cyber-300 mb-2" />
-                        <div className="text-[11px] sm:text-xs font-black tracking-widest text-white/60">
-                          {t}
-                        </div>
-                      </div>
-                    ))}
+            <Link to="/contact" className="group block">
+              <HoloCard glow="cyber" className="flex h-full items-center gap-3">
+                <ShieldCheck className="h-5 w-5 shrink-0 text-cyber-400" />
+                <div>
+                  <div className="font-display text-base font-bold text-white">
+                    Taklif yoki hisobot
                   </div>
-
-                  {/* Social connect popover */}
-                  <div className="mt-6 flex justify-center">
-                    <div className="relative">
-                      <AnimatePresence>
-                        {isPopoverOpen && (
-                          <motion.div
-                            ref={popoverRef}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{
-                              opacity: 0,
-                              y: 10,
-                              transition: { duration: 0.18 },
-                            }}
-                            className={classNames(
-                              "z-50 border-2 border-cyber-500 bg-black/95 backdrop-blur rounded-xl p-5",
-                              "shadow-glow-cyan",
-                              {
-                                "absolute left-1/2 -translate-x-1/2 -top-[150px] w-[320px]":
-                                  !isMobile,
-                                "fixed bottom-0 left-0 right-0 w-full rounded-b-none":
-                                  isMobile,
-                              },
-                            )}
-                          >
-                            <div className="text-center text-sm font-black tracking-widest text-signal-300">
-                              &gt; CONNECT WITH US_
-                            </div>
-
-                            <div className="mt-5 flex items-center justify-around">
-                              {socials.map((s, i) => (
-                                <a
-                                  key={i}
-                                  href={s.href}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="group flex flex-col items-center gap-2"
-                                >
-                                  <div className="rounded-lg border-2 border-cyber-500 bg-cyber-500/10 p-3 transition-all duration-300 group-hover:border-signal-500 group-hover:bg-signal-500/10">
-                                    <s.icon className="h-7 w-7 text-cyber-300 transition-colors duration-300 group-hover:text-signal-300" />
-                                  </div>
-                                  <span className="text-[11px] font-black tracking-widest text-white/45 group-hover:text-signal-300">
-                                    {s.label}
-                                  </span>
-                                </a>
-                              ))}
-                            </div>
-
-                            {isMobile && (
-                              <button
-                                onClick={() => setIsPopoverOpen(false)}
-                                className="mt-5 w-full rounded-lg border border-cyber-500/40 bg-cyber-500/10 py-2 text-xs font-black tracking-widest text-cyber-300"
-                              >
-                                YOPISH
-                              </button>
-                            )}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-
-                      <motion.button
-                        ref={joinBtnRef}
-                        onClick={() => setIsPopoverOpen((v) => !v)}
-                        whileTap={{ scale: 0.98 }}
-                        className={classNames(
-                          "px-7 py-3 sm:px-8 sm:py-4 rounded-2xl border",
-                          "border-signal-500 bg-gradient-to-r from-signal-400 to-cyber-400",
-                          "text-black font-black tracking-wider",
-                          "shadow-glow-sm hover:shadow-glow-cyan transition-all duration-300",
-                        )}
-                      >
-                        &gt; BIZGA QO'SHILING! 🚀
-                      </motion.button>
-                    </div>
-                  </div>
+                  <div className="mt-0.5 text-xs text-white/40">To'g'ridan-to'g'ri yozing</div>
                 </div>
-              </div>
-            </Glass>
-          </motion.div>
-        </section>
-
-        {/* FOOTER */}
-        <motion.footer
-          className="mt-12 pt-8 border-t-2 border-signal-500/30 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
-        >
-          <p className="text-xs sm:text-sm text-white/35 mb-2 font-mono">
-            © 2025–2026 CYBER NEXUS — ALL RIGHTS RESERVED
-          </p>
-          <a
-            href="https://cybernexus.uz"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-cyber-300 hover:text-signal-300 transition-colors duration-300 font-black text-sm sm:text-base tracking-wider"
-          >
-            &gt; cybernexus.uz_
-          </a>
-        </motion.footer>
-      </div>
-
-      {/* MODAL (details) */}
-      <AnimatePresence>
-        {active && (
-          <>
-            <motion.div
-              className="fixed inset-0 z-40 bg-void-850/70 backdrop-blur-[2px]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setActive(null)}
-            />
-            <motion.div
-              className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 18 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-              onClick={() => setActive(null)}
-            >
-              <div
-                className="w-full max-w-2xl rounded-2xl border border-cyber-500 bg-void-900/90 backdrop-blur p-5 shadow-glow-cyan"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="h-14 w-14 rounded-lg border border-signal-500/35 bg-signal-500/10 grid place-items-center overflow-hidden shrink-0">
-                      {active.icon ? (
-                        <active.icon className="text-signal-300 text-2xl" />
-                      ) : (
-                        <FaShieldAlt className="text-signal-300 text-2xl" />
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-lg sm:text-xl font-black tracking-wider text-signal-300 line-clamp-2">
-                        {active.title}
-                      </div>
-                      <div className="mt-2 text-xs font-bold tracking-widest text-cyber-300/90 truncate">
-                        {active.kind || "DETAILS"} • CYBER NEXUS
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setActive(null)}
-                    className="rounded-lg border border-cyber-500/40 bg-cyber-500/10 p-2 text-cyber-300 hover:border-signal-500 hover:text-signal-300 transition-all"
-                    aria-label="close"
-                  >
-                    <FaTimes />
-                  </button>
-                </div>
-
-                <div className="mt-4 rounded-xl border border-signal-500/25 bg-void-850/60 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-white/45">
-                    SUMMARY
-                  </div>
-                  <p className="mt-2 text-sm leading-relaxed text-signal-300/85">
-                    {active.desc}
-                  </p>
-                </div>
-
-                <div className="mt-3 rounded-xl border border-signal-500/20 bg-void-850/50 p-4">
-                  <div className="text-[11px] font-black tracking-widest text-white/45">
-                    DETAILS
-                  </div>
-                  <p className="mt-2 text-sm leading-relaxed text-signal-300/80">
-                    {active.details}
-                  </p>
-
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {(active.tags || []).map((t) => (
-                      <span
-                        key={t}
-                        className="text-[10px] font-black tracking-widest rounded-full border border-cyber-500/25 bg-cyber-500/10 px-2 py-1 text-cyber-300/90"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mt-4 flex flex-col sm:flex-row gap-3">
-                  <button
-                    type="button"
-                    onClick={() => toggleFav(active.id)}
-                    className={classNames(
-                      "flex-1 rounded-2xl border px-4 py-3 text-sm font-black tracking-wider transition-all",
-                      fav.includes(active.id)
-                        ? "border-cyber-500 bg-cyber-500/10 text-cyber-300 shadow-glow-cyan"
-                        : "border-signal-500 bg-void-850/60 text-signal-300 shadow-glow-sm hover:border-cyber-500 hover:text-cyber-300",
-                    )}
-                  >
-                    {fav.includes(active.id)
-                      ? "★ Favorited"
-                      : "☆ Add to favorites"}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (active.link)
-                        window.open(
-                          active.link,
-                          "_blank",
-                          "noopener,noreferrer",
-                        );
-                    }}
-                    className="flex-1 rounded-2xl border border-signal-500 bg-gradient-to-r from-signal-400 to-cyber-400 px-4 py-3 text-sm font-black tracking-wider text-black shadow-glow-sm hover:shadow-glow-cyan transition-all inline-flex items-center justify-center gap-2"
-                  >
-                    Open <FaExternalLinkAlt className="text-[14px]" />
-                  </button>
-                </div>
-
-                <div className="mt-3 text-center text-[11px] text-white/35">
-                  External link opens in a new tab.
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-
-      {/* small utilities */}
-      <style>{`
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  `}</style>
+                <ArrowUpRight className="ml-auto h-4 w-4 shrink-0 text-white/25 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-cyber-400" />
+              </HoloCard>
+            </Link>
+          </div>
+        </Reveal>
+      </Section>
     </div>
   );
 };
