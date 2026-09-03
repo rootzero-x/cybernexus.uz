@@ -28,6 +28,7 @@ const Privacy = lazy(() => import("./src/Pages/Privacy/Privacy"));
 const TermsOfService = lazy(() => import("./src/Pages/Terms Of Service/termsofservice"));
 const Verify = lazy(() => import("./src/Pages/Verify/Verify"));
 const Profile = lazy(() => import("./src/Pages/Profile/Profile"));
+const DeleteAccount = lazy(() => import("./src/Pages/DeleteAccount/DeleteAccount"));
 
 function RouteFallback() {
   return (
@@ -53,7 +54,13 @@ export const Routers = () => {
           {/* Public */}
           <Route path="/auth" element={<Auth />} />
           <Route path="/policy" element={<Privacy />} />
+          {/* Google Play's store listing links to /privacy — keep it working. */}
+          <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
+          {/* Public on purpose: Play links to this from the listing, and
+              somebody who has already uninstalled the app must still be able
+              to read what deletion removes before signing in. */}
+          <Route path="/delete-account" element={<DeleteAccount />} />
           {/* Public on purpose: a certificate id is checked by people who
               do not have an account here. */}
           <Route path="/verify" element={<Verify />} />

@@ -27,6 +27,7 @@ import {
   Smartphone,
   Sparkles,
   TrendingUp,
+  Trash2,
   X,
 } from "lucide-react";
 
@@ -728,6 +729,21 @@ export default function Profile() {
                 ))}
               </div>
             )}
+
+            {/* Signing every device out is not the same as leaving, so the way
+                out of the platform lives here rather than behind support. */}
+            <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-plasma/20 bg-plasma/[.05] px-4 py-4">
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-white">Hisobni o'chirish</p>
+                <p className="mt-1 text-xs leading-relaxed text-white/45">
+                  Hisob va unga bog'langan barcha ma'lumotlar butunlay o'chadi.
+                </p>
+              </div>
+              <NeonButton as={Link} to="/delete-account" variant="danger" size="sm">
+                <Trash2 className="h-4 w-4" />
+                O'chirish
+              </NeonButton>
+            </div>
           </div>
         ) : null}
 

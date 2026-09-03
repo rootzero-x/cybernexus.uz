@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Play Console upload staging (screenshots, feature graphic) — not part of the site
+.play-assets/

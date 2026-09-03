@@ -32,3 +32,16 @@ export function updateProfile({ fullName }) {
     body: { full_name: fullName },
   });
 }
+
+/**
+ * Delete this account and everything personal attached to it.
+ *
+ * `confirm` must be the literal string "DELETE" — the server rejects anything
+ * else, so a stray POST cannot wipe a row on its own.
+ */
+export function deleteMyAccount() {
+  return apiFetch("/profile/delete_account.php", {
+    method: "POST",
+    body: { confirm: "DELETE" },
+  });
+}
